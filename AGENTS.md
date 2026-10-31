@@ -4,7 +4,7 @@
 
 - [Confirmado] Este arquivo orienta o trabalho em todo o repositório `/home/somvibe/Projetos/pessoal/precordis/novo-sistema-clinica`. Instruções explícitas do usuário prevalecem sobre recomendações documentais.
 - [Confirmado] O produto previsto é um SaaS por assinatura para clínicas de exames: cadastros, agenda, check-in, TV, resultados/laudos, portais, notificações, billing e auditoria. A Precordis será o primeiro tenant. Fonte: [visão do produto](docs/fluxos/08-visao-produto-bounded-contexts.md).
-- [Confirmado] Na criação deste arquivo, a raiz contém documentação, sem `composer.json`, `artisan` ou `package.json`. Não tratar arquitetura planejada, etapas, comandos ou schemas como implementação concluída.
+- [Confirmado] A aplicação deve ser implementada em `laravel/`, dentro da raiz do repositório. Nesta preparação, o conteúdo versionado da pasta contém apenas `.gitkeep`, sem `composer.json`, `artisan` ou `package.json`. Não tratar a criação do diretório, arquitetura planejada, etapas, comandos ou schemas como implementação concluída.
 - [Confirmado] Marcar afirmações com `[Confirmado]` quando houver evidência identificada e com `[Inferido]` quando forem hipóteses ou propostas. Para comportamento do legado, exigir arquivo/linha ou estrutura do dump. Confirmação documental comprova o que o documento diz, não o funcionamento do software.
 - [Confirmado] Não duplicar especificações: consultar e referenciar a fonte por assunto abaixo. Ao alterar uma regra, atualizar sua fonte, sem criar versões paralelas neste arquivo.
 
@@ -19,6 +19,7 @@
 
 | Estado | Pasta / fonte | Responsabilidade |
 |---|---|---|
+| [Confirmado] | [laravel/](laravel/) · [arquitetura §14.2](docs/fluxos/14-arquitetura-laravel.md#142-estrutura-de-pastas-modular-por-domínio) | Diretório reservado à aplicação: código, configuração, recursos, migrations, seeds e testes ficarão aqui após a fundação. Documentação e schemas de referência permanecem em `docs/`, na raiz. |
 | [Confirmado] | [docs/analise/](docs/analise/) · [sumário](docs/analise/00-sumario-executivo.md) | Diagnóstico do legado; não é especificação automática do novo comportamento. |
 | [Confirmado] | [Inventário](docs/analise/01-inventario.md), [dependências e atores](docs/analise/02-mapa-dependencias-atores.md), [telas e formulários](docs/analise/03-fluxos-telas-formularios.md), [regras](docs/analise/04-regras-de-negocio.md) | Localizar funcionalidades, pontos de entrada e regras observadas no legado. |
 | [Confirmado] | [Segurança/LGPD](docs/analise/05-seguranca-lgpd-conformidade.md), [dicionário/ER legado](docs/analise/06-bancos-legados-dicionario-er.md), [inconsistências](docs/analise/07-inconsistencias-modelagem.md) | Riscos, estrutura legada e problemas de modelagem a verificar contra código/dumps. |
@@ -73,11 +74,13 @@
 
 ## Execução local, migrations, seeds e testes
 
-- [Confirmado] Não existem comandos da aplicação executáveis nesta raiz no estado inicial. Primeiro implementar a fundação conforme a etapa 1 e documentar os comandos efetivamente disponíveis. Não executar os exemplos abaixo enquanto faltarem a aplicação e suas configurações.
+- [Confirmado] Executar comandos da aplicação a partir de `laravel/`; os caminhos `app/`, `config/`, `resources/`, `database/`, `tests/` e `vendor/` citados como estrutura da aplicação são relativos a essa pasta. `AGENTS.md`, `.codex/` e `docs/` permanecem na raiz do repositório. A configuração de ambiente da aplicação deverá ficar em `laravel/.env`, fora do Git.
+- [Confirmado] `laravel/` ainda contém somente `.gitkeep` como arquivo versionado, sem comandos executáveis da aplicação. Primeiro implementar a fundação conforme a etapa 1 e documentar os comandos efetivamente disponíveis. Não executar os exemplos abaixo enquanto faltarem a aplicação e suas configurações.
 - [Inferido] Após a fundação, o roteiro abaixo é uma proposta operacional; confirmar caminhos, opções e comandos com `php artisan list`, `php artisan help <comando>` e os scripts do `composer.json`. `tenant:create` e `tenants:migrate` são entregáveis previstos no fluxo 20, não comandos já implementados.
 
 ```bash
 # Somente local/staging, após confirmar conexões e caminhos das migrations.
+cd laravel  # a partir da raiz do repositório, após a instalação da aplicação
 composer install
 cp .env.example .env  # apenas se .env ainda não existir; nunca sobrescrever segredos locais
 php artisan key:generate  # somente na instalação local inicial

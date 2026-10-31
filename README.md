@@ -4,7 +4,7 @@
 
 ## Estado do projeto
 
-[Confirmado] O repositório está na fase de documentação e preparação da implementação. Contém análises do legado, especificações funcionais, referências Vuexy, schemas SQL e instruções para agentes. Ainda não contém aplicação Laravel, `composer.json`, `artisan`, migrations Laravel, seeders ou suíte de testes da aplicação.
+[Confirmado] O repositório está na fase de documentação e preparação da implementação. Contém análises do legado, especificações funcionais, referências Vuexy, schemas SQL e instruções para agentes. A pasta [laravel/](laravel/) está reservada para a aplicação e seu conteúdo versionado contém apenas `.gitkeep`; ainda não há framework instalado, `composer.json`, `artisan`, migrations Laravel, seeders ou suíte de testes da aplicação.
 
 [Confirmado] Os arquivos SQL são referências de modelagem; sua presença não comprova homologação no banco de destino. As decisões documentais ainda abertas estão em [PENDENCIAS.md](docs/outros/PENDENCIAS.md). O andamento oficial das etapas fica no [plano de desenvolvimento, §20.4](docs/fluxos/20-plano-desenvolvimento.md#204-controle-de-fases-manter-atualizado).
 
@@ -41,6 +41,8 @@
 │   ├── layout/
 │   ├── outros/
 │   └── schema/
+├── laravel/
+│   └── .gitkeep
 ├── AGENTS.md
 ├── README.md
 └── novo-sistema-clinica.code-workspace
@@ -53,7 +55,7 @@
 3. [Confirmado] Para trabalhar no VS Code, abrir [novo-sistema-clinica.code-workspace](novo-sistema-clinica.code-workspace), configurado para a raiz do projeto.
 4. [Confirmado] Para tarefas com o agente do projeto, consultar [.codex/agents/precordis.toml](.codex/agents/precordis.toml). Suas instruções apontam para o `AGENTS.md` e a documentação existente.
 
-[Confirmado] A instalação e os comandos de migrations, seeds e testes dependem da implementação da fundação. O roteiro condicional está no [AGENTS.md](AGENTS.md#execução-local-migrations-seeds-e-testes); não há aplicação executável para iniciar nesta fase.
+[Confirmado] A instalação e os comandos de migrations, seeds e testes dependem da implementação da fundação e devem usar `laravel/` como diretório de trabalho. A documentação continua em `docs/`, na raiz do repositório. O roteiro condicional está no [AGENTS.md](AGENTS.md#execução-local-migrations-seeds-e-testes); a pasta reservada ainda não contém aplicação executável.
 
 ## Desenvolvimento e contribuição
 
