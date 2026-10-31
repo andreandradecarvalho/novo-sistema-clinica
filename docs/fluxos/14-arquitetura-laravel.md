@@ -40,7 +40,7 @@
 
 ## 14.2 Estrutura de pastas (modular por domínio)
 
-[Confirmado] A raiz da aplicação será [laravel/](../../laravel/), dentro do repositório. Nesta preparação, seu conteúdo versionado contém apenas `.gitkeep`; a árvore abaixo é a **estrutura planejada, relativa a `laravel/`**, a implementar na fundação. Documentação, DDL de referência, `AGENTS.md` e `.codex/` permanecem na raiz do repositório, fora da aplicação.
+[Confirmado] A raiz da aplicação será [docs/laravel/](../laravel/), conforme a organização solicitada pelo usuário. Nesta preparação, seu conteúdo versionado contém apenas `.gitkeep`; a árvore abaixo é a **estrutura planejada, relativa a `docs/laravel/`**, a implementar na fundação. Documentação e DDL de referência permanecem nas demais subpastas de `docs/`; `AGENTS.md` e `.codex/` permanecem na raiz do repositório, fora da aplicação.
 
 ```
 app/
