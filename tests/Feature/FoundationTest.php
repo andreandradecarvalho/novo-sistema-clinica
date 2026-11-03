@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Identity\Auth\TenantSessionHandler;
+use App\Domain\Identity\Auth\TenantTwoFactorProvider;
 use App\Domain\Identity\Models\User;
 use App\Domain\Tenancy\Exceptions\MissingTenant;
 use App\Domain\Tenancy\Models\Tenant;
@@ -11,6 +12,7 @@ use App\Domain\Tenancy\Services\TenantContext;
 use App\Domain\Tenancy\Services\TenantStorage;
 use App\Support\LocalHomologation;
 use Database\Seeders\HomologationSeeder;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Validation\UncompromisedVerifier;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
@@ -241,6 +243,49 @@ it('separates identical TOTP codes by tenant and prevents replay in the same ten
     $this->context->run($this->b['tenant'], fn () => expect($provider->verify($secret, $code))->toBeTrue());
 });
 
+it('rejects a TOTP code claimed by a competing request after the cache read', function (): void {
+    $engine = Mockery::mock(Google2FA::class)->makePartial();
+    $cache = app(Repository::class);
+    $secret = $engine->generateSecretKey();
+    $code = $engine->getCurrentOtp($secret);
+    $this->context->run($this->a['tenant'], function () use ($engine, $cache, $secret, $code): void {
+        $key = $this->context->key('2fa.used:'.hash('sha256', $secret.'|'.$code));
+        $engine->shouldReceive('verifyKeyNewer')->once()->with($secret, $code, null)
+            ->andReturnUsing(function () use ($cache, $key): int {
+                // Another request wins after this request observed an unused code.
+                $cache->add($key, 100, 90);
+
+                return 100;
+            });
+        expect(new TenantTwoFactorProvider($engine, $cache)->verify($secret, $code))->toBeFalse();
+    });
+});
+
+it('retains TOTP replay protection through the full accepted clock drift window', function (): void {
+    $engine = Mockery::mock(Google2FA::class)->makePartial();
+    $counter = (new Google2FA)->getTimestamp();
+    $engine->shouldReceive('getTimestamp')->andReturn($counter, $counter + 2);
+    $secret = $engine->generateSecretKey();
+    $code = $engine->oathTotp($secret, $counter + 1);
+    $provider = new TenantTwoFactorProvider($engine, app(Repository::class));
+    try {
+        $this->context->run($this->a['tenant'], function () use ($provider, $secret, $code): void {
+            expect($provider->verify($secret, $code))->toBeTrue();
+            $this->travel(61)->seconds();
+            expect($provider->verify($secret, $code))->toBeFalse();
+        });
+    } finally {
+        $this->travelBack();
+    }
+});
+
+it('refuses TOTP authentication when replay protection has no cache', function (): void {
+    $engine = new Google2FA;
+    $secret = $engine->generateSecretKey();
+    $provider = new TenantTwoFactorProvider($engine);
+    expect($provider->verify($secret, $engine->getCurrentOtp($secret)))->toBeFalse();
+});
+
 it('isolates persisted session payloads by clinic even with an identical session id', function (): void {
     $handler = new TenantSessionHandler(DB::connection(), 'sessions', 120, app());
     $id = Str::random(40);
@@ -337,6 +382,12 @@ it('refuses the live homologation check outside its isolated environment', funct
         ->assertFailed();
 });
 
+it('refuses homologation migrations outside the isolated environment', function (): void {
+    $this->artisan('homologation:migrate')
+        ->expectsOutputToContain('This command requires the isolated local homologation database.')
+        ->assertFailed();
+});
+
 it('rejects connection overrides before running homologation fixtures', function (string $setting, mixed $value): void {
     $previousEnvironment = app()->environment();
     $previousDatabase = config('database');
@@ -349,6 +400,9 @@ it('rejects connection overrides before running homologation fixtures', function
             $setting => $value,
         ]);
         expect(fn () => app(LocalHomologation::class)->ensure())->toThrow(RuntimeException::class);
+        $this->artisan('homologation:migrate')
+            ->expectsOutputToContain('This command requires the isolated local homologation database.')
+            ->assertFailed();
     } finally {
         app()->instance('env', $previousEnvironment);
         config(['database' => $previousDatabase]);

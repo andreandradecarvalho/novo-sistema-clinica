@@ -17,7 +17,7 @@ python3 scripts/homologacao.py status
 python3 scripts/homologacao.py down
 ```
 
-[Confirmado] O preparador preserva um .env.homologacao já existente. O comando up migra somente o banco novo_sistema_clinica_homologacao e aplica fixtures protegidas por ambiente/host/nome de banco; não limpa tabelas nem sobrescreve usuários existentes. A suíte testa a recusa do seeder e do comando de verificação fora desse contexto, incluindo DB_URL, conexão padrão e conexão já resolvida incompatíveis. Nenhuma alteração no legado ou nas contas locais da porta 8080.
+[Confirmado] O preparador preserva um .env.homologacao já existente. O comando up executa homologation:migrate, que valida ambiente, configuração e conexão resolvida antes de chamar as migrations; migra somente o banco novo_sistema_clinica_homologacao e aplica fixtures protegidas por ambiente/host/nome de banco; não limpa tabelas nem sobrescreve usuários existentes. A suíte testa a recusa do seeder e do comando de verificação fora desse contexto, incluindo DB_URL, conexão padrão e conexão já resolvida incompatíveis. Nenhuma alteração no legado ou nas contas locais da porta 8080.
 
 [Confirmado] O comando check é executado no container e chama o servidor HTTP real. O relatório público, sem credenciais, fica em docs/outros/homologacao-local-AAAA-MM-DD.json; o snapshot validado desta entrega é [homologacao-local-2026-11-03.json](homologacao-local-2026-11-03.json). O resultado inclui data, versões reais, FKs habilitadas, verificações e revisão de origem; working_tree_dirty registra alterações locais ainda não commitadas.
 

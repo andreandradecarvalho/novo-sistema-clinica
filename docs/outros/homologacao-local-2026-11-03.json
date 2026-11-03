@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-11-03T15:06:43+00:00",
+  "observed_at": "2026-11-03T20:27:14+00:00",
   "environment": "homologacao-local-isolada",
   "php": "8.5.12",
   "laravel": "13.39.0",
@@ -157,6 +157,6 @@
     "Somente dados sintéticos",
     "Não substitui CI remota ou revisão de PR"
   ],
-  "source_revision": "af7d1ecd473f54138655b886096dbb3fbc8b4e05",
+  "source_revision": "e21900372982e19b0e88402ee3639bc810ac7be2",
   "working_tree_dirty": true
 }

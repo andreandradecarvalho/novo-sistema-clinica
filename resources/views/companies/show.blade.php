@@ -1,0 +1,12 @@
+@extends('layouts.app')
+@section('title', 'Empresa cliente')
+@section('content')
+<div class="page-heading"><h1 class="h4 mb-1">{{ $company->name }}</h1><p class="text-body-secondary">Estabelecimentos desta empresa cliente.</p></div>
+@can('viewAny', [\App\Domain\Companies\Models\CompanyAccess::class, $company])<div class="d-flex justify-content-end mb-6"><a class="btn btn-label-primary" href="{{ route('companies.accesses.index', $company->public_id) }}">Concessões empresariais</a></div>@endcan
+<section class="card mb-6"><div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-3"><h2 class="h5 mb-0">Identificação</h2>@can('update', $company)<a class="btn btn-primary" href="{{ route('companies.edit', $company->public_id) }}">Editar empresa</a>@endcan</div><div class="card-body"><dl class="row mb-0"><dt class="col-sm-3">CNPJ</dt><dd class="col-sm-9">{{ $company->cnpj ?? 'Não informado' }}</dd><dt class="col-sm-3">Situação</dt><dd class="col-sm-9">{{ $company->is_active ? 'Ativa' : 'Inativa' }}</dd></dl></div></section>
+<section class="card"><div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-3"><h2 class="h5 mb-0">Estabelecimentos</h2>@can('create', [\App\Domain\Companies\Models\CompanyUnit::class, $company])<a class="btn btn-primary" href="{{ route('companies.units.create', $company->public_id) }}">Novo estabelecimento</a>@endcan</div>
+<div class="table-responsive"><table class="table table-hover align-middle mb-0"><caption class="visually-hidden">Estabelecimentos da empresa</caption><thead><tr><th scope="col">Nome</th><th scope="col">Cidade / UF</th><th scope="col">Situação</th><th scope="col">Ações</th></tr></thead><tbody>
+@forelse($units as $unit)<tr><td>{{ $unit->name }}</td><td>{{ $unit->city ?? 'Não informada' }} {{ $unit->state ? ' / '.$unit->state : '' }}</td><td><span @class(['badge', 'bg-label-success' => $unit->is_active, 'bg-label-secondary' => !$unit->is_active])>{{ $unit->is_active ? 'Ativo' : 'Inativo' }}</span></td><td>@can('update', [$unit, $company])<a class="btn btn-sm btn-label-primary" href="{{ route('companies.units.edit', [$company->public_id, $unit->id]) }}">Editar</a>@endcan</td></tr>@empty<tr><td colspan="4" class="text-center py-8 text-body-secondary">Nenhum estabelecimento cadastrado.</td></tr>@endforelse
+</tbody></table></div><div class="card-body border-top">{{ $units->links('pagination::bootstrap-5') }}</div></section>
+<a class="btn btn-label-secondary mt-6" href="{{ route('companies.index') }}">Voltar às empresas</a>
+@endsection

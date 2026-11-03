@@ -9,6 +9,8 @@
 - [Inferido] `occupational_programs` registra referência/versionamento do PCMSO, responsável e contexto de riscos proveniente do PGR quando aplicável. Não pressupõe que toda organização esteja obrigada a PCMSO nem que o SaaS produza PGR/LTCAT. Origem, dispensa quando aplicável e responsável pela informação são explícitos.
 - [Inferido] `occupational_protocols` guarda versão dos exames/regras aplicáveis ao contexto. Exposições, função, vigência e fonte são preservadas no snapshot da avaliação. A estrutura inicial JSON versionada admite evolução de riscos; não é substituto de validação médica nem de um módulo completo de segurança do trabalho.
 
+[Confirmado] Convenção implementada no cadastro manual: início obrigatório e períodos inclusivos. Nova versão inicia após a anterior e fecha sua vigência no dia precedente, sem registrar desligamento; desligamento explícito preenche o fim da versão e a data de desligamento. Múltiplos vínculos simultâneos permanecem permitidos. Uso, snapshots e limites estão em [vínculos empregatícios](../outros/vinculos-empregaticios.md). Isso não representa entrega de avaliação ou ASO.
+
 ## 23.2 Avaliação e ASO
 
 [Confirmado] A NR-7 distingue admissional, periódico, retorno ao trabalho, mudança de riscos ocupacionais e demissional (§7.5.6), prevê conteúdo mínimo do ASO (§7.5.19.1) e periodicidades dependentes do contexto. Fonte: [NR-7 oficial](https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/arquivos/normas-regulamentadoras/nr-07-atualizada-2022.pdf).
@@ -28,6 +30,8 @@
 - [Inferido] Acesso empresarial exige `company_user_access`, empresa exata, vigência e permissão específica. Por padrão, permite situação operacional e ASO liberado daquele empregador/contexto; não permite anamnese, hipóteses diagnósticas ou resultados complementares completos. Exceções exigem finalidade/base e autorização específicas, avaliadas pela clínica.
 - [Inferido] Novo empregador não herda acesso a histórico de outro vínculo. Encerramento de vínculo não destrói prontuário; prazo de visibilidade empresarial e guarda são políticas distintas. Trocar `patients.company_id` não concede acesso retroativo.
 - [Confirmado] O sigilo dos exames de trabalhadores é tratado no art. 76 do [Código de Ética Médica](https://transparencia.cfm.org.br/codigo-de-etica-medica/), inclusive perante exigências empresariais, com a exceção prevista no artigo.
+
+[Confirmado] Gestão administrativa de concessões implementada na etapa 2: [categorias, vigência, revogação e limites](../outros/concessoes-empresariais.md). A verificação exige concessão e permissão específica; integração com documento liberado e vínculo exato permanece obrigatória nas etapas 6/10.
 
 ## 23.4 eSocial e integrações
 

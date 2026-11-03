@@ -22,6 +22,6 @@ final class UserController extends Controller
     {
         Gate::authorize('view', $user);
 
-        return view('users.show', ['subject' => $user]);
+        return view('users.show', ['subject' => $user->load('unit')]);
     }
 }

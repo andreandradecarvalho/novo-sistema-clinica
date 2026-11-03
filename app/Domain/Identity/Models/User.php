@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Identity\Models;
 
 use App\Domain\Tenancy\Concerns\BelongsToTenant;
+use App\Domain\Tenancy\Models\Unit;
 use App\Domain\Tenancy\Services\TenantContext;
 use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -69,6 +71,12 @@ final class User extends Authenticatable implements MustVerifyEmailContract
         self::creating(function (User $user): void {
             $user->public_id ??= (string) Str::ulid();
         });
+    }
+
+    /** @return BelongsTo<Unit, $this> */
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class)->withTrashed();
     }
 
     public function requiresTwoFactor(): bool

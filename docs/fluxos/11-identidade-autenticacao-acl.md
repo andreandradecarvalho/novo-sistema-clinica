@@ -62,3 +62,5 @@ Senhas migram como **"forçar redefinição no primeiro acesso"** (não dá para
 No legado a autorização rodava no cliente e o `header()` sem `exit` não bloqueava. No novo, **nada** chega ao controlador sem passar por middleware de tenant + `auth` + `can:`; e cada ação sensível tem Policy. Os testes de permissão por papel e de isolamento por tenant ([09](09-estrategia-multi-tenant.md) §9.4, [15](15-qualidade-testes-devops.md)) são parte do "pronto".
 
 [Confirmado] Matriz normativa e concessões excepcionais: [24 §24.1](24-seguranca-retencao-operacao.md). Acesso empresarial: [23 §23.3](23-saude-ocupacional.md). Estruturas de concessão/dispositivos/download em schema.sql. RBAC isolado não substitui essas Policies.
+
+[Confirmado] Atribuição administrativa de unidade implementada na etapa 2: [uso, autorização e limites](../outros/atribuicao-unidades.md). O vínculo usa users.unit_id; restrições operacionais da recepção continuam obrigatórias nas Policies dos módulos de atendimento.

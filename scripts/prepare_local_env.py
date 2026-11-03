@@ -22,6 +22,7 @@ def ensure(key, value):
             return
     lines.append(key + '=' + value)
 ensure('APP_KEY', 'base64:' + base64.b64encode(secrets.token_bytes(32)).decode())
+ensure('CPF_SEARCH_KEY', secrets.token_hex(32))
 ensure('DB_PASSWORD', secrets.token_urlsafe(32))
 ensure('MARIADB_ROOT_PASSWORD', secrets.token_urlsafe(32))
 ensure('LOCAL_UID', str(os.getuid()))

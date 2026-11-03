@@ -41,7 +41,7 @@
 
 ## 14.2 Estrutura de pastas e integração visual
 
-[Confirmado] Raiz da aplicação: [raiz do repositório](../../). Fundação implementada e testada localmente; aceite de staging/CI remota pendente, conforme status e sessão no fluxo 20. Código, manifests, Docker e testes ficam na raiz. Documentação e DDL de referência ficam em docs/. Configurar somente public/ da raiz como webroot; não expor docs/, vendor/ ou .env.
+[Confirmado] Raiz da aplicação: [raiz do repositório](../../). Fundação implementada e aceita com homologação local isolada; CI remota adiada por orientação do usuário, conforme status e sessão no fluxo 20. Código, manifests, Docker e testes ficam na raiz. Documentação e DDL de referência ficam em docs/. Configurar somente public/ da raiz como webroot; não expor docs/, vendor/ ou .env.
 
 [Inferido] Organização modular em app/Domain/{Tenancy,Identity,Patients,Companies,Scheduling,Visits,Exams,Anamnesis,Results,Occupational,ClinicalFinance,Notifications,Billing,Audit,Migration,Shared}, com Models/Actions/DTOs/Enums/Policies/Contracts conforme necessário. HTTP em app/Http; migrations em database/migrations, rodando uma vez. Testes Unit/Feature/Arch/Tenancy.
 

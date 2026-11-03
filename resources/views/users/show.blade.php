@@ -8,7 +8,8 @@
         <h2 class="h5 mb-3">{{ $subject->name }}</h2><span @class(['badge', 'bg-label-success' => $subject->is_active, 'bg-label-secondary' => !$subject->is_active])>{{ $subject->is_active ? 'Ativo' : 'Inativo' }}</span>
     </div></section></div>
     <div class="col-lg-8"><section class="card h-100"><h2 class="card-header h5">Dados da conta</h2><div class="card-body">
-        <dl class="row mb-0"><dt class="col-sm-3 mb-3">Nome</dt><dd class="col-sm-9 mb-3">{{ $subject->name }}</dd><dt class="col-sm-3 mb-3">E-mail</dt><dd class="col-sm-9 mb-3 text-break">{{ $subject->email }}</dd><dt class="col-sm-3 mb-3">Clínica</dt><dd class="col-sm-9 mb-3">{{ app(\App\Domain\Tenancy\Services\TenantContext::class)->require()->name }}</dd></dl>
+        <dl class="row mb-0"><dt class="col-sm-3 mb-3">Nome</dt><dd class="col-sm-9 mb-3">{{ $subject->name }}</dd><dt class="col-sm-3 mb-3">E-mail</dt><dd class="col-sm-9 mb-3 text-break">{{ $subject->email }}</dd><dt class="col-sm-3 mb-3">Clínica</dt><dd class="col-sm-9 mb-3">{{ app(\App\Domain\Tenancy\Services\TenantContext::class)->require()->name }}</dd><dt class="col-sm-3 mb-3">Unidade clínica</dt><dd class="col-sm-9 mb-3">{{ $subject->unit?->name ?? 'Sem unidade atribuída' }}@if($subject->unit && !$subject->unit->is_active) <span class="badge bg-label-warning">Inativa</span>@endif</dd></dl>
+        @can('assignUnit', $subject)<a class="btn btn-label-primary mt-4" href="{{ route('users.unit.edit', $subject->public_id) }}">Alterar unidade</a>@endcan
     </div></section></div>
 </div>
 @endsection

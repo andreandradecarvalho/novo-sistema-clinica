@@ -67,3 +67,33 @@
 - [Confirmado] `schema.sql`: `appointments` ganhou coluna gerada `active_flag` e a chave única passou a `UNIQUE(tenant_id, patient_id, scheduled_date, active_flag)`, corrigindo a P05 (o `UNIQUE` com `deleted_at` NULL não bloqueava duplicados ativos no MySQL).
 - [Confirmado] P03, P04, P05 e a observação de FK marcadas como resolvidas no `../outros/PENDENCIAS.md`. P01 (contrato do ETL: `legacy_map` vs `legacy_references`) e P02 (sequência do MVP) permanecem abertas — decisão do responsável.
 - [Inferido/Pendente] Validação ainda estrutural; homologar `schema.sql` em banco descartável no motor/versão de destino (§14.1). O item [Atenção] da entrada anterior fica atendido quanto à varredura documental.
+
+
+## 2026-11-03 — Migration inicial do cadastro de pacientes (etapa 2)
+
+- [Confirmado] Adicionada [2026_11_03_000003_create_patient_registry.php](../../database/migrations/2026_11_03_000003_create_patient_registry.php): reproduz exatamente as definições de companies, company_units e patients do schema.sql, nesta ordem. Empresas/unidades entram como dependências das FKs de patients; nenhum DDL clínico futuro foi importado em bloco e o schema.sql não foi alterado.
+- [Confirmado] Preservados CPF em TEXT ciphertext, hash CHAR(64), versão de chave, unique por tenant e FKs compostas, inclusive usuário, empresa/unidade e possível duplicata. A aplicação ainda não aceita esses vínculos pela entrada HTTP, até as regras específicas serem entregues.
+- [Confirmado] up executado em MariaDB 13.0.2 nos bancos locais testing, homologacao e desenvolvimento do Compose. Rollback somente desta migration e reaplicação aprovados em novo_sistema_clinica_testing após confirmar as três tabelas vazias; foreign_key_checks=1 ao final. Nenhum rollback no ambiente de trabalho/homologação ou acesso ao legado/produção.
+- [Confirmado] As migrations anteriores permanecem intactas. O down remove as três tabelas em ordem inversa e é destrutivo; validação em banco vazio não autoriza rollback com pacientes. Em instalação com dados, preservar backup/chaves e corrigir por migration progressiva.
+
+
+## 2026-11-03 — Cadastro profissional e interface de unidades clínicas (etapa 2)
+
+- [Confirmado] Adicionada [2026_11_03_000004_create_professionals.php](../../database/migrations/2026_11_03_000004_create_professionals.php), reproduzindo exatamente professionals do schema.sql: vínculo único com user_id, FK composta (tenant_id,user_id), campos de conselho/especialidade e chave composta para vínculos clínicos futuros. Não adicionada coluna de situação ou vínculo paralelo com unidade; a situação do integrante pertence a users.
+- [Confirmado] units já existia na migration da fundação e recebeu somente interface/Actions/Policy. Nenhuma alteração nas migrations anteriores ou no schema.sql.
+- [Confirmado] up aprovado em MariaDB 13.0.2 nos bancos locais de testes, desenvolvimento e homologação isolada. Rollback apenas da nova migration e reaplicação aprovados em novo_sistema_clinica_testing após confirmar professionals vazia e a migration como a última aplicada; foreign_key_checks=1 ao final. Nenhum rollback no banco de trabalho/homologação.
+- [Confirmado] O down remove professionals e é destrutivo; em instalação com registros, preservar banco/chaves e preferir correções progressivas. A validação em banco vazio não autoriza apagar perfis referenciados por registros clínicos futuros. Legado e produção não foram acessados.
+
+## 2026-11-03 — Histórico de vínculos paciente–empregador (etapa 2)
+
+- [Confirmado] Adicionada [2026_11_03_000005_create_patient_company_links.php](../../database/migrations/2026_11_03_000005_create_patient_company_links.php), reproduzindo exatamente a tabela patient_company_links do schema.sql. Preservados campos, índices, FKs compostas de tenant/paciente/empresa/estabelecimento, RESTRICT e CHECK do período. Objetivo: executar o cadastro histórico previsto no fluxo 23 sem importar tabelas futuras de avaliação/ASO. Migrations anteriores e DDL de referência não foram alterados.
+- [Confirmado] Snapshot dos nomes de empresa/estabelecimento usa context_encrypted já previsto; não acrescenta coluna. A igualdade entre empresa e estabelecimento é validada pela Action, além das FKs de tenant. Imutabilidade histórica, data de desligamento e vínculo com paciente exato também são regras da aplicação; o CHECK isolado não implementa todo o contrato.
+- [Confirmado] up aprovado em MariaDB 13.0.2 nos bancos locais de desenvolvimento, homologação isolada e testes. Rollback de uma única migration e reaplicação aprovados somente em novo_sistema_clinica_testing, após conferir destino, última migration e tabela vazia; foreign_key_checks=1 ao final. Testes exercitam FK cruzada, período inválido e reversão transacional quando a auditoria falha.
+- [Confirmado] down remove a tabela e é destrutivo; o ensaio vazio não autoriza reversão com histórico real. Instalações com dados exigem backup/chaves e correção por migration progressiva. Nenhuma alteração em legado/produção, nenhum rollback de desenvolvimento/homologação e nenhuma homologação MySQL nesta entrega.
+
+## 2026-11-03 — Concessões empresariais por usuário e vigência (etapa 2)
+
+- [Confirmado] Adicionada [2026_11_03_000006_create_company_user_access.php](../../database/migrations/2026_11_03_000006_create_company_user_access.php), reproduzindo exatamente company_user_access do schema.sql. Preservados tipos, índices, FKs compostas de tenant/usuário/empresa e CHECK valid_until >= valid_from. Objetivo: executar a gestão administrativa de concessões dos fluxos 11/23/24. Nenhuma alteração nas migrations anteriores ou no DDL de referência.
+- [Confirmado] Categoria permitida, atividade dos participantes, conversão do fuso da clínica para UTC, imutabilidade e revogação são regras da aplicação; o DDL isolado não implementa autorização de portal/documento. Não foi adicionado UNIQUE: registros sobrepostos são independentes, e revogar uma concessão não elimina outra vigente. Uso e limites no [documento operacional](../outros/concessoes-empresariais.md).
+- [Confirmado] up aprovado em MariaDB 13.0.2 nos bancos locais de desenvolvimento, homologação isolada e testes. Rollback somente da migration 000006 e reaplicação aprovados em novo_sistema_clinica_testing após conferir destino, última migration e tabela vazia; foreign_key_checks=1 ao final. Testes exercitam FK cruzada, CHECK temporal e reversão da criação/revogação diante de falha da auditoria.
+- [Confirmado] down é destrutivo e remove as concessões. O ensaio vazio não autoriza rollback com histórico real; instalações com dados exigem backup e migration progressiva. Nenhuma escrita no legado/produção, rollback no banco de desenvolvimento/homologação ou homologação MySQL nesta entrega.

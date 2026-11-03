@@ -4,13 +4,27 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Domain\Companies\Models\Company;
+use App\Domain\Companies\Models\CompanyAccess;
+use App\Domain\Companies\Models\CompanyUnit;
+use App\Domain\Companies\Policies\CompanyAccessPolicy;
+use App\Domain\Companies\Policies\CompanyPolicy;
+use App\Domain\Companies\Policies\CompanyUnitPolicy;
 use App\Domain\Identity\Auth\TenantPasswordBrokerManager;
 use App\Domain\Identity\Auth\TenantSessionHandler;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Policies\UserPolicy;
 use App\Domain\Identity\Services\SecurityAudit;
+use App\Domain\Occupational\Models\EmploymentLink;
+use App\Domain\Occupational\Policies\EmploymentLinkPolicy;
+use App\Domain\Patients\Models\Patient;
+use App\Domain\Patients\Policies\PatientPolicy;
+use App\Domain\Professionals\Models\Professional;
+use App\Domain\Professionals\Policies\ProfessionalPolicy;
 use App\Domain\Tenancy\Exceptions\MissingTenant;
 use App\Domain\Tenancy\Models\Tenant;
+use App\Domain\Tenancy\Models\Unit;
+use App\Domain\Tenancy\Policies\UnitPolicy;
 use App\Domain\Tenancy\Services\TenantContext;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
@@ -36,6 +50,13 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(CompanyAccess::class, CompanyAccessPolicy::class);
+        Gate::policy(EmploymentLink::class, EmploymentLinkPolicy::class);
+        Gate::policy(Unit::class, UnitPolicy::class);
+        Gate::policy(Professional::class, ProfessionalPolicy::class);
+        Gate::policy(Company::class, CompanyPolicy::class);
+        Gate::policy(CompanyUnit::class, CompanyUnitPolicy::class);
+        Gate::policy(Patient::class, PatientPolicy::class);
         $this->app['session']->extend('tenant-database', fn ($app) => new TenantSessionHandler(
             $app['db']->connection(config('session.connection')), config('session.table'), (int) config('session.lifetime'), $app,
         ));

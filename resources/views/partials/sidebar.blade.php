@@ -20,6 +20,22 @@
             </a>
         </li>
         @endcan
+        @can('viewAny', \App\Domain\Patients\Models\Patient::class)
+        <li class="menu-item {{ request()->routeIs('patients.*') ? 'active' : '' }}">
+            <a href="{{ route('patients.index') }}" class="menu-link" @if(request()->routeIs('patients.*')) aria-current="page" @endif><x-icon name="users" class="menu-icon" /><span>Pacientes</span></a>
+        </li>
+        @endcan
+        @can('viewAny', \App\Domain\Companies\Models\Company::class)
+        <li class="menu-item {{ request()->routeIs('companies.*') ? 'active' : '' }}">
+            <a href="{{ route('companies.index') }}" class="menu-link" @if(request()->routeIs('companies.*')) aria-current="page" @endif><x-icon name="users" class="menu-icon" /><span>Empresas</span></a>
+        </li>
+        @endcan
+        @can('viewAny', \App\Domain\Tenancy\Models\Unit::class)
+        <li class="menu-item {{ request()->routeIs('units.*') ? 'active' : '' }}"><a href="{{ route('units.index') }}" class="menu-link" @if(request()->routeIs('units.*')) aria-current="page" @endif><x-icon name="users" class="menu-icon" /><span>Unidades clínicas</span></a></li>
+        @endcan
+        @can('viewAny', \App\Domain\Professionals\Models\Professional::class)
+        <li class="menu-item {{ request()->routeIs('professionals.*') ? 'active' : '' }}"><a href="{{ route('professionals.index') }}" class="menu-link" @if(request()->routeIs('professionals.*')) aria-current="page" @endif><x-icon name="users" class="menu-icon" /><span>Profissionais</span></a></li>
+        @endcan
         <li class="menu-header small"><span class="menu-header-text">Minha conta</span></li>
         <li class="menu-item {{ request()->routeIs('security') ? 'active' : '' }}">
             <a href="{{ route('security') }}" class="menu-link" @if(request()->routeIs('security')) aria-current="page" @endif>

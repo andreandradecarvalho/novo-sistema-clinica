@@ -64,6 +64,14 @@
 | [Confirmado] | [Prompt: Análise Profunda do Legado Precordis (PHP 5/7) e Especificação de um SaaS Multi-tenant em Laravel](<outros/prompt-analise-precordis-saas.md>) | Histórico; consultar fontes vigentes abaixo. |
 | [Confirmado] | [Histórico do schema](<schema/CHANGELOG.md>) | Documento do tema; escopo e status no próprio arquivo. |
 
+[Confirmado] Revisão técnica da fundação: [relatório da etapa 1](outros/revisao-etapa-01.md). Status e exceção de aceite permanecem no fluxo 20.
+
+[Confirmado] Primeira entrega da etapa 2: [cadastro de pacientes — uso e limites](outros/cadastro-pacientes.md).
+
+[Confirmado] Cadastros empresariais da etapa 2: [empresas clientes e estabelecimentos](outros/cadastro-empresas.md).
+
+[Confirmado] Cadastros administrativos da clínica: [unidades clínicas e profissionais](outros/cadastro-unidades-profissionais.md).
+
 ## SQL e verificação
 
 - [Confirmado] [schema.sql](schema/schema.sql) é o único DDL atual; antigos central.sql/tenant.sql foram substituídos. O split é de responsabilidades lógicas no banco compartilhado.
@@ -72,3 +80,9 @@
 [Confirmado] Operação da aplicação na raiz (instalação local, migrations, seeds e checks): [README do projeto](../README.md#ambiente-local). Entrega e evidências da fundação: [fluxo 20](fluxos/20-plano-desenvolvimento.md); estrutura executável: [migrations](../database/migrations/).
 
 [Confirmado] Homologação local isolada da fundação: [roteiro, clínicas e evidências](outros/homologacao-local.md). Credenciais ficam no arquivo de ambiente privado indicado no roteiro.
+
+[Confirmado] Vínculos paciente–empregador, períodos, versões e desligamento: [uso e limites](outros/vinculos-empregaticios.md), com contrato no fluxo 23.
+
+[Confirmado] Gestão do vínculo integrante–unidade: [atribuição de unidades](outros/atribuicao-unidades.md), conforme identidade/ACL do fluxo 11.
+
+[Confirmado] Gestão administrativa do acesso por empregador: [concessões empresariais](outros/concessoes-empresariais.md), conforme fluxos 11/23/24.

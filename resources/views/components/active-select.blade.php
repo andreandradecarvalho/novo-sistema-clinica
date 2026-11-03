@@ -1,0 +1,2 @@
+@props(['active' => true])
+<div class="mb-6"><label class="form-label" for="is_active">Situação</label><select id="is_active" name="is_active" class="form-select" required><option value="1" @selected(in_array(old('is_active', (int) $active), [1, '1'], true))>Ativo</option><option value="0" @selected(in_array(old('is_active', (int) $active), [0, '0'], true))>Inativo</option></select>@error('is_active')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror</div>

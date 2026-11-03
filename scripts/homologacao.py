@@ -19,9 +19,14 @@ def prepare():
         raise SystemExit('Recusado: .env.homologacao não pode ser symlink.')
     if ENV_PATH.exists():
         ENV_PATH.chmod(0o600)
+        existing = ENV_PATH.read_text()
+        if not any(line.startswith('CPF_SEARCH_KEY=') for line in existing.splitlines()):
+            with ENV_PATH.open('a') as stream:
+                stream.write('\nCPF_SEARCH_KEY=' + secrets.token_hex(32) + '\n')
         return
     values = {
         'APP_NAME': 'Precordis_Homologacao', 'APP_ENV': 'staging',
+        'CPF_SEARCH_KEY': secrets.token_hex(32),
         'APP_KEY': 'base64:' + base64.b64encode(secrets.token_bytes(32)).decode(),
         'APP_DEBUG': 'false', 'APP_URL': 'http://clinica-a.localhost:8082', 'APP_PORT': '8082',
         'APP_LOCALE': 'pt_BR', 'APP_FALLBACK_LOCALE': 'pt_BR',
@@ -72,7 +77,7 @@ def main():
         run('up', '-d', '--wait', 'db', 'redis')
         run('run', '--rm', 'init')
         run('run', '--rm', '--no-deps', 'app', 'php', 'artisan', 'config:clear')
-        run('run', '--rm', '--no-deps', 'app', 'php', 'artisan', 'migrate', '--force')
+        run('run', '--rm', '--no-deps', 'app', 'php', 'artisan', 'homologation:migrate')
         run('run', '--rm', '--no-deps', 'app', 'php', 'artisan', 'db:seed', '--class=HomologationSeeder', '--force')
         run('up', '-d', '--wait', 'app', 'horizon')
         print('Homologação iniciada em clinica-a.localhost:8082 e clinica-b.localhost:8082.')

@@ -22,7 +22,7 @@
 
 ## O que continua necessário na implementação/implantação
 
-- [Confirmado] A fundação Laravel na raiz foi implementada e testada localmente; evidências/limites e aceite pendente da etapa 1 estão no [fluxo 20](../fluxos/20-plano-desenvolvimento.md). Este DDL não implementa casts clínicos, assinatura, restore nem os módulos das etapas seguintes. A homologação local isolada com duas clínicas foi executada, conforme [roteiro/evidência](homologacao-local.md); CI remota, implantação externa e aceite final permanecem pendentes.
+- [Confirmado] A fundação Laravel na raiz foi implementada e testada localmente; evidências/limites e aceite autorizado da etapa 1 estão no [fluxo 20](../fluxos/20-plano-desenvolvimento.md). Este DDL não implementa casts clínicos, assinatura, restore nem os módulos das etapas seguintes. A homologação local isolada com duas clínicas foi executada, conforme [roteiro/evidência](homologacao-local.md); a revisão técnica local e o aceite foram registrados no fluxo 20. Por instrução explícita do usuário, CI remota fica para verificação futura, sem bloquear o avanço local; implantação externa permanece pendente.
 - [Inferido] Antes de ativar cada domínio, homologar com a clínica protocolos/periodicidades/modelos, acesso empresarial, portfólio e financeiro contratado; perguntas únicas em [19](../fluxos/19-perguntas-em-aberto-negocio.md). Não são respostas fornecidas pelo negócio nesta correção.
 - [Confirmado] MySQL ainda não foi homologado; o resultado observado é MariaDB. Não anunciar suporte testado a ambos nem conformidade clínica integral.
 
