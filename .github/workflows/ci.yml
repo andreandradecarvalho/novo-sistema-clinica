@@ -37,6 +37,14 @@ jobs:
         run: |
           npm ci --ignore-scripts
           npm run build
+      - name: Homologação local com duas clínicas
+        run: |
+          python3 scripts/homologacao.py up
+          python3 scripts/homologacao.py check
       - name: Encerrar serviços descartáveis
         if: always()
-        run: docker compose down --volumes
+        run: |
+          if [ -f .env.homologacao ]; then
+            python3 scripts/homologacao.py down
+          fi
+          docker compose down --volumes

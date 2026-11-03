@@ -9,6 +9,8 @@ use App\Domain\Tenancy\Models\Tenant;
 use App\Domain\Tenancy\Services\TenantCache;
 use App\Domain\Tenancy\Services\TenantContext;
 use App\Domain\Tenancy\Services\TenantStorage;
+use App\Support\LocalHomologation;
+use Database\Seeders\HomologationSeeder;
 use Illuminate\Contracts\Validation\UncompromisedVerifier;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
@@ -324,3 +326,35 @@ it('requires an initial password change and atomically revokes the other session
     expect(DB::table('sessions')->where('tenant_id', $this->b['tenant']->id)->count())->toBe(1);
     $this->get($base.'/')->assertOk();
 });
+
+it('refuses homologation fixtures outside the isolated staging environment', function (): void {
+    expect(fn () => app(HomologationSeeder::class)->run())->toThrow(RuntimeException::class);
+});
+
+it('refuses the live homologation check outside its isolated environment', function (): void {
+    $this->artisan('homologation:check')
+        ->expectsOutputToContain('This command requires the isolated local homologation database.')
+        ->assertFailed();
+});
+
+it('rejects connection overrides before running homologation fixtures', function (string $setting, mixed $value): void {
+    $previousEnvironment = app()->environment();
+    $previousDatabase = config('database');
+    try {
+        app()->instance('env', 'staging');
+        config([
+            'database.default' => 'mariadb',
+            'database.connections.mariadb.host' => 'db',
+            'database.connections.mariadb.database' => 'novo_sistema_clinica_homologacao',
+            $setting => $value,
+        ]);
+        expect(fn () => app(LocalHomologation::class)->ensure())->toThrow(RuntimeException::class);
+    } finally {
+        app()->instance('env', $previousEnvironment);
+        config(['database' => $previousDatabase]);
+    }
+})->with([
+    'URL overrides the configured host' => ['database.connections.mariadb.url', 'mysql://invalid.example/another_database'],
+    'another default connection' => ['database.default', 'mysql'],
+    'previously resolved connection targets another database' => ['database.connections.mariadb.url', null],
+]);

@@ -70,3 +70,5 @@
 - [Confirmado] [Validador sintético](../scripts/validate_schema.py) cria e remove banco local descartável; execução/resultado e limitações no CHANGELOG. Não aponta para produção nem modifica o banco de trabalho.
 
 [Confirmado] Operação da aplicação na raiz (instalação local, migrations, seeds e checks): [README do projeto](../README.md#ambiente-local). Entrega e evidências da fundação: [fluxo 20](fluxos/20-plano-desenvolvimento.md); estrutura executável: [migrations](../database/migrations/).
+
+[Confirmado] Homologação local isolada da fundação: [roteiro, clínicas e evidências](outros/homologacao-local.md). Credenciais ficam no arquivo de ambiente privado indicado no roteiro.

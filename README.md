@@ -4,7 +4,7 @@
 
 ## Estado do projeto
 
-[Confirmado] A implementação começou na raiz. A fundação entrega autenticação Fortify/2FA, contexto de clínica, ACL por tenant, sessões, auditoria de acesso e interface Blade/Vuexy. Os checks locais estão registrados no [fluxo 20](docs/fluxos/20-plano-desenvolvimento.md); o aceite em staging e a CI remota ainda estão pendentes. Os módulos clínicos e ocupacionais seguem o planejamento desse fluxo.
+[Confirmado] A implementação começou na raiz. A fundação entrega autenticação Fortify/2FA, contexto de clínica, ACL por tenant, sessões, auditoria de acesso e interface Blade/Vuexy. Os checks locais estão registrados no [fluxo 20](docs/fluxos/20-plano-desenvolvimento.md); a homologação local isolada foi validada, e o aceite final/CI remota ainda estão pendentes. Os módulos clínicos e ocupacionais seguem o planejamento desse fluxo.
 
 [Confirmado] Os arquivos SQL são referências de modelagem; sua presença não comprova homologação no banco de destino. As decisões documentais ainda abertas estão em [PENDENCIAS.md](docs/outros/PENDENCIAS.md). O andamento oficial das etapas fica no [plano de desenvolvimento, §20.4](docs/fluxos/20-plano-desenvolvimento.md#204-controle-de-fases-manter-atualizado).
 
@@ -113,6 +113,10 @@ docker compose down
 ```
 
 [Confirmado] O dashboard Horizon nega acesso pela web, inclusive local, até existir identidade operacional da plataforma; usuários clínicos não podem inspecionar jobs de outras clínicas. Redis de desenvolvimento é descartável. SMTP, HTTPS e infraestrutura de staging ainda exigem configuração própria. O [workflow de CI](.github/workflows/ci.yml) executa os mesmos checks em ambiente descartável; não há resultado remoto publicado nesta sessão.
+
+## Homologação local com duas clínicas
+
+[Confirmado] Ambiente independente na porta 8082, com banco/Redis/storage próprios e código somente leitura. Preparação, operação, acessos privados e evidências: [homologação local](docs/outros/homologacao-local.md). O ambiente de desenvolvimento na porta 8080 permanece separado.
 
 ## Desenvolvimento e contribuição
 

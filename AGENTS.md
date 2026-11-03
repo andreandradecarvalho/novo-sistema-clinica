@@ -99,6 +99,8 @@
 - [Confirmado] Validar isolamento também em cache, fila, storage, broadcast, sessões e reset de senha. Raw SQL, toBase(), remoção explícita de scopes e pivôs polimórficos continuam fronteiras de revisão obrigatória; não presumir proteção universal do scope.
 - [Confirmado] Evidências, limites e aceite ficam no [fluxo 20](docs/fluxos/20-plano-desenvolvimento.md). Não anunciar suporte MySQL, CI remota verde ou staging validado sem executá-los.
 
+- [Confirmado] Homologação local isolada: seguir o [roteiro](docs/outros/homologacao-local.md) e scripts/homologacao.py. Não confundir a porta/banco/volumes desse ambiente com desenvolvimento; o comando down desse script preserva os volumes. Credenciais e chaves TOTP somente no .env.homologacao ignorado pelo Git. Fixtures e comando de verificação recusam ambientes diferentes do destino isolado.
+
 ## Código e idioma
 
 - [Confirmado] Seguir a arquitetura modular do fluxo 14: controllers finos, validação/autorização em Form Requests, casos de uso em Actions/Services e Policies para acesso. Usar PHP tipado, funções pequenas e DRY; não introduzir abstrações sem necessidade.

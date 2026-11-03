@@ -50,7 +50,7 @@
 | # | Etapa | Status | Evidência |
 |---|---|---|---|
 | [Confirmado] 0 | Governança e preparação documental | CONCLUÍDA | Fontes conciliadas, links conferidos e DDL validado; registro desta sessão e CHANGELOG. |
-| [Confirmado] 1 | Fundação: tenancy, identidade, ACL e CI | EM_ANDAMENTO | Fundação na raiz implementada e validada localmente: composer check e build Vite aprovados. Workflow de CI preparado; execução remota, staging e revisão/aceite ainda pendentes. Evidências na sessão de validação abaixo. |
+| [Confirmado] 1 | Fundação: tenancy, identidade, ACL e CI | EM_ANDAMENTO | Fundação na raiz implementada e validada localmente: composer check e build Vite aprovados. Homologação local isolada aprovada com duas clínicas, HTTP real e Horizon: 36 verificações. CI ampliada; execução remota e revisão/aceite ainda pendentes. Evidências nas sessões abaixo. |
 | [Confirmado] 2 | Cadastros, identidade e vínculos | PENDENTE | Sem implementação/aceite registrado. |
 | [Confirmado] 3 | Catálogo, protocolos e anamnese | PENDENTE | Sem implementação/aceite registrado. |
 | [Confirmado] 4 | Pedidos, agenda, recepção e execução | PENDENTE | Sem implementação/aceite registrado. |
@@ -119,3 +119,18 @@
 - [Confirmado] Forms mantêm rotas, CSRF e validação do servidor; campos exibem erros do bag correspondente. Menus/links continuam sob autorização. Nenhuma alteração no schema ou nos dados de negócio do ambiente de trabalho, nas regras de tenancy/permissões ou no legado. Fixtures ficaram no banco de testes. Horários de sessão são apresentados no fuso configurado da clínica.
 - [Confirmado] composer check aprovado: Pint, Rector, Larastan e os 29 testes/158 verificações existentes. Build Vite aprovado. Inspeção no navegador em 1440 px e 390 px: autenticação, dashboard, equipe e segurança; menu mobile abre/fecha, menu desktop recolhe, dropdown e visibilidade de senha funcionam, tabelas rolam sem overflow da página. Perfect Scrollbar foi integrado após a inspeção revelar sua necessidade no redimensionamento do Menu fornecido.
 - [Confirmado] Preview autenticado usou exclusivamente usuário/clínica sintéticos no banco novo_sistema_clinica_testing, em servidor temporário separado do ambiente de trabalho. Fontes/imagens locais verificadas, sem recursos externos nas telas inspecionadas. Evidências visuais locais em .playwright-mcp/, ignoradas pelo Git; não contêm dados clínicos. O aceite remoto/staging da etapa 1 continua pendente no controle de fases.
+
+
+### 2026-11-03 — Acessos sintéticos locais solicitados pelo usuário
+
+- [Confirmado] Criadas três contas de teste na clínica local Precordis: administrador, recepção e médico, sem sobrescrever usuários existentes. Senhas aleatórias fornecidas somente na conversa; valores não registrados em documentação ou seeders. Banco armazena hashes.
+- [Confirmado] Os três logins foram validados no navegador e as sessões de verificação encerradas. Preservadas troca obrigatória da senha inicial e exigência de 2FA para administrador/médico. Nenhum acesso ao legado ou produção.
+
+
+### 2026-11-03 — Homologação local isolada com duas clínicas
+
+- [Confirmado] Por escolha explícita do usuário, preparada homologação local isolada da etapa 1. Fonte operacional única: [homologação local](../outros/homologacao-local.md). Compose próprio, porta 8082, banco/Redis/rede/storage/bootstrap/cache separados, código somente leitura e credenciais geradas em .env.homologacao ignorado pelo Git, modo 0600. Desenvolvimento na porta 8080 segue ativo e separado.
+- [Confirmado] Migrations aplicadas uma vez no banco de homologação, com duas clínicas sintéticas e quatro atores. Seeder idempotente não sobrescreve senhas/2FA existentes e exige ambiente staging/host db/banco isolado. Administradores de fixture têm TOTP real previamente configurado; recepção A exercita a troca obrigatória da senha inicial. Isso não altera o onboarding dos usuários de desenvolvimento.
+- [Confirmado] 36 verificações reais aprovadas por HTTP/Horizon, incluindo mesmo e-mail/senhas diferentes, TOTP obrigatório, sessões SQL criptografadas, CSRF, cookie A em B, contexto/header/binding, ACL, arquivos privados fora do webroot e worker persistente A/falha/B com team/permissões corretos. Resultado: [relatório sanitizado](../outros/homologacao-local-2026-11-03.json). PHP/MariaDB observados no relatório; não homologa MySQL.
+- [Confirmado] composer check aprovado: Pint (67 fontes), Rector, Larastan sem erros e 34 testes/169 verificações, incluindo recusa fora do ambiente permitido, DB_URL incompatível, outra conexão padrão e conexão já resolvida para outro banco. Endereços das duas clínicas e assets locais conferidos no navegador. Workflow de CI inclui o mesmo roteiro; execução remota não realizada, nenhum push/merge/deploy automático.
+- [Confirmado] Etapa 1 continua EM_ANDAMENTO até revisão/aceite e CI remota. Homologação local escolhida foi entregue; não iniciadas etapas dependentes nem alterado legado. HTTPS/SMTP e implantação externa não foram certificados.

@@ -213,6 +213,9 @@ return [
     ],
 
     'environments' => [
+        'staging' => [
+            'supervisor-1' => ['maxProcesses' => 1],
+        ],
         'production' => [
             'supervisor-1' => [
                 'maxProcesses' => 10,

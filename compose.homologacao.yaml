@@ -1,0 +1,78 @@
+name: precordis-clinic-homologacao
+services:
+  init:
+    image: precordis-clinic-php:8.5.12
+    user: "0:0"
+    volumes:
+      - homologacao-storage:/app/storage
+      - homologacao-bootstrap:/app/bootstrap/cache
+    command: [sh, -c, 'mkdir -p /app/storage/app/private /app/storage/framework/cache/data /app/storage/framework/sessions /app/storage/framework/views /app/storage/logs /app/bootstrap/cache && chown -R ${LOCAL_UID}:${LOCAL_GID} /app/storage /app/bootstrap/cache']
+  app:
+    build: .
+    image: precordis-clinic-php:8.5.12
+    user: "${LOCAL_UID}:${LOCAL_GID}"
+    working_dir: /app
+    env_file: .env.homologacao
+    environment:
+      HOME: /tmp
+      COMPOSER_HOME: /tmp/composer
+    volumes:
+      - .:/app:ro
+      - ./.env.homologacao:/app/.env:ro
+      - homologacao-storage:/app/storage
+      - homologacao-bootstrap:/app/bootstrap/cache
+    ports:
+      - "127.0.0.1:${APP_PORT}:8000"
+    command: php artisan serve --host=0.0.0.0 --port=8000 --no-reload
+    depends_on:
+      init:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, php, -r, "exit(@file_get_contents('http://127.0.0.1:8000/up') === false ? 1 : 0);"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  horizon:
+    image: precordis-clinic-php:8.5.12
+    user: "${LOCAL_UID}:${LOCAL_GID}"
+    working_dir: /app
+    env_file: .env.homologacao
+    volumes:
+      - .:/app:ro
+      - ./.env.homologacao:/app/.env:ro
+      - homologacao-storage:/app/storage
+      - homologacao-bootstrap:/app/bootstrap/cache
+    command: php artisan horizon
+    depends_on:
+      app:
+        condition: service_healthy
+  db:
+    image: mariadb:13.0.2
+    environment:
+      MARIADB_DATABASE: ${DB_DATABASE}
+      MARIADB_USER: ${DB_USERNAME}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - homologacao-database:/var/lib/mysql
+    healthcheck:
+      test: [CMD, healthcheck.sh, --connect, --innodb_initialized]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  redis:
+    image: redis:7.4.6-alpine
+    command: redis-server --save '' --appendonly no
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+volumes:
+  homologacao-database:
+  homologacao-storage:
+  homologacao-bootstrap:
