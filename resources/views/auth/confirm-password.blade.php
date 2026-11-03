@@ -1,10 +1,11 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 @section('title', 'Confirmar senha')
+@section('heading', 'Confirmar senha')
+@section('description', 'Confirme sua senha para acessar as configurações de segurança.')
+@section('illustration', Vite::asset('docs/layout/assets/img/illustrations/auth-reset-password-illustration-light.png'))
 @section('content')
-<div class="card auth-card"><div class="card-body"><h1 class="h4 mb-4">Confirmar senha</h1>
-<p>Confirme sua senha para acessar as configurações de segurança.</p>
-<form method="post" action="{{ route('password.confirm') }}">@csrf
-<x-input name="password" label="Senha atual" type="password" autocomplete="current-password" />
-<button class="btn btn-primary w-100" type="submit">Confirmar</button></form>
-</div></div>
+<form id="formAuthentication" method="post" action="{{ route('password.confirm') }}">@csrf
+    <x-input name="password" label="Senha atual" type="password" autocomplete="current-password" autofocus />
+    <button class="btn btn-primary d-grid w-100" type="submit">Confirmar</button>
+</form>
 @endsection

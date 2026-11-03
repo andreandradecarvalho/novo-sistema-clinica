@@ -1,0 +1,14 @@
+@import '../../docs/layout/assets/vendor/css/pages/page-auth.css';
+
+.auth-cover-panel { background: var(--bs-body-bg); }
+.auth-cover-bg-color { background: color-mix(in srgb, var(--bs-primary) 5%, var(--bs-body-bg)); }
+.auth-cover-bg { border-radius: 0 1.25rem 1.25rem 0; }
+.auth-cover-copy { max-width: 440px; }
+.auth-form-content { max-width: 100%; }
+.auth-illustration { object-fit: contain; }
+@media (min-width: 992px) {
+    .authentication-bg { min-height: 100vh; }
+}
+@media (max-width: 991.98px) {
+    .authentication-wrapper:not(.authentication-basic) .authentication-inner { height: auto; min-height: 100dvh; }
+}
