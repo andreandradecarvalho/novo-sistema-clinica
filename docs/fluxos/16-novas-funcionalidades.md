@@ -1,3 +1,5 @@
+[Confirmado] Atualização de escopo em 03/11/2026: o núcleo ocupacional/ASO é requisito funcional do [fluxo 23](23-saude-ocupacional.md), entregue na etapa 6 do plano 20. A prioridade abaixo do Portal da Empresa não posterga esse núcleo. Listas abaixo são oportunidades históricas; plano e dependências vigentes no [fluxo 20](20-plano-desenvolvimento.md).
+
 # 16 — Novas funcionalidades e melhorias
 
 > Separadas das correções estruturais. Valor de negócio e complexidade **P/M/G**. Priorização sugerida; decisão do negócio.

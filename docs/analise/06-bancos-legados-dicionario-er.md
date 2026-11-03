@@ -141,4 +141,4 @@ O mesmo conceito "paciente" existe como:
 | `espelho_atendimento.Nome_` / `relatorio_prec.Nome` | samarco | **só nome** | espelho casa 99,9% com a base cadastral; mas só 55,9% com o agendamento |
 | registro no **Microsoft Access** | externo | `CodigoAuxPrincipal`? (sempre 0 no espelho) | chave real desconhecida |
 
-**Conclusão**: a única "chave" que atravessa os sistemas é o **nome da pessoa** — frágil, não-única, com acentuação inconsistente. CPF existe só na base cadastral e falta em 38%. Isto domina a estratégia de migração ([13](../proposta-novo-sistema/13-plano-migracao-dados.md)) e a modelagem nova ([12](../proposta-novo-sistema/12-novo-schema-unificado.md)).
+**Conclusão**: a única "chave" que atravessa os sistemas é o **nome da pessoa** — frágil, não-única, com acentuação inconsistente. CPF existe só na base cadastral e falta em 38%. Isto domina a estratégia de migração ([13](../fluxos/13-plano-migracao-dados.md)) e a modelagem nova ([12](../fluxos/12-novo-schema-unificado.md)).

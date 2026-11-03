@@ -4,7 +4,7 @@
 
 ## Em uma frase
 
-Plataforma por **assinatura** para clínicas de exames: do agendamento à entrega do laudo assinado digitalmente, com painel de TV em tempo real, portais de paciente e empresa, e auditoria LGPD — cada clínica isolada em seu próprio banco. A **Precordis é o primeiro tenant**.
+Plataforma por **assinatura** para clínicas de exames: do agendamento à entrega do laudo assinado digitalmente, com painel de TV em tempo real, portais de paciente e empresa, e auditoria LGPD — cada clínica isolada logicamente por tenant_id no banco compartilhado. A **Precordis é o primeiro tenant**.
 
 ## Índice
 
@@ -23,14 +23,10 @@ Plataforma por **assinatura** para clínicas de exames: do agendamento à entreg
 | 18 | [Riscos e pontos de atenção da migração](18-riscos-migracao.md) |
 | 19 | [Perguntas em aberto para o negócio](19-perguntas-em-aberto-negocio.md) |
 | 20 | [Plano de desenvolvimento: fluxo, etapas e testes](20-plano-desenvolvimento.md) |
-| 21 | [Schema da base de dados + o que aproveitar do tailadmin](21-schema-e-reaproveitamento.md) · SQL em [`schema/`](../schema/) |
+| 21 | [Schema da base de dados + o que aproveitar do tailadmin](21-schema-e-reaproveitamento.md) · SQL em [schema.sql](../schema/schema.sql) |
 
-## Decisões-chave (resumo)
+## Fontes normativas
 
-- [Confirmado] **Stack e versões**: PHP/Laravel estáveis recentes e MySQL ou MariaDB estável recente, conforme a [matriz única e política de atualização em 14 §14.1](14-arquitetura-laravel.md#141-stack--fonte-única-de-versões). Vuexy é a referência visual definida pelo usuário; os componentes complementares estão descritos no fluxo 14.
-- **Multi-tenant**: híbrido **banco central + um banco por clínica** (isolamento físico; melhor para LGPD, backup e exclusão por cliente), via `stancl/tenancy` atrás de contratos próprios.
-- **ACL**: `spatie/laravel-permission` com teams=tenant; papéis padrão + Policies contextuais; 2FA obrigatório para acesso clínico.
-- **Billing**: assinatura B2B (clínica paga), gateway **Asaas** (PIX/boleto/cartão + NFS-e) atrás de `BillingGatewayContract`.
-- **Identidade única do paciente** substitui o vínculo-por-nome espalhado em 3 bancos.
-- **Laudo** com assinatura **ICP-Brasil** e storage fora do webroot.
-- **Antes de tudo**: Fase 0 de contenção de segurança no legado + descoberta do Access.
+- [Confirmado] Versões e integração Vuexy: [14](14-arquitetura-laravel.md). Banco único: [09](09-estrategia-multi-tenant.md). Execução/status: [20](20-plano-desenvolvimento.md). DDL: [schema](../schema/schema.sql).
+- [Confirmado] [22 — Atendimento e financeiro clínico](22-atendimento-clinico.md), [23 — Saúde ocupacional e ASO](23-saude-ocupacional.md), [24 — Segurança, retenção e operação](24-seguranca-retencao-operacao.md).
+- [Confirmado] Fontes completas e classificação de documentos: [mapa central](../README.md). Legado somente leitura; etapa 0 não executa contenção no legado.

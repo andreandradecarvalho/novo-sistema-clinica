@@ -1,3 +1,5 @@
+> [Confirmado] **Prompt histórico de levantamento.** Não é fonte normativa de arquitetura/execução. Para implementação, usar [mapa central](../README.md), [tenancy 09](../fluxos/09-estrategia-multi-tenant.md), [plano 20](../fluxos/20-plano-desenvolvimento.md) e os guardrails do AGENTS. Menções abaixo a split, acesso a dados ou ações no legado não alteram a orientação atual de somente leitura.
+
 # Prompt: Análise Profunda do Legado Precordis (PHP 5/7) e Especificação de um SaaS Multi-tenant em Laravel
 
 ## PAPEL

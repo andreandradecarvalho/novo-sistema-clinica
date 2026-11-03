@@ -38,5 +38,9 @@
 ## 18.5 Rollback
 
 - Manter o legado **somente leitura** por um período após o corte.
-- ETL idempotente + `legacy_map` permitem reimportar; snapshots antes de cada etapa.
+- ETL idempotente + `legacy_references` permitem reimportar; snapshots antes de cada etapa.
 - Critérios objetivos de go/no-go: relatório de inconsistências aprovado, contagens batendo, amostra de 30 pacientes conferida, testes de isolamento verdes.
+
+## 18.6 Contrato vigente de corte e recuperação
+
+- [Confirmado] Este inventário histórico não autoriza ações no legado nem fixa janela de corte. O [fluxo 13](13-plano-migracao-dados.md) define o contrato vigente, revisão de identidade e delta; [24](24-seguranca-retencao-operacao.md) define recuperação. Retorno ao legado após primeira escrita nova exige reconciliação, nunca simples troca de DNS por horário.

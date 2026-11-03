@@ -1,0 +1,12 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "docs",
+        "vendor",
+        "node_modules",
+        ".aws",
+        ".agents",
+        ".codex",
+        ".playwright-mcp"
+    ]
+}

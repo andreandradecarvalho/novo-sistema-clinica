@@ -1,0 +1,48 @@
+name: precordis-clinic
+services:
+  app:
+    build: .
+    image: precordis-clinic-php:8.5.12
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      HOME: /tmp
+      COMPOSER_HOME: /tmp/composer
+      DB_HOST: db
+      DB_PORT: 3306
+      REDIS_HOST: redis
+    ports:
+      - "127.0.0.1:${APP_PORT:-8080}:8000"
+    command: php artisan serve --host=0.0.0.0 --port=8000 --no-reload
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  db:
+    image: mariadb:13.0.2
+    environment:
+      MARIADB_DATABASE: ${DB_DATABASE:?Configure DB_DATABASE no .env}
+      MARIADB_USER: ${DB_USERNAME:?Configure DB_USERNAME no .env}
+      MARIADB_PASSWORD: ${DB_PASSWORD:?Configure DB_PASSWORD no .env}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?Execute a preparacao local}
+    volumes:
+      - database:/var/lib/mysql
+      - ./docker/mariadb/init-testing.sh:/docker-entrypoint-initdb.d/20-testing.sh:ro
+    healthcheck:
+      test: [CMD, healthcheck.sh, --connect, --innodb_initialized]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  redis:
+    image: redis:7.4.6-alpine
+    command: redis-server --save '' --appendonly no
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+volumes:
+  database:

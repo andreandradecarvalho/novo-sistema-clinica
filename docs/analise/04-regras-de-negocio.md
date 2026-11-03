@@ -40,7 +40,7 @@ pré-agendado  ──confirma──►  confirmado  ──►  check-in (bolinha
 
 - **Check-in** (`checkinCliente`, inativo): grade de 19 exames por paciente, cada um `verde`/`amarelo`/`branco`/`nao`. "Cliente extra" = encaixe sem agendamento prévio (`codigoAgenda` sorteado 7000–9000). [C]
 - **Chamada de senha/sala** (`precordistv`, ativo): não há senha numérica; chama-se **pelo nome**. Trava de concorrência: um paciente não pode estar ocupado em duas salas; uma sala não aceita dois pacientes (checado em `chamar.php`). Recepção e Entrega Final não têm trava. PIN de 4 dígitos por sala para liberar. [C]
-- **Priorização de idoso/gestante/PCD (Lei 10.048/2000)**: **não existe** no código. [C] — oportunidade (ver [16](../proposta-novo-sistema/16-novas-funcionalidades.md)).
+- **Priorização de idoso/gestante/PCD (Lei 10.048/2000)**: **não existe** no código. [C] — oportunidade (ver [16](../fluxos/16-novas-funcionalidades.md)).
 
 ## 4.4 Vínculo empresa ↔ paciente
 
@@ -69,4 +69,4 @@ pré-agendado  ──confirma──►  confirmado  ──►  check-in (bolinha
 | B8 | **`get_cliente_by_id.php` com `var_dump` e sem `WHERE`** | `var_dump($user)` no loop; `$query_search` montado mas não concatenado na SQL (`LIMIT 10` sem filtro) | endpoint quebrado/verboso |
 | B9 | **datas de nascimento em formatos mistos** | `info_usuario.dt_nascimento`: 5.748 `Y-m-d`, 1.259 `d/m/Y`, 3.006 vazio; o PHP assume `d/m/Y` | idade errada/vazia para a maioria |
 
-Esses bugs são insumo direto do plano de migração ([13](../proposta-novo-sistema/13-plano-migracao-dados.md)) e do roadmap ([17](../proposta-novo-sistema/17-roadmap-fases.md)).
+Esses bugs são insumo direto do plano de migração ([13](../fluxos/13-plano-migracao-dados.md)) e do roadmap ([17](../fluxos/17-roadmap-fases.md)).

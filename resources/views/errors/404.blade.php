@@ -1,0 +1,1 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Página indisponível</title><h1>Página indisponível</h1><p>Confira o endereço da sua clínica.</p></html>

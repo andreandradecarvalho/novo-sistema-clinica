@@ -1,0 +1,42 @@
+# [Confirmado] Releases oficiais consultadas em 2026-11-03:
+# https://github.com/actions/checkout/releases/tag/v7.0.1
+# https://github.com/actions/setup-node/releases/tag/v7.1.0
+name: Fundação Laravel
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Preparar ambiente descartável
+        run: python3 scripts/prepare_local_env.py
+      - name: Construir PHP e iniciar MariaDB/Redis
+        run: |
+          docker compose build app
+          docker compose up -d --wait db redis
+      - name: Instalar dependências PHP
+        run: docker compose run --rm --no-deps app composer install --prefer-dist --no-interaction
+      - name: Validar manifests e plataforma
+        run: |
+          docker compose run --rm --no-deps app composer validate --strict --no-check-publish
+          docker compose run --rm --no-deps app composer check-platform-reqs
+      - name: Pint, Rector, Larastan e Pest
+        run: docker compose run --rm --no-deps app composer check
+      - name: Build Vuexy/Vite
+        run: |
+          npm ci --ignore-scripts
+          npm run build
+      - name: Encerrar serviços descartáveis
+        if: always()
+        run: docker compose down --volumes

@@ -32,3 +32,11 @@
 20. **Idioma do código de domínio**: português ou inglês? (Decisão de Clean Code; recomendação em [14](14-arquitetura-laravel.md).)
 21. **Janela de corte**: a clínica tolera parar o sistema por algumas horas num fim de semana para a virada, ou precisa de convivência longa (strangler)?
 22. **Retenção de 20 anos**: onde os laudos históricos ficarão (storage por tenant)? Há orçamento para storage + backup de longo prazo?
+
+## 19.1 Encaminhamento após conciliação — 03/11/2026
+
+- [Confirmado] Convenções técnicas resolvidas: banco único (09), Vuexy/Blade/Vite e inglês no código (14), ETL legacy_references (13), MVP completo com resultados antes de migração (20). A lista histórica acima não reabre essas decisões.
+- [Inferido] #1/#3/#5: levantamento operacional externo; nenhuma intervenção no legado neste trabalho. #2 Access bloqueia migração clínica, não fundação. #8/#9: padrão de slot inicial no fluxo 22; capacidade e conflitos entre agenda diária/horário são configuração a homologar. #18: gateway permanece escolha comercial antes da etapa 9; Asaas é proposta, não conta/provedor já contratado.
+- [Inferido] Parâmetros clínicos antes de ativar um tenant: portfólio de exames, terceirização/coleta/imagens, protocolos/riscos e periodicidade ocupacional, responsável por PCMSO, modelo de ASO, profissionais habilitados, regras de acesso da empresa e histórico de vínculo. Não inventar respostas clínicas nesta conciliação.
+- [Inferido] Parâmetros comerciais antes da etapa afetada: tabela/contrato e pagadores, financeiro mínimo, nº de unidades/usuários/volume, SLA e necessidade de banco dedicado; eSocial fora da transmissão automática inicial, conforme fluxo 23.
+- [Inferido] Produção só após homologação dos fluxos por responsável técnico/operação, assinatura conforme documento e recuperação ensaiada. Pendência de parametrização não deve ser marcada como resposta já fornecida pelo negócio.

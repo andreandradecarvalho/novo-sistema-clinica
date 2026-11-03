@@ -1,5 +1,7 @@
 # 05 — Segurança, privacidade (LGPD) e conformidade
 
+[Confirmado] Diagnóstico histórico de 31/10/2026. As descrições de produção abaixo não foram revalidadas nesta correção. Requisitos atuais do novo produto estão no [fluxo 24](../fluxos/24-seguranca-retencao-operacao.md); nenhuma ação no legado está autorizada por este diagnóstico.
+
 > Cada item traz **arquivo:linha**, **severidade** e **recomendação**. Senhas mascaradas. Este documento descreve *o que* está vulnerável e *como corrigir* — não traz prova de conceito de exploração.
 > Severidade: **Crítica** (explorável hoje, impacto alto em dado de saúde) · **Alta** · **Média** · **Baixa**.
 
@@ -49,7 +51,7 @@ O legado trata **dado pessoal sensível de saúde** (art. 11 da LGPD) de ~10 mil
 
 | Requisito | Situação no legado | Ação no sistema novo |
 |---|---|---|
-| **Base legal / consentimento** | Termos existem em `formulario` (campo `termos_aceita*`), mas só **959 de 10.015** pacientes têm aceite registrado; default do radio é "Sim" (consentimento não é livre) | Consentimento/█base legal explícito, versionado, com data e texto; para dado de saúde, avaliar tutela da saúde (art. 11, II, "a") com apoio jurídico |
+| **Base legal / consentimento** | Termos existem em `formulario` (campo `termos_aceita*`), mas só **959 de 10.015** pacientes têm aceite registrado; default do radio é "Sim" (consentimento não é livre) | Finalidade/base legal por operação; tutela da saúde no art. 11, II, "f", obrigação legal/regulatória em "a". Consentimento específico quando aplicável; eventos versionados conforme fluxo 24 |
 | **Minimização** | Coleta anamnese extensa (incl. dados íntimos: andrológico, ginecológico) | Coletar só o necessário por tipo de exame |
 | **Log de acesso a dado sensível** | Só `watchdog` de login; **nenhum** log de quem abriu qual laudo/anamnese | Trilha de auditoria de **todo** acesso a dado clínico |
 | **Criptografia em repouso/trânsito** | HTTPS forçado (`.htaccess`); laudos e banco sem cripto em repouso; senha em claro | TLS + cripto em repouso (storage/colunas sensíveis); hash de senha |
@@ -58,15 +60,10 @@ O legado trata **dado pessoal sensível de saúde** (art. 11 da LGPD) de ~10 mil
 | **Operadores (terceiros)** | n8n de terceiro processa dados sem contrato visível | Contrato de operador + DPA; registro das operações |
 | **Direitos do titular** | Sem fluxo | Portal do titular (acesso, correção, portabilidade) |
 
-## 5.6 Requisitos setoriais (prontuário eletrônico)
+## 5.6 Requisitos do novo produto — fonte consolidada
 
-> Verificado em fontes oficiais/consolidadas em 31/10/2026. [C]
-
-| Requisito | Norma | O legado atende? | Implicação para o novo |
-|---|---|---|---|
-| **Guarda do prontuário por no mínimo 20 anos** a partir do último registro | Lei 13.787/2018 (art. 6º) + Res. CFM 1.821/2007 | Parcial — guarda PDFs, sem política formal nem integridade garantida | Retenção ≥ 20 anos, backup com integridade, descarte controlado |
-| **Assinatura digital ICP-Brasil** para dispensar o papel / validar laudo | Lei 13.787/2018 (§2º); Res. CFM 1.821/2007 e 2.218/2018; NGS2 da certificação SBIS/CFM | **Não** — laudos são PDFs sem assinatura | Assinar laudos com certificado ICP-Brasil (A3/nuvem) ou CRM Digital; verificação por QR; avaliar certificação SBIS/CFM (NGS1/NGS2) se for eliminar papel |
-| **Padrão TISS (ANS)** para faturamento de convênio | RN ANS 501/2022; versão vigente **04.03.00** (obrigatória desde 01/07/2026), Componente Organizacional 202609 | Não se aplica hoje (não há faturamento TISS) | Só se a Precordis passar a faturar convênio pela plataforma; manter a versão vigente, que muda com frequência |
-| **LGPD saúde** | Lei 13.709/2018, art. 11 | ver 5.5 | ver 5.5 |
-
-Nada aqui é aconselhamento jurídico; os pontos de conformidade (consentimento para dado de saúde, certificação SBIS/CFM, obrigatoriedade TISS) devem ser validados com assessoria jurídica e, quando aplicável, com o médico responsável técnico.
+- [Confirmado] O diagnóstico acima registra evidências históricas de 31/10/2026; não comprova situação atual de produção e não autoriza intervenção no legado. A orientação vigente é somente leitura.
+- [Confirmado] Segurança e guarda do novo produto têm fonte única em [24](../fluxos/24-seguranca-retencao-operacao.md), com referências oficiais de LGPD, Lei 13.787 e NR-7. Ocupacional e ASO seguem [23](../fluxos/23-saude-ocupacional.md).
+- [Confirmado] Correção de referência: tutela da saúde é art. 11, II, “f”, da [LGPD atualizada](https://www2.camara.leg.br/legin/fed/lei/2018/lei-13709-14-agosto-2018-787077-normaatualizada-pl.pdf). Não usar ausência de aceite genérico como demonstração automática de falta de base legal.
+- [Inferido] Assinatura, digitalização e eliminação de papel exigem avaliação por documento/processo, sem equiparar hash/QR a assinatura ou afirmar ICP-Brasil como exigência universal com base apenas na Lei 13.787. Guarda ocupacional tem marco próprio; aplicar a política pertinente do fluxo 24.
+- [Inferido] TISS só integra o escopo se houver faturamento de convênios; sua versão deve ser conferida na fonte oficial da ANS antes da integração, sem versão fixa presumida neste diagnóstico. Protocolos clínicos e requisitos específicos são homologados pelo responsável técnico.

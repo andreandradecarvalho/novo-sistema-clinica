@@ -1,242 +1,111 @@
-# 20 — Plano de desenvolvimento: fluxo, etapas e testes
+# 20 — Plano de desenvolvimento, PR e controle de execução
 
-> [Confirmado] Documento de execução do novo SaaS multi-tenant, com PHP/Laravel e MySQL ou MariaDB nas versões estáveis de destino da [matriz única em 14 §14.1](14-arquitetura-laravel.md#141-stack--fonte-única-de-versões). Complementa o roadmap de alto nível ([17](17-roadmap-fases.md)) com o **como construir**: ordem das etapas, entregáveis técnicos, testes e critérios de aceite de cada uma. A **migração da Precordis** é a Etapa 7.
->
-> **Front-end (layout, CSS, JS, design system):** marcado como **[A DEFINIR]** onde aparece — será apontado posteriormente. As etapas que dependem de telas entregam primeiro o back-end + contratos de API/Inertia; a camada visual entra quando a direção de design chegar, sem bloquear o restante.
+[Confirmado] Fonte única de etapas/status. Corrigida em 03/11/2026 para banco único, Vuexy, legado somente leitura e domínio clínico/ocupacional. Versões exclusivamente em [14 §14.1](14-arquitetura-laravel.md). Requisitos funcionais: [22](22-atendimento-clinico.md), [23](23-saude-ocupacional.md), [24](24-seguranca-retencao-operacao.md). Contrato ETL: [13](13-plano-migracao-dados.md).
 
----
+## 20.1 Workflow e PR
 
-## 20.1 Fluxo de trabalho (vale para todas as etapas)
-
-### Ciclo por etapa
-```mermaid
-flowchart LR
-  A[Ler controle de fases + dependências] --> B[Branch feat/etapa-NN]
-  B --> C[Migrations + Models + Enums/VOs]
-  C --> D[Actions/Services + Policies + Form Requests]
-  D --> E[Endpoints API /v1 + Resources]
-  E --> F["Front-end [A DEFINIR] quando houver design"]
-  F --> G[Testes: unit + feature + tenancy + arch]
-  G --> H[CI verde: pint, rector, larastan, pest]
-  H --> I[PR + revisão + squash merge]
-  I --> J[Atualiza controle de fases]
-```
-
-### Regras
-- **Uma etapa só começa** se todas as suas dependências estiverem `CONCLUÍDA`.
-- **Branch** por etapa: `feat/etapa-NN-<slug>`; PR pequeno e revisado; merge por squash.
-- **Nada entra sem CI verde**: `pint` (estilo) → `rector --dry-run` → `larastan` (nível máx viável) → `pest` (inclui testes de tenancy e arquitetura). Detalhe em [15](15-qualidade-testes-devops.md).
-- **Definition of Done** (por etapa): código + testes dos tipos exigidos + migrations reversíveis + `tenants:migrate` roda limpo em 2 tenants + documentação curta no PR + controle de fases atualizado.
-- **Segredos nunca no git** (lição do legado): `.env` + cofre; `.env.example` versionado.
-- **Migrations seguras** (expand-contract) desde o início, porque rodam por tenant.
-- **Idioma do domínio**: definir na Etapa 1 e manter (recomendação em [14](14-arquitetura-laravel.md) §14.7 → pergunta #20).
-
-### Tipos de teste e quando cada um é obrigatório
-| Tipo | Obrigatório em |
-|---|---|
-| Unit (VOs, regras puras) | toda etapa que cria regra/VO |
-| Feature (HTTP/Inertia) | toda etapa com endpoint |
-| **Tenancy (isolamento)** | Etapa 1 e **regressão em toda etapa** que cria tabela de tenant |
-| Permissão por papel | toda etapa com ação protegida |
-| Arch (Pest Arch) | contínuo (regras de fronteira) |
-
----
+1. [Inferido] Ler AGENTS, pendências e fontes do domínio. Etapa depende do aceite das anteriores; não declarar implementação por existência de documentação.
+2. [Inferido] Branch feat/etapa-NN-slug, diff pequeno e revisável: migrations/models/enums → Actions/Policies/Form Requests → endpoints → Vuexy → testes. Uma migration no banco único, não por clínica.
+3. [Inferido] CI: Pint, Rector --dry-run, Larastan/PHPStan, Pest e build Vite quando aplicável. Testes unitários de regras, HTTP, permissões, dois tenants e arquitetura. Segurança, migração de banco e recuperação entram desde a fundação.
+4. [Inferido] PR informa problema/comportamento, fontes, mudanças de DDL, testes reais, limitações e risco. Revisão + CI verde antes de merge; squash conforme autorização vigente. Não fazer push/merge/deploy automaticamente por esta documentação.
+5. [Inferido] Aceite: testes pertinentes, migrations e seeds seguros em banco descartável, dois tenants sintéticos, documentação coerente. Reversibilidade não autoriza apagar dado clínico: usar expand-contract, backup/restore e plano de recuperação para mudanças destrutivas.
+6. [Confirmado] Proibido DDL/DML em produção e alterações no legado neste escopo. Comandos previstos só serão executáveis após instalação da aplicação; código em inglês, interface/documentação em português.
 
 ## 20.2 Quadro de etapas
 
-| # | Etapa | Depende de | Entrega principal | Branch |
-|---|---|---|---|---|
-| 0 | Contenção de segurança no legado | — | legado seguro durante a convivência | `hotfix/legado-seguranca` |
-| 1 | Fundação (tenancy, auth, ACL, CI/CD) | 0 | esqueleto multi-tenant + pipeline | `feat/etapa-01-fundacao` |
-| 2 | Cadastros + identidade do paciente | 1 | paciente único, empresa, unidade, profissional | `feat/etapa-02-cadastros` |
-| 3 | Catálogo de exames + anamnese | 2 | tipos de exame, preparos, ficha clínica | `feat/etapa-03-exames-anamnese` |
-| 4 | Agenda + recepção/check-in | 2,3 | agendar, confirmar, faltar, check-in | `feat/etapa-04-agenda-checkin` |
-| 5 | Painel de TV + salas + roteiro (tempo real) | 4 | chamada, salas com FK/PIN, roteiro | `feat/etapa-05-tv-salas` |
-| 6 | Resultados, laudos e assinatura | 2,4 | resultado clínico, laudo PDF, ICP-Brasil | `feat/etapa-06-resultados-laudos` |
-| 7 | **Migração da Precordis → tenant** | 2,3,4,6 | Precordis como 1º tenant com dados reais | `feat/etapa-07-migracao-precordis` |
-| 8 | Notificações + pesquisa (fila) | 4 | e-mail/WhatsApp/SMS, NPS/satisfação | `feat/etapa-08-notificacoes` |
-| 9 | Billing + assinatura | 1 | planos, cobrança recorrente, limites | `feat/etapa-09-billing` |
-| 10 | Portais paciente/empresa | 2,6 | self-service + portal da empresa | `feat/etapa-10-portais` |
-| 11 | Dashboard/BI + hardening + corte | todas | indicadores, revisão final, go-live | `feat/etapa-11-hardening` |
+| # | Etapa | Dependências | Entrega |
+|---|---|---|---|
+| [Inferido] 0 | Governança e preparação documental | — | Fontes conciliadas, fronteiras de leitura e decisões técnicas registradas; não é patch do legado. |
+| [Inferido] 1 | Fundação: tenancy, identidade, ACL e CI | 0 | Laravel/PHP da matriz 14; Vuexy/Blade/Vite, TenantContext, auth, 2FA, ACL, seeds globais/por clínica, CI e staging sintético. |
+| [Inferido] 2 | Cadastros, identidade e vínculos | 1 | Pacientes, empresas/unidades, profissionais, vínculos com vigência, busca/merge assistido e concessões empresariais. |
+| [Inferido] 3 | Catálogo, protocolos e anamnese | 2 | Catálogo, preparos, questionários versionados/snapshots, consentimentos por finalidade e protocolos ocupacionais aprováveis por tenant. |
+| [Inferido] 4 | Pedidos, agenda, recepção e execução | 2,3 | Pedidos/itens/preços, reserva, encaixe, visitas, execuções/tentativas e financeiro clínico mínimo do fluxo 22. |
+| [Inferido] 5 | TV, dispositivos, salas e roteiro | 4 | Token revogável, canais Reverb por tenant/unidade, chamadas mínimas e travas transacionais de sala/paciente. |
+| [Inferido] 6 | Resultados, documentos e ocupacional | 2,3,4 | Resultado por execução, autoria/revisão/liberação, versões/assinatura, avaliação ocupacional, ASO e disponibilização autorizada. |
+| [Inferido] 7 | Migração completa da Precordis | 2,3,4,6 | ETL 13 e fonte Access caracterizada, duas cargas ensaiadas, identidade revisada, reconciliação, arquivos no storage autorizado. |
+| [Inferido] 8 | Notificações e pesquisa | 4 | Mensageria em fila com snapshot/idempotência, preferências por finalidade, webhooks e pesquisa validada 0–10. |
+| [Inferido] 9 | Assinatura e billing da plataforma | 1 | Planos/limites, gateway escolhido em sandbox, webhooks/conciliacão, política de inadimplência e acesso necessário preservado. |
+| [Inferido] 10 | Portais paciente e empresa | 2,6 | Paciente acessa dados próprios; empresa tem acesso por vínculo/documento/finalidade; sem prontuário aberto por padrão. |
+| [Inferido] 11 | Homologação, recuperação e go-live | 1–10 | Ensaio de restore, segurança, capacidade, treinamento, go/no-go clínico/operacional e recuperação após primeira escrita. |
 
-```mermaid
-flowchart LR
-  E0[0 Contenção] --> E1[1 Fundação]
-  E1 --> E2[2 Cadastros]
-  E2 --> E3[3 Exames/Anamnese]
-  E2 --> E4[4 Agenda/Check-in]
-  E3 --> E4
-  E4 --> E5[5 TV/Salas]
-  E4 --> E6[6 Resultados/Laudos]
-  E2 --> E7[7 Migração Precordis]
-  E3 --> E7
-  E4 --> E7
-  E6 --> E7
-  E4 --> E8[8 Notificações]
-  E1 --> E9[9 Billing]
-  E2 --> E10[10 Portais]
-  E6 --> E10
-  E5 & E7 & E8 & E9 & E10 --> E11[11 Dashboard/Hardening/Corte]
-```
+[Inferido] **MVP clínico completo = etapas 0–7**, incluindo etapa 6 antes da migração clínica. Não prometer portais self-service ou envio eSocial no MVP. A disponibilização autorizada de laudo/ASO já faz parte da etapa 6. Um piloto só de agenda, sem migração clínica, exige escopo e aceite próprios; não recebe o nome de migração completa.
 
-> **MVP** = Etapas 0 → 1 → 2 → 3 → 4 → 5 → 7. A clínica passa a agendar, receber, chamar na TV e ver os pacientes migrados, no sistema novo e seguro, mantendo laudo/Access por fora até a Etapa 6. As Etapas 8–11 agregam notificação, laudo assinado, cobrança, portais e visão gerencial.
+## 20.3 Testes e aceite específicos
 
----
+- [Inferido] Etapa 0: links/fontes coerentes, nenhuma dependência de alterar o legado, decisões registradas; não significa contenção de produção concluída.
+- [Inferido] Etapa 1: migrate uma vez, tenant:create sem CREATE DATABASE, seeds com contexto, login/reset/2FA e ACL; rejeitar contexto ausente/header falso e troca de tenant em worker; CI verde.
+- [Inferido] Etapas 2–4: igualdade de tenant/paciente/empresa nos vínculos; merge humano auditado; snapshots de pergunta; preço histórico; reserva cancelada libera slot; concorrência de agenda; várias execuções/tentativas sem sobrescrita.
+- [Inferido] Etapa 5: duas chamadas simultâneas não ocupam a mesma sala nem o mesmo atendimento em salas incompatíveis; PIN usa password_verify para hash, não comparação direta com hash_equals; canais/dispositivos não cruzam tenants.
+- [Inferido] Etapa 6: execução → revisão → assinatura/liberação; retificação preserva bytes; link expira/revoga; ASO preserva contexto e autoria; empregador não vê anamnese; critérios do fluxo 23 cumpridos.
+- [Inferido] Etapa 7: critérios do fluxo 13, inclusive origem das atualizações/delta, zero associação clínica ambígua sem revisão e reconciliação aprovada pelo negócio.
+- [Inferido] Etapas 8–10: retry sem duplicação; escopo de mensagens/logs; limites sem apagar dados; portal respeita vínculo histórico e categoria documental.
+- [Inferido] Etapa 11: restore banco/storage/chaves, RPO/RTO medidos, teste de carga, corte/recuperação sem perda após primeira escrita; assinatura e protocolos homologados com responsável técnico.
 
-## 20.3 Detalhamento das etapas
+<a id="204-controle-de-fases-manter-atualizado"></a>
 
-Cada etapa segue o mesmo gabarito: **Objetivo · Dependências · Entregáveis · Front-end · Testes · Critérios de aceite**.
+## 20.4 Controle de fases (fonte única)
 
-### Etapa 0 — Contenção de segurança no legado
-- **Objetivo:** fechar as falhas exploráveis hoje, já que o legado segue no ar durante a construção.
-- **Entregáveis:** rotação das 3 senhas de banco + grant restrito por IP ([05](../analise/05-seguranca-lgpd-conformidade.md) C9); segredos fora do git (histórico limpo); remoção do webroot de `info.php`, dumps `.sql`, `compactacao/`, `arquivos_zip/`, `prec.txt`, `teste_lw/Mail.php`; `exit;` após cada `header()` de bloqueio; confinar `manager.php`/`baixar_zip.php`/`excluir_pasta.php` ao diretório do usuário e exigir login; varredura do host (links Monetizze no `info.php`).
-- **Front-end:** n/a.
-- **Testes:** checklist manual de verificação (cada item fechado confirmado em produção); smoke test de que o legado continua funcional.
-- **Aceite:** nenhum endpoint de laudo acessível sem login; segredos ausentes do repositório; host varrido.
+[Confirmado] Estados: PENDENTE, EM_ANDAMENTO, BLOQUEADA, CONCLUÍDA, REABERTA. O relatório documental e o teste do DDL não concluem etapas de aplicação. Na conciliação, todas as etapas de implementação permanecem pendentes; a governança foi aceita após validação de links/contratos e teste SQL desta sessão.
 
-### Etapa 1 — Fundação
-- **Objetivo:** esqueleto multi-tenant funcional com autenticação, ACL e pipeline — base de tudo.
-- **Dependências:** 0.
-- **Entregáveis:**
-  - [Confirmado] Implementar o projeto PHP/Laravel dentro de [docs/laravel/](../laravel/), conforme [14 §14.1–14.2](14-arquitetura-laravel.md#141-stack--fonte-única-de-versões); Sail/Herd; Docker; Redis; Horizon. O conteúdo versionado da pasta está reservado com `.gitkeep`, sem framework instalado. Executar Composer/Artisan e os testes a partir dela. Registrar as versões efetivas, validar dependências e selecionar MySQL ou MariaDB para central e tenants, com homologação no motor/versão de destino; consultar o estado local no `AGENTS.md` da raiz.
-  - **Tenancy**: `stancl/tenancy` atrás de contratos próprios (`TenantResolver`, `TenantContext`); banco central + provisionamento de banco por tenant; identificação por subdomínio (+ header `X-Tenant` para API, + token de dispositivo para TV/totem). Comandos `tenant:create`, `tenants:migrate`.
-  - **Auth**: Fortify + Sanctum; 2FA TOTP (obrigatório para papéis clínicos); política de senha; throttling; sessões ativas.
-  - **ACL**: `spatie/laravel-permission` (teams=tenant); papéis padrão ([11](11-identidade-autenticacao-acl.md)); catálogo inicial de permissões; `AuditLog`.
-  - Migrations centrais (`tenants`, `domains`, super-admin) + base do tenant (permission tables, `users`, `audit_log`).
-  - **CI/CD** completo (pint/rector/larastan/pest), staging.
-  - Estrutura de pastas modular ([14](14-arquitetura-laravel.md) §14.2); 1 Service Provider por módulo.
-- **Front-end [A DEFINIR]:** esqueleto do back-office (Filament) e shell dos portais (Inertia) só com navegação mínima — tema/CSS/JS entram depois.
-- **Testes:**
-  - **Tenancy (bloqueante):** 2 tenants; request autenticado no tenant A nunca retorna dado do tenant B em query, cache, fila, storage e broadcast.
-  - Auth: login, 2FA, throttle, reset.
-  - ACL: papel sem permissão recebe 403.
-  - Arch: controllers não acessam Models direto; domínio não importa HTTP; nenhum SDK fora de seu módulo.
-- **Aceite:** criar tenant por comando provisiona banco e roda migrations; os testes de isolamento passam; CI verde.
+| # | Etapa | Status | Evidência |
+|---|---|---|---|
+| [Confirmado] 0 | Governança e preparação documental | CONCLUÍDA | Fontes conciliadas, links conferidos e DDL validado; registro desta sessão e CHANGELOG. |
+| [Confirmado] 1 | Fundação: tenancy, identidade, ACL e CI | EM_ANDAMENTO | Fundação na raiz implementada e validada localmente: composer check e build Vite aprovados. Workflow de CI preparado; execução remota, staging e revisão/aceite ainda pendentes. Evidências na sessão de validação abaixo. |
+| [Confirmado] 2 | Cadastros, identidade e vínculos | PENDENTE | Sem implementação/aceite registrado. |
+| [Confirmado] 3 | Catálogo, protocolos e anamnese | PENDENTE | Sem implementação/aceite registrado. |
+| [Confirmado] 4 | Pedidos, agenda, recepção e execução | PENDENTE | Sem implementação/aceite registrado. |
+| [Confirmado] 5 | TV, dispositivos, salas e roteiro | PENDENTE | Sem implementação/aceite registrado. |
+| [Confirmado] 6 | Resultados, documentos e ocupacional | PENDENTE | Sem implementação/aceite registrado. |
+| [Confirmado] 7 | Migração completa da Precordis | PENDENTE | Sem implementação/aceite registrado. |
+| [Confirmado] 8 | Notificações e pesquisa | PENDENTE | Sem implementação/aceite registrado. |
+| [Confirmado] 9 | Assinatura e billing da plataforma | PENDENTE | Sem implementação/aceite registrado. |
+| [Confirmado] 10 | Portais paciente e empresa | PENDENTE | Sem implementação/aceite registrado. |
+| [Confirmado] 11 | Homologação, recuperação e go-live | PENDENTE | Sem implementação/aceite registrado. |
 
-### Etapa 2 — Cadastros + identidade do paciente
-- **Objetivo:** identidade única do paciente (resolve o vínculo-por-nome do legado) + empresa, unidade, profissional.
-- **Dependências:** 1.
-- **Entregáveis:** Models `Patient`, `Company`/`CompanyUnit`, `Unit`, `Professional`; VOs `Cpf` (com validação de DV), `Telefone`, `Email`; migrations; Actions de CRUD + busca; `patient_company`; busca/autocomplete (Scout se necessário); **merge assistido** de pacientes (fila de revisão); auditoria de acesso a dado de paciente.
-- **Front-end [A DEFINIR]:** telas de cadastro/busca/merge.
-- **Testes:** unit dos VOs (CPF válido/inválido/duplicado); feature de CRUD; permissão (recepção vê só sua unidade; empresa vê só seus funcionários — Policy); tenancy (regressão).
-- **Aceite:** cadastrar/buscar/fundir paciente; CPF único quando presente; auditoria registrando acesso.
+## 20.5 Registro de execução
 
-### Etapa 3 — Catálogo de exames + anamnese
-- **Objetivo:** tipos de exame com preparos/orientações e ficha clínica estruturada.
-- **Dependências:** 2.
-- **Entregáveis:** Models `ExamType`, `ExamTypePreparation`, `ExamTypeAttachment` (os PDFs de `orientacoes/`), `Anamnesis`, `AnamnesisAnswer`; perguntas versionadas por tipo de exame; consentimento LGPD versionado (texto + data); regra "campo obrigatório por empresa" como **configuração** (substitui o `if SAMARCO` hardcoded).
-- **Front-end [A DEFINIR]:** formulário de anamnese (tablet) e catálogo.
-- **Testes:** unit das regras de obrigatoriedade configurável; feature de preenchimento; consentimento gravado com versão/data; tenancy (regressão).
-- **Aceite:** anamnese salva vinculada ao paciente; consentimento versionado; orientação anexada ao exame.
+### 2026-11-03 — Correção das pendências documentais e do DDL
 
-### Etapa 4 — Agenda + recepção/check-in
-- **Objetivo:** agendar (por dia, com gancho para horário), confirmar, cancelar, faltar; check-in com progresso por exame.
-- **Dependências:** 2, 3.
-- **Entregáveis:** Models `Appointment` (+enum `AppointmentStatus` *backed*), `AppointmentExam`, `Checkin`, `CheckinExamStatus`; `AgendarExameAction`; derivação de status; **trava real de duplicidade** (corrige B1); reconvocação +1 ano; capacidade/regra de agenda por tenant ([14](14-arquitetura-laravel.md) §14.8); eventos `ExameAgendado`/`PacienteConfirmou`.
-- **Front-end [A DEFINIR]:** calendário/agenda e painel de check-in.
-- **Testes:** unit (derivação de status, trava de duplicidade que **de fato** bloqueia); feature dos fluxos agendar→confirmar→faltar→check-in; permissão por papel; tenancy (regressão).
-- **Aceite:** não é possível duplicar agendamento ativo; status único e consistente; check-in reflete progresso.
+- [Confirmado] Entregas: fontes conciliadas, contratos 22–24, ETL único, dependências corrigidas e DDL alinhado. Validação SQL e alterações estão no CHANGELOG: 69 tabelas/170 FKs criadas e 25 verificações sintéticas aprovadas em MariaDB 13.0.2. Etapa 0 concluída documentalmente, etapas 1–11 permanecem pendentes. Esta sessão não instala framework nem altera o legado.
+- [Confirmado] As decisões clínicas específicas de cada tenant continuam parâmetros de implantação com responsável técnico. Não foram inventados protocolos ou contratos comerciais.
+- [Inferido] Próxima execução: fundação conforme etapa 1 após aceite documental; verificar motor/imagens e compatibilidade de dependências antes da instalação.
 
-### Etapa 5 — Painel de TV + salas + roteiro (tempo real)
-- **Objetivo:** portar o `precordistv` (referência de qualidade) para tempo real e corrigir os bugs de sala/roteiro.
-- **Dependências:** 4.
-- **Entregáveis:** Models `Room` (PIN com **hash**), `RoomStatus` (**FK real** → corrige B3), `CallEvent`, `PatientRoute` (ligado ao atendimento → corrige B2); **Laravel Reverb** substituindo o polling; trava de concorrência de sala; liberação automática noturna como job agendado (não dentro do GET); acesso da TV/sala por token de dispositivo.
-- **Front-end [A DEFINIR]:** tela da TV, tela de sala (celular), recepção.
-- **Testes:** feature de chamar/ocupar/liberar; concorrência (paciente não em 2 salas; sala não com 2 pacientes); PIN por `hash_equals`; tempo real (evento publicado no canal do tenant); tenancy (canal do A não vaza para B).
-- **Aceite:** chamada aparece na TV em tempo real; sem sala fantasma; roteiro persiste.
+## 20.6 Perguntas e parametrização
 
-### Etapa 6 — Resultados, laudos e assinatura
-- **Objetivo:** resultado clínico como entidade de 1ª classe (deixa de ser espelho do Access) + laudo com assinatura ICP-Brasil.
-- **Dependências:** 2, 4.
-- **Entregáveis:** Models `ExamResult`, `ExamResultItem` (indicadores tipados), `Laudo` (storage **fora do webroot**), `LaudoSignature`; enum `LaudoStatus`; geração de PDF; **assinatura ICP-Brasil** atrás de `LaudoSignerContract` (subfase); link assinado com expiração para o paciente; Policy "médico só assina o que executou"; `Framingham` como campo derivado.
-- **Front-end [A DEFINIR]:** visualização/assinatura/liberação de laudo.
-- **Testes:** feature de criar→assinar→liberar; Policy de autoria; link assinado expira; laudo do tenant A nunca resolve em path do tenant B; (assinatura ICP: teste de integração com certificado de homologação).
-- **Aceite:** laudo liberado acessível só por link autorizado; assinatura verificável por QR; storage isolado por tenant.
+[Confirmado] Perguntas de negócio têm fonte única em [19](19-perguntas-em-aberto-negocio.md); não manter cópia concorrente na análise. Descoberta Access bloqueia ETL clínico, não fundação. O modelo de preços, protocolos e responsabilidades externas é validado antes de ativar a respectiva função, sem prometer funcionalidades ainda não implementadas.
 
-### Etapa 7 — Migração da Precordis para o SaaS multi-tenant
-- **Objetivo:** tornar a **Precordis o primeiro tenant**, com os dados reais dos 3 bancos MySQL + do Access importados e validados.
-- **Dependências:** 2, 3, 4, 6 (precisa dos destinos: paciente, exame/anamnese, agenda, resultado/laudo).
-- **Entregáveis:**
-  - **Descoberta do Access** (pergunta #2): localizar, dimensionar, mapear a chave real do paciente e o histórico anterior a jun/2026.
-  - Comandos **Artisan idempotentes** `legacy:import {etapa}` com tabela de-para `legacy_map` e relatório de inconsistências, na ordem de [13](13-plano-migracao-dados.md): empresas → pacientes (dedupe) → anamnese → agendamentos → check-in → resultados/laudos → pesquisa → arquivos (719 MB).
-  - **Deduplicação** por confiança (CPF válido → nome+nascimento → revisão humana); criação de "paciente parcial" para os ~30% de agendamentos sem cadastro.
-  - **Parser por linha** de datas e encoding; normalização de empresa/sexo.
-  - Migração de senhas como "forçar redefinição no 1º acesso"; migração dos laudos para storage do tenant.
-  - **Validação pós-migração**: contagens, somatórios, amostragem de 30 pacientes, relatório de inconsistências para o negócio.
-- **Front-end [A DEFINIR]:** tela/relatório de conferência da migração (pode ser Filament).
-- **Testes:**
-  - Idempotência: rodar o import 2× não duplica.
-  - Contagens batem com [01](../analise/01-inventario.md) §1.9 (tolerância documentada).
-  - Dedupe: casos conhecidos (219 CPFs duplicados, 49 logins duplicados, 14 duplicatas nome+data) resolvidos conforme regra.
-  - Datas/encoding: amostra validada.
-  - Integridade: nenhum laudo órfão; cada PDF vinculado a um paciente.
-- **Aceite:** Precordis operando como tenant em staging com dados reais; relatório de inconsistências **aprovado pelo negócio**; nenhuma regressão nos testes de tenancy.
+### 2026-11-03 — Fundação iniciada e agente atualizado para skill Laravel
 
-### Etapa 8 — Notificações + pesquisa (fila)
-- **Objetivo:** mensageria em fila (substitui o `send-mail` morto e formaliza o n8n) + NPS/satisfação com vínculo correto.
-- **Dependências:** 4.
-- **Entregáveis:** `NotificationChannel` (contratos) com canais Email/WhatsApp/SMS; `NotificationTemplate`, `Notification` (fila via Horizon); campanhas (convocação, reconvocação, fim de ano); `Survey` com `appointment_id` (corrige B5); operador (WhatsApp) formalizado por contrato.
-- **Front-end [A DEFINIR]:** gestão de templates/campanhas e relatório de NPS.
-- **Testes:** feature de enfileirar/enviar/falhar com idempotência; webhook de retorno; NPS e satisfação ligados ao atendimento; tenancy (fila roda na conexão do tenant certo).
-- **Aceite:** notificação enfileirada e processada por tenant; pesquisa cruzável por atendimento.
+- [Confirmado] Branch feat/etapa-01-fundacao já existente. Esqueleto em docs/laravel, imagem PHP 8.5.12 construída e dependências instaladas com composer.lock, incluindo Laravel 13.39.0. Código inicial e migrations da fundação ainda não executados/homologados; nenhum aceite de aplicação concluído.
+- [Confirmado] Por nova instrução do usuário, .codex/agents/precordis.toml e AGENTS.md passam a exigir localizar/ler a skill Laravel 13 Multi-Tenant Expert antes de prosseguir com implementação dependente. O link do plugin está registrado; a configuração não instala o plugin. A busca nesta sessão não encontrou seu SKILL.md nem entrada disponível do plugin. Não foi substituída por skill genérica.
+- [Confirmado] Sem alterações no legado, sem migrations em produção e sem testes de aplicação declarados. A etapa 1 permanece EM_ANDAMENTO. Retomar a implementação com a skill disponível, revisar o código parcial e executar os aceites antes de marcá-la concluída.
 
-### Etapa 9 — Billing + assinatura
-- **Objetivo:** cobrança recorrente da clínica e limites por plano.
-- **Dependências:** 1.
-- **Entregáveis:** `BillingGatewayContract` + `AsaasGateway` (PIX/boleto/cartão + NFS-e); Models `Plan`/`PlanFeature`/`Subscription`/`Invoice`/`Payment`/`UsageRecord`/`Coupon`/`WebhookEvent` (banco central); webhooks idempotentes; estados `active→past_due→read_only→suspended` por middleware; feature flags por plano.
-- **Front-end [A DEFINIR]:** área de assinatura/plano do tenant e painel do super-admin.
-- **Testes:** feature de assinar/trocar plano (pró-rata)/cancelar; webhook idempotente; bloqueio progressivo por inadimplência não apaga dados; limites de plano aplicados por middleware.
-- **Aceite:** assinatura criada e cobrada em sandbox; limites refletidos no acesso; NFS-e emitida.
+### 2026-11-03 — Acesso à skill Laravel confirmado
 
-### Etapa 10 — Portais paciente/empresa
-- **Objetivo:** self-service do paciente e portal da empresa cliente.
-- **Dependências:** 2, 6.
-- **Entregáveis:** Portal do Paciente (agendar, preparo, baixar laudo por link assinado, responder pesquisa); Portal da Empresa (exames dos funcionários, ASO, relatórios) com Policy de escopo por empresa.
-- **Front-end [A DEFINIR]:** este é o front mais sensível ao design premium — entra quando a direção visual chegar.
-- **Testes:** permissão (paciente só vê o seu; empresa só seus funcionários); link de laudo expira; feature dos fluxos; tenancy.
-- **Aceite:** paciente baixa o próprio laudo com segurança; empresa vê só seus funcionários.
+- [Confirmado] Após o usuário informar a habilitação, foi confirmado acesso direto ao plugin Laravel 13 Multi-Tenant Expert, versão 1.0.0, e lido o arquivo interno skills/laravel-multi-tenant/SKILL.md. Nome técnico: laravel-multi-tenant. Ausência na busca genérica não representava bloqueio de acesso direto.
+- [Confirmado] AGENTS.md e o agente .codex registram a identidade verificada e o procedimento de localização. O impedimento de acesso à skill foi superado; isso não conclui testes ou aceite da fundação. Etapa 1 permanece EM_ANDAMENTO.
 
-### Etapa 11 — Dashboard/BI + hardening + corte
-- **Objetivo:** visão gerencial, revisão final de segurança e go-live.
-- **Dependências:** todas.
-- **Entregáveis:** indicadores (exames/dia, ocupação, no-show, tempo por sala, NPS, reconvocar); revisão OWASP/LGPD; backups + retenção ≥ 20 anos **com restore testado por tenant**; monitoramento (incl. do sync do Access enquanto existir); **plano de corte** (strangler) — ver [18](18-riscos-migracao.md) §18.3.
-- **Front-end [A DEFINIR]:** dashboards.
-- **Testes:** feature dos relatórios; teste de restore por tenant; revisão de segurança (checklist); ensaio de corte em staging.
-- **Aceite:** go/no-go objetivo (relatório de migração aprovado, contagens ok, amostra conferida, testes de isolamento verdes, restore testado).
+### 2026-11-03 — Aplicação transferida para a raiz
 
----
+- [Confirmado] Por instrução mais recente do usuário, a aplicação foi movida de docs/laravel/ para a raiz do repositório. Registros anteriores dessa pasta são históricos. Código, manifests, dependências ignoradas, Docker, testes e .env foram preservados; .gitignore foi mesclado, sem alterar staging de mudanças existentes.
+- [Confirmado] Fontes atuais de caminhos: AGENTS.md, README da raiz, docs/README.md e arquitetura 14. O validador SQL lê o .env da raiz. Documentação permanece em docs/; somente public/ é webroot.
+- [Confirmado] Esta reorganização não executa migrations nem conclui a etapa 1; autenticação, configuração, isolamento e suíte da aplicação continuam sujeitos ao aceite.
 
-## 20.4 Controle de fases (manter atualizado)
+- [Confirmado] Verificações após a transferência: Compose válido, composer validate aprovado, composer check-platform-reqs aprovado em PHP 8.5.12 e php artisan --version retornando Laravel Framework 13.39.0. Links locais dos documentos afetados conferidos; .env preservado byte a byte, modo 0600 e ignorado pelo Git, assim como vendor/. Nenhuma migration ou suíte funcional foi executada nesta reorganização.
 
-> Fonte da verdade do andamento. Atualizar ao fim de cada sessão. `PENDENTE · EM_ANDAMENTO · BLOQUEADA · CONCLUÍDA · REABERTA`.
 
-| # | Etapa | Depende de | Status | Branch | Concluída em | Observações |
-|---|---|---|---|---|---|---|
-| 0 | Contenção legado | — | PENDENTE | `hotfix/legado-seguranca` | — | urgente, independe da reescrita |
-| 1 | Fundação | 0 | PENDENTE | `feat/etapa-01-fundacao` | — | |
-| 2 | Cadastros/identidade | 1 | PENDENTE | `feat/etapa-02-cadastros` | — | |
-| 3 | Exames/anamnese | 2 | PENDENTE | `feat/etapa-03-exames-anamnese` | — | |
-| 4 | Agenda/check-in | 2,3 | PENDENTE | `feat/etapa-04-agenda-checkin` | — | |
-| 5 | TV/salas (tempo real) | 4 | PENDENTE | `feat/etapa-05-tv-salas` | — | |
-| 6 | Resultados/laudos | 2,4 | PENDENTE | `feat/etapa-06-resultados-laudos` | — | assinatura ICP = subfase |
-| 7 | **Migração Precordis** | 2,3,4,6 | PENDENTE | `feat/etapa-07-migracao-precordis` | — | depende da descoberta do Access |
-| 8 | Notificações/pesquisa | 4 | PENDENTE | `feat/etapa-08-notificacoes` | — | |
-| 9 | Billing | 1 | PENDENTE | `feat/etapa-09-billing` | — | |
-| 10 | Portais | 2,6 | PENDENTE | `feat/etapa-10-portais` | — | front premium [A DEFINIR] |
-| 11 | Dashboard/hardening/corte | todas | PENDENTE | `feat/etapa-11-hardening` | — | go-live |
+### 2026-11-03 — Fundação implementada e validada localmente
 
-## 20.5 Registro de execução (uma entrada por sessão — não apagar)
+- [Confirmado] Aplicada a skill Laravel específica já verificada. Entrega na raiz: Fortify com login/reset/2FA TOTP, exigência de troca da senha inicial, usuários ativos, sessões persistidas/listagem/revogação, catálogo de permissões global e papéis Spatie teams=tenant. Auditoria síncrona de login/logout/reset/confirmação 2FA sem credenciais ou payload pessoal.
+- [Confirmado] Contexto obrigatório por domínio, header sem poder de seleção, validação de membro ativo, suspensão/read-only, proprietário imutável, guardas para inserções/updates em lote e restauração de modelos com scope. Reset, sessão, throttling, cache, storage e canal privado são separados por clínica. Revisão de SQL bruto/pivôs permanece obrigatória; não há garantia automática para bypass explícito de scopes.
+- [Confirmado] Filas carregam tenant_id escalar no envelope, resolvem contexto antes do handler e limpam contexto/time/guard em sucesso, exceção e loop. Um processo Redis real executou A → falha A → B, com o mesmo PID e permissões distintas. Horizon está configurado com timeout 150 < retry_after 180; seu dashboard permanece negado até existir identidade operacional de plataforma.
+- [Confirmado] Interface Blade integra somente CSS core/auth Vuexy via Vite, com formulários POST/CSRF, escaping e navegação por autorização. Não carregados scripts de demonstração/analytics. Sanctum, TV/Reverb em execução, cadastro clínico e saúde ocupacional permanecem nas etapas correspondentes; o teste de broadcast valida autorização/assinatura sem servidor WebSocket.
+- [Confirmado] composer check aprovado: Pint (63 arquivos de fontes), Rector sem alterações, Larastan nível 5 sem erros e Pest com 29 testes/158 verificações. npm run build aprovado. A verificação externa de senhas vazadas usa mock somente no teste de reset; não foi certificada disponibilidade desse serviço externo. Os testes HTTP usam sessão array e há teste separado do handler persistente MariaDB.
+- [Confirmado] Migrations, rollback e reaplicação aprovados em novo_sistema_clinica_testing, MariaDB 13.0.2, com foreign_key_checks=1: 17 tabelas de aplicação/runtime + migrations e 13 FKs. Nenhum DDL do legado/produção foi executado. Histórico de estrutura no CHANGELOG.
+- [Confirmado] Após confirmar o banco vazio, migrations da fundação aplicadas somente na nova instância local do Compose, separada da instância anterior do host. Provisionada clínica Precordis/domínio localhost sem administrador/senha padrão. Roteiro nominal/interativo no README.
+- [Confirmado] Workflow .github/workflows/ci.yml preparado para ambiente descartável; não executado remotamente. Etapa 1 permanece EM_ANDAMENTO: staging com dois tenants, revisão/PR e aceite ainda não realizados. Nenhum módulo clínico/ocupacional ou importação foi antecipado. Nenhuma mudança no legado ou staging do Git.
 
-```
-## [AAAA-MM-DD HH:MM] Etapa NN — <nome>
-Status ao final: CONCLUÍDA | EM_ANDAMENTO | BLOQUEADA
-Branch / commits:
-Entregue:
-Não entregue / adiado (e por quê):
-Decisões (sobretudo onde o escopo deixava margem):
-Testes adicionados:
-Pendências / próximos passos:
-```
+- [Confirmado] Smoke no navegador local: login em http://localhost:8080/login renderizado com CSS compilado, formulário POST/CSRF e nenhum script externo; sem overflow horizontal em desktop e viewport de 390 px. Corrigido o comando serve do Compose com --no-reload para preservar hosts DB/Redis injetados no processo web. Não foi criado administrador nominal automaticamente.
+- [Confirmado] Varredura da árvore de trabalho elegível ao Git não encontrou .env real, PDFs ou padrões reconhecidos de tokens Mapbox secretos/GitHub/AWS/chave privada. Isso não é auditoria exaustiva do histórico Git; nenhuma reescrita de histórico ou alteração do staging foi realizada.
 
-## 20.6 Pendências que destravam o desenvolvimento
-Antes/durante as primeiras etapas, resolver de [19](19-perguntas-em-aberto-negocio.md): **#2 (Access)**, **#3 (produção real)**, **#8/#9 (agenda por dia vs horário, capacidade)**, **#14 (regras por empresa)**, **#18 (gateway/plano)**, **#20 (idioma do código)**, **#21 (janela de corte)**. O front-end (layout/CSS/JS/design system) será apontado posteriormente e não bloqueia o back-end das etapas.
+- [Confirmado] Revisão final: troca de senha e revogação de sessões usam transação; senha inicial/troca e preservação das sessões da outra clínica possuem regressão. Seeder invalida explicitamente o cache de permissões antes/depois da execução. O teste Redis usa o mesmo backend no produtor/worker, invalida somente sua chave de catálogo e verifica cache A/B; nenhum flush global. Checks finais aprovados após essas correções.

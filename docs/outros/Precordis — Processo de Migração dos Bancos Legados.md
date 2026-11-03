@@ -1,3 +1,5 @@
+> [Confirmado] **DOCUMENTO HISTÓRICO — substituído como contrato em 03/11/2026 pelo [fluxo 13](../fluxos/13-plano-migracao-dados.md).** As propostas, nomes de campos/tabelas, estimativas, comandos e ações sobre produção abaixo não são instruções vigentes. A modelagem corrente está nos fluxos 12/22/23 e no schema; o legado permanece somente leitura. Preservado para rastrear a análise original, não para implementar destinos concorrentes.
+
 # Precordis — Processo de Migração dos Bancos Legados
 
 Oct 31, 2026 · @Luiz Guilherme Aurélio
@@ -111,7 +113,7 @@ Outros problemas que não bloqueiam, mas entram nas transformações:
 
 [Confirmado] Quanto ao motor e à versão, o destino passa a seguir a [matriz única de PHP/Laravel e MySQL ou MariaDB](../fluxos/14-arquitetura-laravel.md#141-stack--fonte-única-de-versões). A homologação de SQL e collations no motor escolhido permanece necessária.
 
-[Confirmado] A proposta original desta seção descreve um banco único (`utf8mb4_unicode_ci`, InnoDB, FKs reais) com `tenant_id` em toda tabela de tenant. Isso diverge do desenho de banco por tenant dos fluxos 09/21 e foi registrado em [PENDENCIAS.md, P03](PENDENCIAS.md#p03--modelo-de-isolamento-no-documento-de-migração); não usar esse trecho como autorização para mudar o split central/tenant. No mapeamento deste documento, os dados legados entram no tenant **Precordis**; a Samarco e as outras 171 empresas viram `companies` desse tenant.
+[Confirmado] Esta seção descreve um banco único (`utf8mb4_unicode_ci`, InnoDB, FKs reais) com `tenant_id` em toda tabela de tenant. **Em 31/10/2026 o usuário adotou exatamente esse modelo** (banco único + `tenant_id` + global scopes) como a estratégia oficial — os fluxos 09/21 e o `schema.sql` foram atualizados para refletir isso, e a P03 do `PENDENCIAS.md` foi resolvida a favor deste desenho. No mapeamento deste documento, os dados legados entram no tenant **Precordis**; a Samarco e as outras 171 empresas viram `companies` desse tenant.
 
 Regras gerais do schema novo:
 

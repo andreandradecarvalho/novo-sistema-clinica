@@ -16,7 +16,7 @@ O código tem ilhas de qualidade (o módulo `precordistv` é moderno e bem escri
 4. **Senhas de paciente em texto plano** (e md5 sem salt), enviadas por e-mail; senhas são códigos de 5 dígitos.
 5. **SQL Injection, XSS e ausência de CSRF** em vários pontos.
 6. **LGPD/dado de saúde**: sem log de acesso a laudo/anamnese, consentimento registrado em só ~10% dos pacientes, laudos no document root, operador terceiro (n8n) sem contrato visível, dumps e `.tar` de laudos esquecidos no servidor.
-7. **Conformidade de prontuário**: laudos sem assinatura digital ICP-Brasil (Lei 13.787/2018); sem política de guarda de 20 anos.
+7. **Conformidade de prontuário**: ausência de política documental de autoria/assinatura/guarda registrada na análise; requisitos atuais por documento em fluxo 24.
 
 **Bugs ativos achados nos dados**: trava de agendamento duplicado inoperante desde sempre; `roteiro_paciente` zerado por FK em cascata contra o sync; sala fantasma ocupada desde agosto; fila de e-mail morta desde 2022 (1.297 pendentes); NPS e satisfação sem vínculo; 298 registros com sexo gravado como nome.
 
@@ -24,13 +24,13 @@ O código tem ilhas de qualidade (o módulo `precordistv` é moderno e bem escri
 
 ## Recomendação
 
-Reescrever como **SaaS multi-tenant em Laravel 13 / PHP 8.4 / MySQL 8.4 LTS**, com **um banco por clínica** (isolamento físico, melhor para LGPD e backup/restore), **ACL por tenant**, **assinatura recorrente**, identidade única do paciente, laudo com assinatura ICP-Brasil e auditoria de acesso. A Precordis é o primeiro tenant.
+Reescrever como **SaaS multi-tenant em Laravel 13** (PHP, Laravel e banco conforme a matriz única em [fluxo 14 §14.1](../fluxos/14-arquitetura-laravel.md#141-stack--fonte-única-de-versões)), com **banco único + `tenant_id` + global scopes** (isolamento lógico com contexto, autorização, FKs compatíveis e testes; escolhido para muitos tenants pequenos, custo/ops no limite — ver [fluxo 09](../fluxos/09-estrategia-multi-tenant.md)), **ACL por tenant**, **assinatura recorrente**, identidade única do paciente, laudo com assinatura ICP-Brasil e auditoria de acesso. A Precordis é o primeiro tenant.
 
-**Antes da reescrita**, executar a **Fase 0 de contenção** no legado (rotacionar segredos, tirar arquivos sensíveis do webroot, fechar os endpoints abertos) — são falhas exploráveis hoje. Em paralelo, **localizar e mapear o Access**, que amplia o escopo e é a fonte do laudo.
+[Confirmado] Achados de segurança são históricos e devem ser encaminhados à operação responsável. Neste projeto, legado somente leitura; a etapa 0 é preparação/governança. Localizar/mapear o Access por leitura autorizada antes da migração clínica, sem bloquear a fundação. Plano vigente: [20](../fluxos/20-plano-desenvolvimento.md).
 
-## Esforço
+## Execução vigente
 
-Projeto em 10 fases (0 a 9), estratégia **strangler** (módulo a módulo), com corte no fim de semana (a operação é quase só em dias úteis). MVP = fundação + cadastros + agenda + check-in + TV + ETL parcial. As estimativas por fase estão em [17](../proposta-novo-sistema/17-roadmap-fases.md); são faixas de ordenação, a fechar com o time e com as respostas de [perguntas-em-aberto.md](perguntas-em-aberto.md).
+[Confirmado] Etapas, dependências e MVP têm fonte única em [20](../fluxos/20-plano-desenvolvimento.md); não usar a numeração antiga de fases. Saúde ocupacional: [23](../fluxos/23-saude-ocupacional.md). Este diagnóstico não limita o novo SaaS ao comportamento de check-up do legado.
 
 ## Índice da análise
 
@@ -45,4 +45,4 @@ Projeto em 10 fases (0 a 9), estratégia **strangler** (módulo a módulo), com 
 | [07 — Inconsistências/modelagem](07-inconsistencias-modelagem.md) | identidade, tipos, órfãos, tabelas mortas |
 | [perguntas-em-aberto](perguntas-em-aberto.md) | o que o negócio precisa decidir |
 
-A **especificação do novo produto** está em [`../proposta-novo-sistema/`](../proposta-novo-sistema/00-indice.md) (seções 8 a 19).
+A **especificação do novo produto** está em [`../fluxos/`](../fluxos/00-indice.md) (seções 8 a 19).

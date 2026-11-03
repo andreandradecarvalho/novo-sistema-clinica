@@ -5,7 +5,7 @@
 | Decisão | Escolha | Justificativa |
 |---|---|---|
 | Base | **Fortify** (starter kit oficial) | login, reset, verificação de e-mail prontos |
-| SPA/mobile/API | **Sanctum** | app novo é Inertia/SPA; token p/ API `/v1` |
+| SPA/mobile/API | **Sanctum** | tokens somente quando API/dispositivo necessitar; UI inicial Blade; token p/ API `/v1` |
 | OAuth2 p/ terceiros | **Passport** só se houver necessidade real | não há hoje |
 | **2FA (TOTP)** | **obrigatório** para perfis com acesso a dado clínico (médico, laudador, admin) | dado sensível |
 | Política de senha | mínimo 10 chars, verificação contra listas de vazamento | corrige senha de 5 dígitos do legado |
@@ -18,27 +18,27 @@ Senhas migram como **"forçar redefinição no primeiro acesso"** (não dá para
 
 ## 11.2 ACL multi-tenant
 
-**Spatie laravel-permission** com a feature **teams = tenant** (cada tenant tem seu conjunto de papéis/permissões); verificado em 31/10/2026 que a linha atual suporta Laravel 13 e tem suporte nativo a teams. Papéis e permissões sempre **com escopo de tenant**; permissões contextuais (além de RBAC) via **Policies**.
+**Spatie laravel-permission** com a feature **teams = tenant** (cada tenant tem seus papéis; catálogo de permissões é global); verificado em 31/10/2026 que a linha atual suporta Laravel 13 e tem suporte nativo a teams. Concessões sempre **com escopo de tenant**, com exceções de papéis globais controladas; permissões contextuais (além de RBAC) via **Policies**.
 
 **Papéis padrão do sistema** (cada clínica pode criar os seus):
 
 | Papel | Escopo |
 |---|---|
-| Super Admin da Plataforma | central (todos os tenants) |
+| Super Admin da Plataforma | plataforma comercial/técnica; sem prontuário automático |
 | Admin da Clínica | tenant inteiro |
 | Recepção | agenda, check-in, chamada |
-| Médico / Laudador | laudos que executou, anamnese |
+| Médico / Laudador | execução/revisão/liberação conforme habilitação e vínculo autorizado |
 | Técnico | execução de exame, status de sala |
 | Financeiro | billing da clínica, relatórios |
-| Usuário de Empresa Cliente | só funcionários da sua empresa (Portal da Empresa) |
+| Usuário de Empresa Cliente | categorias/documentos autorizados por empresa e vínculo histórico, conforme fluxo 23 |
 | Paciente | seus próprios dados (Portal do Paciente) |
 
 **Catálogo de permissões granular por módulo.ação** (exemplos):
 `agenda.view`, `agenda.create`, `agenda.cancel`, `checkin.update`, `chamada.call`, `sala.manage`, `laudo.view`, `laudo.sign`, `laudo.release`, `paciente.view`, `paciente.edit`, `empresa.view`, `pesquisa.view`, `billing.manage`, `audit.view`, `usuarios.manage`.
 
 **Permissões contextuais (Policies), que o RBAC puro não cobre:**
-- médico só vê/assina laudo que **executou**;
-- usuário de empresa só vê **seus funcionários**;
+- profissional só executa/revisa/assina/libera conforme habilitação, atribuição e Policy do tipo documental;
+- usuário de empresa só vê **categorias autorizadas do vínculo empregador**, sem prontuário completo por padrão;
 - recepção restrita à **sua unidade**;
 - paciente só os **próprios** registros.
 
@@ -55,8 +55,10 @@ Senhas migram como **"forçar redefinição no primeiro acesso"** (não dá para
 | login TV `precordis` | `auth.php` | Recepção/Técnico (token de dispositivo p/ a TV em si) |
 | PIN de sala (4 díg., texto plano) | `salas.pin` | credencial de dispositivo da sala (hash) |
 
-**Auditoria obrigatória** (LGPD): concessão/revogação de papel e permissão, e **todo acesso a dado clínico** (abrir laudo, abrir anamnese, exportar) gravados em `audit_log` por tenant — amplia o `watchdog`, que só registrava login.
+**Auditoria obrigatória** (LGPD): concessão/revogação de papel e permissão, e **todo acesso a dado clínico** (abrir laudo, abrir anamnese, exportar) gravados em `activity_log`/`document_accesses` por tenant — amplia o `watchdog`, que só registrava login.
 
 ## 11.4 Diferença essencial do legado
 
 No legado a autorização rodava no cliente e o `header()` sem `exit` não bloqueava. No novo, **nada** chega ao controlador sem passar por middleware de tenant + `auth` + `can:`; e cada ação sensível tem Policy. Os testes de permissão por papel e de isolamento por tenant ([09](09-estrategia-multi-tenant.md) §9.4, [15](15-qualidade-testes-devops.md)) são parte do "pronto".
+
+[Confirmado] Matriz normativa e concessões excepcionais: [24 §24.1](24-seguranca-retencao-operacao.md). Acesso empresarial: [23 §23.3](23-saude-ocupacional.md). Estruturas de concessão/dispositivos/download em schema.sql. RBAC isolado não substitui essas Policies.

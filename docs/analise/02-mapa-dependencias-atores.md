@@ -63,7 +63,7 @@ flowchart TB
 | Subsistema | Variável de sessão | Fonte da credencial |
 |---|---|---|
 | raiz / portal | `$_SESSION['us_id']`, `['administrador']`, `['medico']` | tabela `usuario` (md5) |
-| `agendaprecordis` | `$_SESSION['logged_in']` | **2 pares usuário/senha fixos no `valida.php`** + `apoio/precordis` |
+| `agendaprecordis` | `$_SESSION['logged_in']` | **2 pares usuário/senha fixos no `valida.php`** + `apoio / ***` |
 | `precordistv` | `$_SESSION['precordis_auth']` | **1 usuário `precordis` + 1 hash fixo** em `auth.php` |
 | `checkinCliente` | (nenhuma — `valida.php` não existe na pasta) | formulário aponta para arquivo ausente |
 | `formulario` | nenhuma guarda de sessão real; paciente "entra" por senha+CPF | `usuario`/`info_usuario` |
@@ -87,7 +87,7 @@ O mesmo médico tem um registro em `usuario` (portal), mas a agenda e a TV não 
 | **Médico / laudador** | portal (`manager.php`, `manager-search.php` — busca pacientes da própria empresa) | `usuario.medico = -1` | 382 médicos; 92 logaram nos últimos 12 meses [C] |
 | **Admin Precordis** | portal completo (usuários, empresas, agenda de e-mails, log) | `usuario.administrador = -1` | 14 contas; 7 ativas [C] |
 | **Recepção / agendamento** | `agendaprecordis` | 2 e-mails + senha fixos | login de setor [C] |
-| **Apoio** | `agendaprecordis` (listagens de impressão) | `apoio/precordis` fixo | [C] |
+| **Apoio** | `agendaprecordis` (listagens de impressão) | `apoio / ***` fixo | [C] |
 | **Recepção/sala (TV)** | `precordistv` | 1 login `precordis` compartilhado; sala libera com PIN de 4 dígitos | [C] |
 | **Profissional na sala** | `precordistv/sala.php` pelo celular | token na URL `?sala=KEY` + PIN opcional | público, sem login [C] |
 | **TV da sala de espera** | `precordistv/tv.php` | nenhuma (público) | [C] |

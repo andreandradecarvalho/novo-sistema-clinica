@@ -1,0 +1,11 @@
+@import '../../docs/layout/assets/vendor/css/core.css';
+@import '../../docs/layout/assets/vendor/css/pages/page-auth.css';
+
+body { min-height: 100vh; }
+.app-shell { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
+.auth-card { max-width: 460px; margin: 3rem auto; }
+.app-header { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+.app-header nav { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+.security-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+.qr-code svg { max-width: 100%; height: auto; }
+.recovery-codes { overflow-wrap: anywhere; }

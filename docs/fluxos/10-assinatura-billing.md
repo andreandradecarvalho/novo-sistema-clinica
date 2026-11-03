@@ -63,3 +63,9 @@ erDiagram
   invoices ||--o{ payments : quita
   tenants ||--o{ usage_records : consome
 ```
+
+## 10.5 Limites de escopo e decisão
+
+- [Confirmado] Este módulo cobra o SaaS da clínica; cobrança de exames tem fonte no [fluxo 22 §22.4](22-atendimento-clinico.md). Banco “central” significa contexto lógico de plataforma no banco único.
+- [Inferido] Asaas continua proposta técnica sujeita à escolha comercial e homologação da etapa 9; o pedido de conciliar documentação não confirma contratação nem capacidades específicas da conta. Revalidar API, autenticação e webhooks na documentação oficial do provedor antes de implementar.
+- [Inferido] Inadimplência não apaga prontuários. Definir permissões por ação em leitura/suspensão, exportação e acesso necessário conforme [24](24-seguranca-retencao-operacao.md); suspensão comercial não deve impedir silenciosamente obrigações clínicas de guarda/acesso.

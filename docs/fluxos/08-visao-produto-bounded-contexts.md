@@ -51,7 +51,7 @@ Status: **migrar-igual** / **redesenhar** / **descartar** / **nova**.
 | Agendamento | `agendaprecordis` | Agenda | redesenhar (identidade, trava real, horário opcional) |
 | Confirmação/campanha WhatsApp | `listar_*`, n8n | Notificações | redesenhar (fila + operador formalizado) |
 | Convocação de exame | `*_envio_convocacao_exame` | Notificações | migrar-igual |
-| Reconvocação +1 ano | `listar-...-ano.php` | Agenda/Notificações | migrar-igual |
+| Reconvocação +1 ano (check-up; ocupacional por protocolo) | `listar-...-ano.php` | Agenda/Notificações | migrar-igual |
 | Check-in / progresso | `checkinCliente` | Recepção & Check-in | redesenhar (tabela de exames, tempo real) |
 | Painel TV / chamada | `precordistv` | Painel de Chamada | migrar-igual (é a referência) + tempo real (Reverb) |
 | Salas / PIN / roteiro | `salas*`,`roteiro_api` | Painel de Chamada | redesenhar (corrige B2/B3) |
@@ -68,3 +68,9 @@ Status: **migrar-igual** / **redesenhar** / **descartar** / **nova**.
 | Portal da empresa | — | Portal da Empresa | **nova** |
 | Assinatura/billing | — | Tenancy & Billing | **nova** |
 | Dashboard/BI | — | Relatórios & BI | **nova** |
+
+## 8.4 Domínios complementares obrigatórios
+
+- [Confirmado] [Atendimento e financeiro clínico](22-atendimento-clinico.md): pedido/reserva/visita/execução distintos, repetição, preços históricos e contas a receber; financeiro clínico não é billing SaaS.
+- [Confirmado] [Saúde ocupacional](23-saude-ocupacional.md): vínculo histórico, contexto/protocolo, avaliação e ASO; não é apenas categoria de PDF ou portal posterior.
+- [Confirmado] [Segurança e operação](24-seguranca-retencao-operacao.md): autorização por categoria/vínculo, criptografia, guarda e recuperação. Etapas e escopo de corte somente no fluxo 20; sincronizador externo é temporário conforme fluxo 13.

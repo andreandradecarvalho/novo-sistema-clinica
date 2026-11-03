@@ -1,0 +1,106 @@
+{
+  "server": "13.0.2-MariaDB-ubu2604",
+  "tests": [
+    {
+      "test": "DDL com FKs habilitadas",
+      "passed": true
+    },
+    {
+      "test": "Fixtures sinteticas de duas clinicas",
+      "passed": true
+    },
+    {
+      "test": "Paciente nao referencia empresa de outra clinica",
+      "passed": true
+    },
+    {
+      "test": "Reserva duplicada rejeitada",
+      "passed": true
+    },
+    {
+      "test": "Cancelamento libera mesmo slot",
+      "passed": true
+    },
+    {
+      "test": "Reserva em outro horario permitida",
+      "passed": true
+    },
+    {
+      "test": "Data e horario divergentes rejeitados",
+      "passed": true
+    },
+    {
+      "test": "NPS acima de 10 rejeitado",
+      "passed": true
+    },
+    {
+      "test": "Excluir tenant com historico rejeitado",
+      "passed": true
+    },
+    {
+      "test": "Pedido, atendimento e duas tentativas",
+      "passed": true
+    },
+    {
+      "test": "Tentativa duplicada rejeitada",
+      "passed": true
+    },
+    {
+      "test": "Resultado de outro tenant rejeitado",
+      "passed": true
+    },
+    {
+      "test": "Medicao com unidade e referencia preservadas",
+      "passed": true
+    },
+    {
+      "test": "Medicao com dois tipos de valor rejeitada",
+      "passed": true
+    },
+    {
+      "test": "Mensagem idempotente",
+      "passed": true
+    },
+    {
+      "test": "Retry duplicado da mensagem rejeitado",
+      "passed": true
+    },
+    {
+      "test": "Vinculo e avaliacao ocupacional",
+      "passed": true
+    },
+    {
+      "test": "Avaliacao completa sem medico rejeitada",
+      "passed": true
+    },
+    {
+      "test": "Conclusao automatica invalida rejeitada",
+      "passed": true
+    },
+    {
+      "test": "Conclusao medica completa registrada",
+      "passed": true
+    },
+    {
+      "test": "Documento e ASO versionados",
+      "passed": true
+    },
+    {
+      "test": "Documento nao vincula paciente de outro tenant",
+      "passed": true
+    },
+    {
+      "test": "Perguntas de mesmo codigo em versoes diferentes",
+      "passed": true
+    },
+    {
+      "test": "ETL referencia unica",
+      "passed": true
+    },
+    {
+      "test": "ETL duplicado rejeitado",
+      "passed": true
+    }
+  ],
+  "ddl_sha256": "7bc3caf2a33f72a28ae8371864f6ca9e782d8d2954dc910e62b21da4158b1a0c"
+}
