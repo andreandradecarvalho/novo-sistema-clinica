@@ -8,6 +8,7 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Tenancy\Models\Tenant;
 use App\Domain\Tenancy\Services\TenantContext;
 use App\Support\LocalHomologation;
+use App\Support\RegistryHomologation;
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Console\Command;
 use Illuminate\Http\Client\Response;
@@ -25,7 +26,7 @@ use Throwable;
 final class CheckHomologation extends Command
 {
     #[\Override]
-    protected $signature = 'homologation:check';
+    protected $signature = 'homologation:check {--registries : Include temporary registry/identity fixtures through HTTP}';
 
     #[\Override]
     protected $description = 'Validate the isolated local homologation through real HTTP and Horizon.';
@@ -59,11 +60,12 @@ final class CheckHomologation extends Command
             'php' => PHP_VERSION, 'laravel' => app()->version(),
             'database' => DB::selectOne('SELECT VERSION() AS version')->version,
             'foreign_key_checks' => (int) DB::selectOne('SELECT @@foreign_key_checks AS enabled')->enabled,
-            'passed' => $passed, 'checks' => $this->checks,
+            'passed' => $passed, 'registries_included' => (bool) $this->option('registries'), 'checks' => $this->checks,
             'limits' => ['HTTP local; HTTPS externo não homologado', 'Somente dados sintéticos', 'Não substitui CI remota ou revisão de PR'],
         ];
-        file_put_contents(storage_path('app/homologacao-report.json'), json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR).PHP_EOL);
-        $this->info(($passed ? 'PASS' : 'FAIL').' — '.count($this->checks).' verificações. Relatório sem segredos em storage/app/homologacao-report.json.');
+        $reportPath = $this->option('registries') ? 'app/homologacao-registries-report.json' : 'app/homologacao-report.json';
+        file_put_contents(storage_path($reportPath), json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR).PHP_EOL);
+        $this->info(($passed ? 'PASS' : 'FAIL').' — '.count($this->checks).' verificações. Relatório sem segredos em storage/'.$reportPath.'.');
 
         return $passed ? self::SUCCESS : self::FAILURE;
     }
@@ -132,6 +134,9 @@ final class CheckHomologation extends Command
         $adminB = $context->run($b, fn () => User::query()->where('email', 'admin.homologacao@example.test')->sole());
         $cookiesA = $this->adminLogin('A', $a);
         $cookiesB = $this->adminLogin('B', $b);
+        if ($this->option('registries')) {
+            new RegistryHomologation($this->request(...), $this->verify(...), $this->token(...))->run(['A' => [$a, $cookiesA], 'B' => [$b, $cookiesB]]);
+        }
         $this->verify($this->request('clinica-a.localhost', $cookiesA, 'GET', '/users')->ok(), 'Administrador consulta equipe própria');
         $this->verify($this->request('clinica-a.localhost', $cookiesA, 'GET', '/users/'.$adminB->public_id)->status() === 404, 'Binding não expõe integrante da outra clínica');
         $replay = new CookieJar(false, $cookiesA->toArray());

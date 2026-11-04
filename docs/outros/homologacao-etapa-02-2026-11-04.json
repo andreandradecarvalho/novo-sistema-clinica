@@ -1,0 +1,343 @@
+{
+  "observed_at": "2026-11-04T00:27:34+00:00",
+  "environment": "homologacao-local-isolada",
+  "php": "8.5.12",
+  "laravel": "13.39.0",
+  "database": "13.0.2-MariaDB-ubu2604",
+  "foreign_key_checks": 1,
+  "passed": true,
+  "registries_included": true,
+  "checks": [
+    {
+      "name": "Debug desativado",
+      "passed": true
+    },
+    {
+      "name": "Sessões persistidas e criptografadas",
+      "passed": true
+    },
+    {
+      "name": "Fila e cache Redis",
+      "passed": true
+    },
+    {
+      "name": "Login Vuexy da clínica A",
+      "passed": true
+    },
+    {
+      "name": "Mesmo e-mail rejeita senha da outra clínica A",
+      "passed": true
+    },
+    {
+      "name": "Senha exige desafio 2FA A",
+      "passed": true
+    },
+    {
+      "name": "Senha sem 2FA não abre dashboard A",
+      "passed": true
+    },
+    {
+      "name": "TOTP real autenticou clínica A",
+      "passed": true
+    },
+    {
+      "name": "Sessão SQL abre dashboard A",
+      "passed": true
+    },
+    {
+      "name": "Login Vuexy da clínica B",
+      "passed": true
+    },
+    {
+      "name": "Mesmo e-mail rejeita senha da outra clínica B",
+      "passed": true
+    },
+    {
+      "name": "Senha exige desafio 2FA B",
+      "passed": true
+    },
+    {
+      "name": "Senha sem 2FA não abre dashboard B",
+      "passed": true
+    },
+    {
+      "name": "TOTP real autenticou clínica B",
+      "passed": true
+    },
+    {
+      "name": "Sessão SQL abre dashboard B",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: senha confirmada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: unidade clínica criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: atribuição de unidade por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: perfil profissional criado sem concessão clínica",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: empresa criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: estabelecimento do empregador criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: paciente root criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: paciente source criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: busca CPF/HMAC sem número na resposta",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: vínculo empregatício criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: merge humano preserva integralmente o vínculo",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: origem arquivada não abre por rota normal",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: histórico consolidado com proveniência",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: versionamento pelo sobrevivente conserva origem/empregador",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: desligamento pelo sobrevivente",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: concessão empresarial criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: concessão empresarial revogada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: cadastros não concederam papéis/permissões ao integrante",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: senha confirmada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: unidade clínica criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: atribuição de unidade por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: perfil profissional criado sem concessão clínica",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: empresa criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: estabelecimento do empregador criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: paciente root criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: paciente source criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: busca CPF/HMAC sem número na resposta",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: vínculo empregatício criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: merge humano preserva integralmente o vínculo",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: origem arquivada não abre por rota normal",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: histórico consolidado com proveniência",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: versionamento pelo sobrevivente conserva origem/empregador",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: desligamento pelo sobrevivente",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: concessão empresarial criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: concessão empresarial revogada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: cadastros não concederam papéis/permissões ao integrante",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: paciente da outra clínica recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: concessões de outra empresa/tenant recusadas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: vínculo cruzado recusado pelo binding",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: busca por nome não cruza clínicas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: paciente da outra clínica recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: concessões de outra empresa/tenant recusadas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: vínculo cruzado recusado pelo binding",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: busca por nome não cruza clínicas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2: fixtures temporárias removidas; auditoria operacional preservada",
+      "passed": true
+    },
+    {
+      "name": "Administrador consulta equipe própria",
+      "passed": true
+    },
+    {
+      "name": "Binding não expõe integrante da outra clínica",
+      "passed": true
+    },
+    {
+      "name": "Cookie A reapresentado em B não autentica",
+      "passed": true
+    },
+    {
+      "name": "Reapresentação não destrói sessão A",
+      "passed": true
+    },
+    {
+      "name": "Header não seleciona outra clínica",
+      "passed": true
+    },
+    {
+      "name": "Domínio desconhecido rejeitado",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /.env",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /docs/README.md",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /vendor/autoload.php",
+      "passed": true
+    },
+    {
+      "name": "Horizon não expõe dados entre clínicas",
+      "passed": true
+    },
+    {
+      "name": "CSRF real rejeita POST sem token",
+      "passed": true
+    },
+    {
+      "name": "Recepção autenticou clínica A",
+      "passed": true
+    },
+    {
+      "name": "Troca obrigatória da senha inicial preservada",
+      "passed": true
+    },
+    {
+      "name": "Recepção autenticou clínica B",
+      "passed": true
+    },
+    {
+      "name": "Recepção sem permissão não consulta equipe",
+      "passed": true
+    },
+    {
+      "name": "Logout no HTTP real clinica-a.localhost",
+      "passed": true
+    },
+    {
+      "name": "Logout no HTTP real clinica-b.localhost",
+      "passed": true
+    },
+    {
+      "name": "Horizon processou três jobs reais",
+      "passed": true
+    },
+    {
+      "name": "Mesmo worker persistente em A/falha/B",
+      "passed": true
+    },
+    {
+      "name": "Contexto e team corretos após falha",
+      "passed": true
+    },
+    {
+      "name": "Permissões não vazam no Horizon",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "HTTP local; HTTPS externo não homologado",
+    "Somente dados sintéticos",
+    "Não substitui CI remota ou revisão de PR"
+  ],
+  "source_revision": "aaa13f08c6ca9bbb04b02e5e4bf8d535e774c65d",
+  "working_tree_dirty": true
+}

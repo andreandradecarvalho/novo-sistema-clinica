@@ -33,7 +33,7 @@ final readonly class ProvisionTenant
                     foreach (['clinic_admin', 'receptionist', 'doctor', 'technician', 'finance', 'company_user'] as $role) {
                         Role::findOrCreate($role, 'web');
                     }
-                    Role::findByName('clinic_admin', 'web')->syncPermissions(['users.view', 'users.manage', 'tenant.manage', 'audit.view', 'clinical.access', 'patients.view', 'patients.manage', 'companies.view', 'companies.manage', 'units.view', 'units.manage', 'professionals.view', 'professionals.manage', 'employments.view', 'employments.manage', 'company_access.view', 'company_access.manage']);
+                    Role::findByName('clinic_admin', 'web')->syncPermissions(['users.view', 'users.manage', 'tenant.manage', 'audit.view', 'clinical.access', 'patients.view', 'patients.manage', 'patients.review', 'patients.merge', 'companies.view', 'companies.manage', 'units.view', 'units.manage', 'professionals.view', 'professionals.manage', 'employments.view', 'employments.manage', 'company_access.view', 'company_access.manage']);
                     foreach (['doctor', 'technician'] as $role) {
                         Role::findByName($role, 'web')->syncPermissions(['clinical.access']);
                     }

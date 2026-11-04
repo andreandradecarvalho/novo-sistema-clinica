@@ -35,7 +35,7 @@
 
 [Confirmado] A nova [migration de professionals](../../database/migrations/2026_11_03_000004_create_professionals.php) reproduz a tabela prevista no [schema](../schema/schema.sql). Alteração, teste do motor e reversibilidade estão no [CHANGELOG](../schema/CHANGELOG.md). As antigas migrations e o DDL de referência permanecem intactos.
 
-[Confirmado] A etapa 2 ainda depende das restrições operacionais por unidade/empresa nos módulos futuros e busca/revisão/merge humano auditado de pacientes. Nenhum exame, prontuário, laudo ou ASO foi implementado por estes cadastros. CI remoto permanece para verificação futura conforme a exceção autorizada no fluxo 20.
+[Confirmado] A etapa 2 ainda depende das restrições operacionais por unidade/empresa nos módulos futuros e integração de identidade com os módulos clínicos futuros. Nenhum exame, prontuário, laudo ou ASO foi implementado por estes cadastros. CI remoto permanece para verificação futura conforme a exceção autorizada no fluxo 20.
 
 [Confirmado] Histórico de vínculos com vigência disponível em [vínculos empregatícios](vinculos-empregaticios.md).
 

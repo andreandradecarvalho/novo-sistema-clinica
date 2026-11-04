@@ -64,7 +64,10 @@ def run(*args, capture=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=['prepare', 'up', 'check', 'status', 'down'])
+    parser.add_argument('--registries', action='store_true', help='Incluir cadastros/identidade por HTTP na ação check')
     args = parser.parse_args()
+    if args.registries and args.action != 'check':
+        parser.error('--registries só pode ser usado com check')
     prepare()
     if args.action == 'prepare':
         print('Ambiente privado preparado em .env.homologacao; nenhum segredo exibido.')
@@ -82,12 +85,15 @@ def main():
         run('up', '-d', '--wait', 'app', 'horizon')
         print('Homologação iniciada em clinica-a.localhost:8082 e clinica-b.localhost:8082.')
     elif args.action == 'check':
-        result = run('exec', '-T', 'app', 'php', 'artisan', 'homologation:check', capture=True)
+        flags = ['--registries'] if args.registries else []
+        result = run('exec', '-T', 'app', 'php', 'artisan', 'homologation:check', *flags, capture=True)
         print(result.stdout)
-        report = json.loads(run('exec', '-T', 'app', 'cat', '/app/storage/app/homologacao-report.json', capture=True).stdout)
+        report_path = '/app/storage/app/homologacao-registries-report.json' if args.registries else '/app/storage/app/homologacao-report.json'
+        report = json.loads(run('exec', '-T', 'app', 'cat', report_path, capture=True).stdout)
         report['source_revision'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
         report['working_tree_dirty'] = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip())
-        filename = ROOT / 'docs/outros' / ('homologacao-local-' + datetime.now(timezone.utc).date().isoformat() + '.json')
+        prefix = 'homologacao-etapa-02-' if args.registries else 'homologacao-local-'
+        filename = ROOT / 'docs/outros' / (prefix + datetime.now(timezone.utc).date().isoformat() + '.json')
         filename.write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n')
         print('Evidência sem segredos: ' + str(filename.relative_to(ROOT)))
     elif args.action == 'status':

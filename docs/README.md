@@ -79,10 +79,16 @@
 
 [Confirmado] Operação da aplicação na raiz (instalação local, migrations, seeds e checks): [README do projeto](../README.md#ambiente-local). Entrega e evidências da fundação: [fluxo 20](fluxos/20-plano-desenvolvimento.md); estrutura executável: [migrations](../database/migrations/).
 
-[Confirmado] Homologação local isolada da fundação: [roteiro, clínicas e evidências](outros/homologacao-local.md). Credenciais ficam no arquivo de ambiente privado indicado no roteiro.
+[Confirmado] Homologação local isolada da fundação e dos cadastros: [roteiro, clínicas e evidências](outros/homologacao-local.md). Credenciais ficam no arquivo de ambiente privado indicado no roteiro.
 
 [Confirmado] Vínculos paciente–empregador, períodos, versões e desligamento: [uso e limites](outros/vinculos-empregaticios.md), com contrato no fluxo 23.
 
 [Confirmado] Gestão do vínculo integrante–unidade: [atribuição de unidades](outros/atribuicao-unidades.md), conforme identidade/ACL do fluxo 11.
 
 [Confirmado] Gestão administrativa do acesso por empregador: [concessões empresariais](outros/concessoes-empresariais.md), conforme fluxos 11/23/24.
+
+[Confirmado] Identificação e apoio à revisão humana: [busca e comparação de pacientes](outros/busca-revisao-pacientes.md); identidade nos módulos clínicos futuros segue o planejamento do fluxo 20.
+
+[Confirmado] Decisão positiva de identidade, arquivamento de duplicata e vínculos empregatícios preservados: [merge cadastral de pacientes](outros/merge-pacientes.md).
+
+[Confirmado] Revisão técnica e homologação ampliada dos cadastros: [relatório da etapa 2](outros/revisao-etapa-02.md). O aceite e o avanço de etapas permanecem exclusivamente no fluxo 20.

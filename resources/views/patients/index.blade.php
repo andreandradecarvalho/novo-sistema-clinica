@@ -1,8 +1,9 @@
 @extends('layouts.app')
 @section('title', 'Pacientes')
 @section('content')
-<div class="page-heading"><h1 class="h4 mb-1">Pacientes</h1><p class="text-body-secondary">Cadastros de identificação desta clínica.</p></div>
+<div class="page-heading"><h1 class="h4 mb-1">{{ ($searchResults ?? false) ? 'Resultado da busca' : 'Pacientes' }}</h1><p class="text-body-secondary">Cadastros de identificação desta clínica.</p></div>
 <section class="card">
+    <div class="card-body border-bottom"><a class="btn btn-label-primary" href="{{ route('patients.search.create') }}">Buscar pacientes</a>@if($searchResults ?? false)<a class="btn btn-label-secondary ms-3" href="{{ route('patients.index') }}">Todos os pacientes</a>@endif</div>
     <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-3"><h2 class="h5 mb-0">{{ $patients->total() }} cadastros</h2>@can('create', \App\Domain\Patients\Models\Patient::class)<a href="{{ route('patients.create') }}" class="btn btn-primary">Novo paciente</a>@endcan</div>
     <div class="table-responsive"><table class="table table-hover align-middle mb-0"><caption class="visually-hidden">Pacientes desta clínica</caption>
         <thead><tr><th scope="col">Nome</th><th scope="col">Nascimento</th><th scope="col">Identificação</th><th scope="col">Ações</th></tr></thead>

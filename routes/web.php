@@ -8,6 +8,9 @@ use App\Http\Controllers\CompanyUnitController;
 use App\Http\Controllers\EmploymentController;
 use App\Http\Controllers\MemberUnitController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PatientMergeController;
+use App\Http\Controllers\PatientReviewController;
+use App\Http\Controllers\PatientSearchController;
 use App\Http\Controllers\ProfessionalController;
 use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\SessionController;
@@ -35,6 +38,15 @@ Route::middleware('auth')->group(function (): void {
         Route::get('/{employment}/version', [EmploymentController::class, 'version'])->scopeBindings()->name('version');
         Route::post('/{employment}/version', [EmploymentController::class, 'replace'])->scopeBindings()->name('replace');
         Route::post('/{employment}/terminate', [EmploymentController::class, 'terminate'])->scopeBindings()->name('terminate');
+    });
+    Route::middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
+        Route::get('/patients/search', [PatientSearchController::class, 'create'])->name('patients.search.create');
+        Route::post('/patients/search', [PatientSearchController::class, 'store'])->name('patients.search.store');
+        Route::get('/patients/search/results', [PatientSearchController::class, 'results'])->name('patients.search.results');
+        Route::get('/patients/{patient:public_id}/merges', [PatientMergeController::class, 'index'])->name('patients.merges');
+        Route::post('/patients/{patient:public_id}/compare/{candidate:public_id}/merge', [PatientMergeController::class, 'store'])->withoutScopedBindings()->middleware('password.confirm')->name('patients.merge');
+        Route::get('/patients/{patient:public_id}/duplicates', [PatientReviewController::class, 'index'])->name('patients.duplicates');
+        Route::get('/patients/{patient:public_id}/compare/{candidate:public_id}', [PatientReviewController::class, 'compare'])->withoutScopedBindings()->name('patients.compare');
     });
     Route::resource('patients', PatientController::class)->scoped(['patient' => 'public_id'])->except('destroy')->middleware('clinical.2fa');
     Route::get('/security', SecurityController::class)->middleware('password.confirm')->name('security');

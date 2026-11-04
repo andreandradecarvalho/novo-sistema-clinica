@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Shared\Services;
 
 use App\Domain\Identity\Models\User;
+use App\Domain\Patients\Models\Patient;
 use App\Domain\Tenancy\Services\TenantContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +25,13 @@ final class RegistryAudit
         ]);
     }
 
-    /** @param array<string, int|null>|null $references */
+    /** @param list<int> $patientIds */
+    public function recordEmploymentGroupRead(Patient $survivor, array $patientIds): void
+    {
+        $this->write('employments', 'merged_employments_listed', $survivor, Patient::class, ['patient_ids' => $patientIds]);
+    }
+
+    /** @param array<string, int|list<int>|null>|null $references */
     private function write(string $domain, string $event, ?Model $subject, string $subjectType, ?array $references): void
     {
         DB::table('activity_log')->insert([

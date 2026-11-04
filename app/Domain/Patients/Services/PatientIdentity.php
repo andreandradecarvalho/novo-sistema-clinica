@@ -6,10 +6,16 @@ namespace App\Domain\Patients\Services;
 
 use App\Domain\Shared\ValueObjects\Cpf;
 use App\Domain\Tenancy\Services\TenantContext;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 final readonly class PatientIdentity
 {
+    public static function normalizeName(string $value): string
+    {
+        return Str::lower(Str::ascii(Str::squish($value)));
+    }
+
     public function hash(Cpf $cpf): string
     {
         $key = config('identity.cpf_search_key');

@@ -5,6 +5,8 @@
 <section class="card"><div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-3"><h2 class="h5 mb-0">{{ $patient->name }}</h2>@can('update', $patient)<a class="btn btn-primary" href="{{ route('patients.edit', $patient->public_id) }}">Editar cadastro</a>@endcan</div><div class="card-body">
 <dl class="row"><dt class="col-sm-4">Nascimento</dt><dd class="col-sm-8">{{ $patient->birth_date?->format('d/m/Y') ?? 'Não informado' }}</dd><dt class="col-sm-4">CPF</dt><dd class="col-sm-8">{{ $patient->is_partial ? 'Não informado' : 'Cadastrado com proteção de dados' }}</dd><dt class="col-sm-4">E-mail</dt><dd class="col-sm-8">{{ $patient->email ?? 'Não informado' }}</dd><dt class="col-sm-4">Celular</dt><dd class="col-sm-8">{{ $patient->mobile_phone ?? 'Não informado' }}</dd></dl>
 @can('viewAny', [\App\Domain\Occupational\Models\EmploymentLink::class, $patient])<a class="btn btn-primary me-3" href="{{ route('patients.employments.index', $patient->public_id) }}">Vínculos empregatícios</a>@endcan
+@can('review', $patient)<a class="btn btn-label-secondary me-3" href="{{ route('patients.merges', $patient->public_id) }}">Histórico de merges</a>@endcan
+@can('review', $patient)<a class="btn btn-label-primary me-3" href="{{ route('patients.duplicates', $patient->public_id) }}">Revisar homônimos</a>@endcan
 <a href="{{ route('patients.index') }}" class="btn btn-label-secondary">Voltar aos pacientes</a>
 </div></section>
 @endsection

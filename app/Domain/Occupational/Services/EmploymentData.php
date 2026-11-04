@@ -8,6 +8,7 @@ use App\Domain\Companies\Models\Company;
 use App\Domain\Companies\Models\CompanyUnit;
 use App\Domain\Occupational\Models\EmploymentLink;
 use App\Domain\Patients\Models\Patient;
+use App\Domain\Patients\Services\PatientIdentityGroup;
 use Illuminate\Validation\ValidationException;
 
 final class EmploymentData
@@ -20,7 +21,7 @@ final class EmploymentData
     public function open(Patient $patient, EmploymentLink $link): EmploymentLink
     {
         $this->lockPatient($patient);
-        $current = EmploymentLink::query()->where('patient_id', $patient->getKey())->whereKey($link->getKey())->lockForUpdate()->firstOrFail();
+        $current = EmploymentLink::query()->whereIn('patient_id', app(PatientIdentityGroup::class)->memberIds($patient, true))->whereKey($link->getKey())->lockForUpdate()->firstOrFail();
         if ($current->ends_on !== null || $current->starts_on === null) {
             throw ValidationException::withMessages(['starts_on' => 'O vínculo já possui encerramento ou não tem início conhecido para esta operação.']);
         }

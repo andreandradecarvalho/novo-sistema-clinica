@@ -5,13 +5,20 @@ declare(strict_types=1);
 namespace App\Domain\Patients\Models;
 
 use App\Domain\Occupational\Models\EmploymentLink;
+use App\Domain\Patients\Services\PatientIdentity;
+use App\Domain\Patients\Services\PatientIdentityGroup;
 use App\Domain\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use LogicException;
 
-/** @property bool $is_partial */
+/**
+ * @property bool $is_partial
+ * @property Carbon|null $birth_date
+ */
 final class Patient extends Model
 {
     use BelongsToTenant, SoftDeletes;
@@ -33,13 +40,31 @@ final class Patient extends Model
         return $this->hasMany(EmploymentLink::class, 'patient_id');
     }
 
+    public function resolveChildRouteBinding($childType, $value, $field)
+    {
+        if ($childType === 'employment') {
+            if ($field !== null && $field !== 'id') {
+                throw new LogicException('Unsupported employment binding key.');
+            }
+
+            return EmploymentLink::query()->whereIn('patient_id', app(PatientIdentityGroup::class)->memberIds($this))->whereKey($value)->first();
+        }
+
+        return parent::resolveChildRouteBinding($childType, $value, $field);
+    }
+
     protected static function booted(): void
     {
         self::creating(function (Patient $patient): void {
             $patient->public_id ??= (string) Str::ulid();
         });
+        self::updating(function (Patient $patient): void {
+            if ($patient->getRawOriginal('deleted_at') !== null && PatientMerge::query()->where('merged_patient_id', $patient->getKey())->exists()) {
+                throw new LogicException('Archived merge origins cannot be changed or restored.');
+            }
+        });
         self::saving(function (Patient $patient): void {
-            $patient->normalized_name = Str::lower(Str::ascii(Str::squish($patient->name)));
+            $patient->normalized_name = PatientIdentity::normalizeName($patient->name);
         });
     }
 }

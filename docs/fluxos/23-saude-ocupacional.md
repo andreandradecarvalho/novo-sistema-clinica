@@ -11,6 +11,8 @@
 
 [Confirmado] Convenção implementada no cadastro manual: início obrigatório e períodos inclusivos. Nova versão inicia após a anterior e fecha sua vigência no dia precedente, sem registrar desligamento; desligamento explícito preenche o fim da versão e a data de desligamento. Múltiplos vínculos simultâneos permanecem permitidos. Uso, snapshots e limites estão em [vínculos empregatícios](../outros/vinculos-empregaticios.md). Isso não representa entrega de avaliação ou ASO.
 
+[Confirmado] Consolidação de identidade implementada na etapa 2: vínculos mantêm seus IDs, empregador e patient_id original; a consulta/gestão autorizada pelo sobrevivente considera as origens arquivadas diretamente relacionadas. Concessão empresarial não é ampliada pelo merge. Contrato operacional e limites em [merge de pacientes](../outros/merge-pacientes.md).
+
 ## 23.2 Avaliação e ASO
 
 [Confirmado] A NR-7 distingue admissional, periódico, retorno ao trabalho, mudança de riscos ocupacionais e demissional (§7.5.6), prevê conteúdo mínimo do ASO (§7.5.19.1) e periodicidades dependentes do contexto. Fonte: [NR-7 oficial](https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/arquivos/normas-regulamentadoras/nr-07-atualizada-2022.pdf).

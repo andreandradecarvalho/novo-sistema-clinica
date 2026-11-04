@@ -18,7 +18,7 @@ final class SavePatient
     {
         try {
             return DB::transaction(function () use ($input, $patient): Patient {
-                $patient ??= new Patient;
+                $patient = $patient?->exists ? Patient::query()->whereKey($patient->getKey())->lockForUpdate()->firstOrFail() : new Patient;
                 $event = $patient->exists ? 'patient_updated' : 'patient_created';
                 $patient->fill(array_intersect_key($input, array_flip(['name', 'birth_date', 'email', 'mobile_phone'])));
                 if (! empty($input['cpf'])) {

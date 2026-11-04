@@ -1,0 +1,162 @@
+{
+  "observed_at": "2026-11-04T00:14:12+00:00",
+  "environment": "homologacao-local-isolada",
+  "php": "8.5.12",
+  "laravel": "13.39.0",
+  "database": "13.0.2-MariaDB-ubu2604",
+  "foreign_key_checks": 1,
+  "passed": true,
+  "checks": [
+    {
+      "name": "Debug desativado",
+      "passed": true
+    },
+    {
+      "name": "Sessões persistidas e criptografadas",
+      "passed": true
+    },
+    {
+      "name": "Fila e cache Redis",
+      "passed": true
+    },
+    {
+      "name": "Login Vuexy da clínica A",
+      "passed": true
+    },
+    {
+      "name": "Mesmo e-mail rejeita senha da outra clínica A",
+      "passed": true
+    },
+    {
+      "name": "Senha exige desafio 2FA A",
+      "passed": true
+    },
+    {
+      "name": "Senha sem 2FA não abre dashboard A",
+      "passed": true
+    },
+    {
+      "name": "TOTP real autenticou clínica A",
+      "passed": true
+    },
+    {
+      "name": "Sessão SQL abre dashboard A",
+      "passed": true
+    },
+    {
+      "name": "Login Vuexy da clínica B",
+      "passed": true
+    },
+    {
+      "name": "Mesmo e-mail rejeita senha da outra clínica B",
+      "passed": true
+    },
+    {
+      "name": "Senha exige desafio 2FA B",
+      "passed": true
+    },
+    {
+      "name": "Senha sem 2FA não abre dashboard B",
+      "passed": true
+    },
+    {
+      "name": "TOTP real autenticou clínica B",
+      "passed": true
+    },
+    {
+      "name": "Sessão SQL abre dashboard B",
+      "passed": true
+    },
+    {
+      "name": "Administrador consulta equipe própria",
+      "passed": true
+    },
+    {
+      "name": "Binding não expõe integrante da outra clínica",
+      "passed": true
+    },
+    {
+      "name": "Cookie A reapresentado em B não autentica",
+      "passed": true
+    },
+    {
+      "name": "Reapresentação não destrói sessão A",
+      "passed": true
+    },
+    {
+      "name": "Header não seleciona outra clínica",
+      "passed": true
+    },
+    {
+      "name": "Domínio desconhecido rejeitado",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /.env",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /docs/README.md",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /vendor/autoload.php",
+      "passed": true
+    },
+    {
+      "name": "Horizon não expõe dados entre clínicas",
+      "passed": true
+    },
+    {
+      "name": "CSRF real rejeita POST sem token",
+      "passed": true
+    },
+    {
+      "name": "Recepção autenticou clínica A",
+      "passed": true
+    },
+    {
+      "name": "Troca obrigatória da senha inicial preservada",
+      "passed": true
+    },
+    {
+      "name": "Recepção autenticou clínica B",
+      "passed": true
+    },
+    {
+      "name": "Recepção sem permissão não consulta equipe",
+      "passed": true
+    },
+    {
+      "name": "Logout no HTTP real clinica-a.localhost",
+      "passed": true
+    },
+    {
+      "name": "Logout no HTTP real clinica-b.localhost",
+      "passed": true
+    },
+    {
+      "name": "Horizon processou três jobs reais",
+      "passed": true
+    },
+    {
+      "name": "Mesmo worker persistente em A/falha/B",
+      "passed": true
+    },
+    {
+      "name": "Contexto e team corretos após falha",
+      "passed": true
+    },
+    {
+      "name": "Permissões não vazam no Horizon",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "HTTP local; HTTPS externo não homologado",
+    "Somente dados sintéticos",
+    "Não substitui CI remota ou revisão de PR"
+  ],
+  "source_revision": "aaa13f08c6ca9bbb04b02e5e4bf8d535e774c65d",
+  "working_tree_dirty": true
+}

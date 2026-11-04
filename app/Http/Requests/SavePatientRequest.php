@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use App\Domain\Patients\Models\Patient;
-use App\Domain\Shared\ValueObjects\Cpf;
-use Closure;
+use App\Http\Rules\ValidCpf;
 use Illuminate\Foundation\Http\FormRequest;
-use InvalidArgumentException;
 
 final class SavePatientRequest extends FormRequest
 {
@@ -26,16 +24,7 @@ final class SavePatientRequest extends FormRequest
             'birth_date' => ['nullable', 'date_format:Y-m-d', 'before_or_equal:today'],
             'email' => ['nullable', 'email', 'max:180'],
             'mobile_phone' => ['nullable', 'string', 'max:20', 'regex:/\A[0-9+() -]+\z/'],
-            'cpf' => ['nullable', 'string', 'max:14', function (string $attribute, mixed $value, Closure $fail): void {
-                try {
-                    if (! is_string($value)) {
-                        throw new InvalidArgumentException;
-                    }
-                    new Cpf($value);
-                } catch (InvalidArgumentException) {
-                    $fail('CPF inválido.');
-                }
-            }],
+            'cpf' => ['nullable', 'string', 'max:14', new ValidCpf],
             'tenant_id' => ['prohibited'], 'user_id' => ['prohibited'], 'company_id' => ['prohibited'],
             'company_unit_id' => ['prohibited'], 'possible_duplicate_of_id' => ['prohibited'],
             'cpf_hash' => ['prohibited'], 'cpf_encrypted' => ['prohibited'],

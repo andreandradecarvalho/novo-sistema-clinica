@@ -27,7 +27,7 @@
 
 ## Limites da entrega
 
-[Confirmado] Cadastro empresarial não concede acesso a prontuário, paciente, resultado ou ASO. Permanecem para continuação da etapa 2: restrições operacionais por unidade/empresa nos módulos futuros, além da busca/merge assistido de pacientes. Não há exclusão definitiva, gestão de matriz/filial por parent_id, CNPJ próprio em company_units ou integração fiscal nesta interface. Testes e verificações não executadas estão no fluxo 20.
+[Confirmado] Cadastro empresarial não concede acesso a prontuário, paciente, resultado ou ASO. Permanecem para continuação da etapa 2: restrições operacionais por unidade/empresa nos módulos futuros, além da integração de identidade com os módulos clínicos futuros. Não há exclusão definitiva, gestão de matriz/filial por parent_id, CNPJ próprio em company_units ou integração fiscal nesta interface. Testes e verificações não executadas estão no fluxo 20.
 
 [Confirmado] Cadastros relacionados disponíveis: [unidades clínicas e profissionais](cadastro-unidades-profissionais.md).
 

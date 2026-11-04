@@ -21,6 +21,8 @@ final class EmploymentLink extends Model
 {
     use BelongsToTenant;
 
+    public const array REVIEW_COLUMNS = ['id', 'tenant_id', 'patient_id', 'company_id', 'company_unit_id', 'registration_number', 'job_title', 'department', 'starts_on', 'ends_on', 'termination_date', 'source', 'context_encrypted', 'created_at', 'updated_at'];
+
     #[\Override]
     protected $table = 'patient_company_links';
 

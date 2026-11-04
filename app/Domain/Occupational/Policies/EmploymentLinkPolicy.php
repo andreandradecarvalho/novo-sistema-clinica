@@ -9,6 +9,7 @@ use App\Domain\Identity\Services\TenantPermission;
 use App\Domain\Occupational\Models\EmploymentLink;
 use App\Domain\Patients\Models\Patient;
 use App\Domain\Patients\Policies\PatientPolicy;
+use App\Domain\Patients\Services\PatientIdentityGroup;
 
 final class EmploymentLinkPolicy
 {
@@ -26,7 +27,8 @@ final class EmploymentLinkPolicy
 
     public function view(User $actor, EmploymentLink $link, Patient $patient): bool
     {
-        return (int) $link->patient_id === (int) $patient->getKey() && (int) $link->tenant_id === (int) $patient->tenant_id && $this->viewAny($actor, $patient);
+        return (int) $link->tenant_id === (int) $patient->tenant_id && $this->viewAny($actor, $patient)
+            && app(PatientIdentityGroup::class)->contains($patient, (int) $link->patient_id);
     }
 
     public function update(User $actor, EmploymentLink $link, Patient $patient): bool

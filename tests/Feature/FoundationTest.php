@@ -376,11 +376,11 @@ it('refuses homologation fixtures outside the isolated staging environment', fun
     expect(fn () => app(HomologationSeeder::class)->run())->toThrow(RuntimeException::class);
 });
 
-it('refuses the live homologation check outside its isolated environment', function (): void {
-    $this->artisan('homologation:check')
+it('refuses the live homologation check outside its isolated environment', function (bool $registries): void {
+    $this->artisan('homologation:check', ['--registries' => $registries])
         ->expectsOutputToContain('This command requires the isolated local homologation database.')
         ->assertFailed();
-});
+})->with([false, true]);
 
 it('refuses homologation migrations outside the isolated environment', function (): void {
     $this->artisan('homologation:migrate')

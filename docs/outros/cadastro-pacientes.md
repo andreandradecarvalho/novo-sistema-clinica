@@ -27,10 +27,12 @@
 
 [Confirmado] A migration cria `companies`, `company_units` e `patients`, com os campos/índices/FKs do [schema de referência](../schema/schema.sql). As duas primeiras foram introduzidas como dependências estruturais; sua interface agora é descrita em [empresas e estabelecimentos](cadastro-empresas.md). Mudança e validações em [CHANGELOG](../schema/CHANGELOG.md).
 
-[Confirmado] Permanecem para continuação da etapa 2: busca assistida/exata na interface, revisão de possíveis duplicatas e merge humano auditado, restrições operacionais por unidade/empresa nos módulos futuros. Não há prontuário, exames ou saúde ocupacional implementados por este cadastro. Testes e status desta entrega estão no fluxo 20; CI remoto continua para verificação futura conforme a exceção autorizada.
+[Confirmado] Busca e comparação de homônimos estão disponíveis conforme [uso e limites](busca-revisao-pacientes.md). Permanecem para continuação da etapa 2: integração de identidade com os módulos clínicos futuros, além das restrições operacionais por unidade/empresa nos módulos futuros. Não há prontuário, exames ou saúde ocupacional implementados por este cadastro. Testes e status desta entrega estão no fluxo 20; CI remoto continua para verificação futura conforme a exceção autorizada.
 
 [Confirmado] Cadastros relacionados disponíveis: [unidades clínicas e profissionais](cadastro-unidades-profissionais.md).
 
 [Confirmado] Histórico de vínculos com vigência disponível em [vínculos empregatícios](vinculos-empregaticios.md).
 
 [Confirmado] Gestão administrativa de concessões disponível em [concessões empresariais](concessoes-empresariais.md); integração dos portais permanece futura.
+
+[Confirmado] Decisão humana positiva e merge com vínculos empregatícios preservados: [uso e limites](merge-pacientes.md).

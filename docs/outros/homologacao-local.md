@@ -1,4 +1,4 @@
-# Homologação local isolada da fundação
+# Homologação local isolada
 
 [Confirmado] Ambiente escolhido pelo usuário para validar a etapa 1 com duas clínicas sintéticas. Usa [compose.homologacao.yaml](../../compose.homologacao.yaml) e [scripts/homologacao.py](../../scripts/homologacao.py). Estratégia de dados e versões seguem os fluxos [09](../fluxos/09-estrategia-multi-tenant.md) e [14](../fluxos/14-arquitetura-laravel.md). Status/aceite ficam exclusivamente no [fluxo 20](../fluxos/20-plano-desenvolvimento.md).
 
@@ -11,6 +11,8 @@
 python3 scripts/homologacao.py prepare
 python3 scripts/homologacao.py up
 python3 scripts/homologacao.py check
+# Inclui os cadastros e a identidade da etapa 2, com fixtures temporárias.
+python3 scripts/homologacao.py check --registries
 python3 scripts/homologacao.py status
 
 # Encerra somente esta homologação, preservando seus volumes.
@@ -20,6 +22,15 @@ python3 scripts/homologacao.py down
 [Confirmado] O preparador preserva um .env.homologacao já existente. O comando up executa homologation:migrate, que valida ambiente, configuração e conexão resolvida antes de chamar as migrations; migra somente o banco novo_sistema_clinica_homologacao e aplica fixtures protegidas por ambiente/host/nome de banco; não limpa tabelas nem sobrescreve usuários existentes. A suíte testa a recusa do seeder e do comando de verificação fora desse contexto, incluindo DB_URL, conexão padrão e conexão já resolvida incompatíveis. Nenhuma alteração no legado ou nas contas locais da porta 8080.
 
 [Confirmado] O comando check é executado no container e chama o servidor HTTP real. O relatório público, sem credenciais, fica em docs/outros/homologacao-local-AAAA-MM-DD.json; o snapshot validado desta entrega é [homologacao-local-2026-11-03.json](homologacao-local-2026-11-03.json). O resultado inclui data, versões reais, FKs habilitadas, verificações e revisão de origem; working_tree_dirty registra alterações locais ainda não commitadas.
+
+## Cadastros e identidade — etapa 2
+
+[Confirmado] `check --registries` mantém as verificações da fundação e acrescenta operações reais de cadastro nas duas clínicas. O relatório fica em `docs/outros/homologacao-etapa-02-AAAA-MM-DD.json`, com data UTC. A [execução de 04/11/2026 UTC](homologacao-etapa-02-2026-11-04.json) aprovou **81 verificações**: 36 da fundação, 44 de cadastros/identidade/isolamento e uma de limpeza. O código desse complemento está em [RegistryHomologation](../../app/Support/RegistryHomologation.php); a análise e os limites ficam na [revisão da etapa 2](revisao-etapa-02.md).
+
+- [Confirmado] Cobertura adicional: unidade clínica, atribuição de integrante, profissional, empresa/estabelecimento, pacientes, busca por CPF/HMAC e nome, vínculo empregatício, comparação/merge humano, consulta consolidada, versionamento/desligamento e criação/revogação de concessão empresarial. Verifica preservação das FKs/histórico, ausência de papéis automáticos e recusa de paciente/empresa/vínculo de outra clínica.
+- [Confirmado] Usa os administradores sintéticos existentes com senha/TOTP privados. Cria integrante sem permissões e registros sintéticos com identificador aleatório próprio da execução; usa o mesmo CPF sintético nas duas clínicas para exercitar seu isolamento. Não modifica senhas, TOTP ou a atribuição de unidade dos quatro atores persistentes documentados.
+- [Confirmado] O destino é validado antes da execução e novamente antes da limpeza. Em `finally`, remove somente registros temporários rastreados por IDs e tenant, em transação e ordem de FKs; mantém a auditoria operacional sem conteúdo cadastral. Não faz truncamento ou limpeza global. Interrupção abrupta do processo/container pode impedir esse `finally`; nesse caso, examinar as fixtures do ambiente isolado antes de repetir, sem apagar registros pelo nome genericamente.
+- [Confirmado] `--registries` só é aceito na ação `check` do script. A suíte verifica que o comando Artisan, com e sem a opção, recusa ambiente diferente da homologação isolada antes de qualquer requisição ou fixture. A CI declarada executa o modo ampliado; execução remota continua não verificada.
 
 ## Clínicas e acessos sintéticos
 
