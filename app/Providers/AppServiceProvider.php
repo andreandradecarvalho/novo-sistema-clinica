@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Domain\Catalog\Models\ExamPreparation;
+use App\Domain\Catalog\Models\ExamType;
+use App\Domain\Catalog\Policies\ExamPreparationPolicy;
+use App\Domain\Catalog\Policies\ExamTypePolicy;
 use App\Domain\Companies\Models\Company;
 use App\Domain\Companies\Models\CompanyAccess;
 use App\Domain\Companies\Models\CompanyUnit;
@@ -50,6 +54,8 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(ExamType::class, ExamTypePolicy::class);
+        Gate::policy(ExamPreparation::class, ExamPreparationPolicy::class);
         Gate::policy(CompanyAccess::class, CompanyAccessPolicy::class);
         Gate::policy(EmploymentLink::class, EmploymentLinkPolicy::class);
         Gate::policy(Unit::class, UnitPolicy::class);

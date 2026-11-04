@@ -6,6 +6,8 @@ use App\Http\Controllers\CompanyAccessController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyUnitController;
 use App\Http\Controllers\EmploymentController;
+use App\Http\Controllers\ExamPreparationController;
+use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\MemberUnitController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientMergeController;
@@ -19,6 +21,15 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function (): void {
+    Route::prefix('exam-types/{exam_type:public_id}/preparations')->name('exam-types.preparations.')->scopeBindings()->middleware('clinical.2fa')->group(function (): void {
+        Route::get('/', [ExamPreparationController::class, 'index'])->name('index');
+        Route::get('/create', [ExamPreparationController::class, 'create'])->name('create');
+        Route::post('/', [ExamPreparationController::class, 'store'])->name('store');
+        Route::get('/{preparation}', [ExamPreparationController::class, 'show'])->name('show');
+        Route::get('/{preparation}/edit', [ExamPreparationController::class, 'edit'])->name('edit');
+        Route::put('/{preparation}', [ExamPreparationController::class, 'update'])->name('update');
+    });
+    Route::resource('exam-types', ExamTypeController::class)->scoped(['exam_type' => 'public_id'])->except('destroy')->middleware('clinical.2fa');
     Route::resource('units', UnitController::class)->scoped(['unit' => 'public_id'])->except('destroy')->middleware('clinical.2fa');
     Route::get('/professionals/register/{user:public_id}', [ProfessionalController::class, 'registration'])->middleware('clinical.2fa')->name('professionals.registration');
     Route::resource('professionals', ProfessionalController::class)->except('destroy')->middleware('clinical.2fa');

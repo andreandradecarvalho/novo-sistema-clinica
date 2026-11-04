@@ -36,6 +36,9 @@
         @can('viewAny', \App\Domain\Professionals\Models\Professional::class)
         <li class="menu-item {{ request()->routeIs('professionals.*') ? 'active' : '' }}"><a href="{{ route('professionals.index') }}" class="menu-link" @if(request()->routeIs('professionals.*')) aria-current="page" @endif><x-icon name="users" class="menu-icon" /><span>Profissionais</span></a></li>
         @endcan
+        @can('viewAny', \App\Domain\Catalog\Models\ExamType::class)
+        <li class="menu-item {{ request()->routeIs('exam-types.*') ? 'active' : '' }}"><a href="{{ route('exam-types.index') }}" class="menu-link" @if(request()->routeIs('exam-types.*')) aria-current="page" @endif><x-icon name="layout-dashboard" class="menu-icon" /><span>Catálogo de exames</span></a></li>
+        @endcan
         <li class="menu-header small"><span class="menu-header-text">Minha conta</span></li>
         <li class="menu-item {{ request()->routeIs('security') ? 'active' : '' }}">
             <a href="{{ route('security') }}" class="menu-link" @if(request()->routeIs('security')) aria-current="page" @endif>

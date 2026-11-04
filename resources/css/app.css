@@ -19,6 +19,7 @@ body { min-height: 100vh; }
 .page-heading { margin-bottom: 1.5rem; }
 .qr-code svg { max-width: 100%; height: auto; }
 .recovery-codes { overflow-wrap: anywhere; }
+.preparation-instructions { white-space: pre-wrap; overflow-wrap: anywhere; }
 .welcome-illustration { max-height: 220px; max-width: 100%; object-fit: contain; }
 @media (max-width: 575.98px) {
     .layout-navbar .clinic-name { max-width: 47vw; }

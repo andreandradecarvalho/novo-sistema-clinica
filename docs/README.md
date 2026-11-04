@@ -92,3 +92,5 @@
 [Confirmado] Decisão positiva de identidade, arquivamento de duplicata e vínculos empregatícios preservados: [merge cadastral de pacientes](outros/merge-pacientes.md).
 
 [Confirmado] Revisão técnica e homologação ampliada dos cadastros: [relatório da etapa 2](outros/revisao-etapa-02.md). O aceite e o avanço de etapas permanecem exclusivamente no fluxo 20.
+
+[Confirmado] Cadastro administrativo de tipos de exame e orientações de preparo: [catálogo de exames e preparos — etapa 3](outros/catalogo-exames.md).

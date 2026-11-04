@@ -95,7 +95,7 @@
 - [Confirmado] Usar o PHP do container; não contornar o requisito de plataforma com ignore-platform-reqs. Segredos permanecem em .env, modo 0600, ignorado pelo Git. Não sobrescrever APP_KEY de instalação existente.
 - [Confirmado] Migrations são únicas no banco compartilhado. tenant:create não cria bancos e é idempotente. db:seed mantém catálogo global; papéis são configurados com contexto de clínica no provisionamento. Nunca incluir administrador/senha fixa em seed.
 - [Confirmado] A suíte Pest exige novo_sistema_clinica_testing em host local e testa o motor MariaDB escolhido, sem SQLite. Manter Redis ativo para o teste de worker persistente. Não usar o banco de trabalho para rollback de teste, migrate:fresh ou fixtures.
-- [Confirmado] Mudanças nas migrations/DDL exigem registro em [CHANGELOG](docs/schema/CHANGELOG.md). DDL de domínio em schema.sql é referência completa futura; migrations atuais implementam somente fundação e infraestrutura Laravel. Não importar todo o DDL para simular entrega de módulos futuros.
+- [Confirmado] Mudanças nas migrations/DDL exigem registro em [CHANGELOG](docs/schema/CHANGELOG.md). DDL de domínio em schema.sql é referência completa futura; migrations implementam gradualmente as entregas registradas no fluxo 20. Não importar todo o DDL para simular entrega de módulos futuros.
 - [Confirmado] Validar isolamento também em cache, fila, storage, broadcast, sessões e reset de senha. Raw SQL, toBase(), remoção explícita de scopes e pivôs polimórficos continuam fronteiras de revisão obrigatória; não presumir proteção universal do scope.
 - [Confirmado] Evidências, limites e aceite ficam no [fluxo 20](docs/fluxos/20-plano-desenvolvimento.md). Não anunciar suporte MySQL, CI remota verde ou staging validado sem executá-los.
 
