@@ -1,5 +1,7 @@
 # Mapa da documentação
 
+[Confirmado] Para continuar a implementação, consultar o [ponto de retomada no fluxo 20](fluxos/20-plano-desenvolvimento.md#2041-ponto-de-retomada--04112026), mantido na fonte única de execução.
+
 [Confirmado] Aplicação na [raiz do repositório](../), com [composer.json](../composer.json) e [artisan](../artisan); documentação nas pastas analise, fluxos, layout, outros e schema. Orquestração: [AGENTS](../AGENTS.md). Não confundir documentação/DDL com aplicação instalada. Correções atuais em [pendências](outros/PENDENCIAS.md).
 
 ## Fontes únicas por assunto
@@ -93,4 +95,8 @@
 
 [Confirmado] Revisão técnica e homologação ampliada dos cadastros: [relatório da etapa 2](outros/revisao-etapa-02.md). O aceite e o avanço de etapas permanecem exclusivamente no fluxo 20.
 
-[Confirmado] Cadastro administrativo de tipos de exame e orientações de preparo: [catálogo de exames e preparos — etapa 3](outros/catalogo-exames.md).
+[Confirmado] Cadastro administrativo de tipos de exame, orientações textuais e anexos privados de preparo: [catálogo de exames e preparos — etapa 3](outros/catalogo-exames.md).
+
+[Confirmado] Configuração administrativa de grupos e perguntas de texto livre, com histórico imutável: [questionários versionados — uso e limites](outros/questionarios.md). Contrato clínico no fluxo 22; não inclui coleta de respostas.
+
+[Confirmado] Manifestações por finalidade, termo/evidência cifrados e histórico preservado: [consentimentos e termos do paciente — uso e limites](outros/consentimentos-pacientes.md), conforme fluxo 24.

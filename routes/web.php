@@ -6,9 +6,12 @@ use App\Http\Controllers\CompanyAccessController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyUnitController;
 use App\Http\Controllers\EmploymentController;
+use App\Http\Controllers\ExamAttachmentController;
 use App\Http\Controllers\ExamPreparationController;
 use App\Http\Controllers\ExamTypeController;
+use App\Http\Controllers\HealthQuestionController;
 use App\Http\Controllers\MemberUnitController;
+use App\Http\Controllers\PatientConsentController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientMergeController;
 use App\Http\Controllers\PatientReviewController;
@@ -21,6 +24,26 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function (): void {
+    Route::prefix('patients/{patient:public_id}/consents')->name('patients.consents.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
+        Route::get('/', [PatientConsentController::class, 'index'])->name('index');
+        Route::get('/create', [PatientConsentController::class, 'create'])->name('create');
+        Route::post('/', [PatientConsentController::class, 'store'])->name('store');
+        Route::get('/{consent}', [PatientConsentController::class, 'show'])->name('show');
+    });
+    Route::prefix('questionnaires')->name('questionnaires.')->scopeBindings()->middleware('clinical.2fa')->group(function (): void {
+        Route::get('/', [HealthQuestionController::class, 'index'])->name('index');
+        Route::post('/', [HealthQuestionController::class, 'storeGroup'])->name('store');
+        Route::get('/{group}', [HealthQuestionController::class, 'show'])->name('show');
+        Route::post('/{group}/questions', [HealthQuestionController::class, 'store'])->name('questions.store');
+        Route::get('/{group}/questions/{question}', [HealthQuestionController::class, 'question'])->name('questions.show');
+        Route::post('/{group}/questions/{question}/versions', [HealthQuestionController::class, 'revise'])->name('questions.revise');
+    });
+    Route::prefix('exam-types/{exam_type:public_id}/attachments')->name('exam-types.attachments.')->scopeBindings()->middleware('clinical.2fa')->group(function (): void {
+        Route::get('/', [ExamAttachmentController::class, 'index'])->name('index');
+        Route::get('/create', [ExamAttachmentController::class, 'create'])->name('create');
+        Route::post('/', [ExamAttachmentController::class, 'store'])->name('store');
+        Route::get('/{attachment}/download', [ExamAttachmentController::class, 'download'])->name('download');
+    });
     Route::prefix('exam-types/{exam_type:public_id}/preparations')->name('exam-types.preparations.')->scopeBindings()->middleware('clinical.2fa')->group(function (): void {
         Route::get('/', [ExamPreparationController::class, 'index'])->name('index');
         Route::get('/create', [ExamPreparationController::class, 'create'])->name('create');

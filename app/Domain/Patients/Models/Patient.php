@@ -40,6 +40,12 @@ final class Patient extends Model
         return $this->hasMany(EmploymentLink::class, 'patient_id');
     }
 
+    /** @return HasMany<PatientConsent, $this> */
+    public function consents(): HasMany
+    {
+        return $this->hasMany(PatientConsent::class);
+    }
+
     public function resolveChildRouteBinding($childType, $value, $field)
     {
         if ($childType === 'employment') {

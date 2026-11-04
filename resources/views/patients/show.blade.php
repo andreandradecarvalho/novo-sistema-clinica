@@ -7,6 +7,7 @@
 @can('viewAny', [\App\Domain\Occupational\Models\EmploymentLink::class, $patient])<a class="btn btn-primary me-3" href="{{ route('patients.employments.index', $patient->public_id) }}">Vínculos empregatícios</a>@endcan
 @can('review', $patient)<a class="btn btn-label-secondary me-3" href="{{ route('patients.merges', $patient->public_id) }}">Histórico de merges</a>@endcan
 @can('review', $patient)<a class="btn btn-label-primary me-3" href="{{ route('patients.duplicates', $patient->public_id) }}">Revisar homônimos</a>@endcan
+@can('viewAny', [\App\Domain\Patients\Models\PatientConsent::class, $patient])<a class="btn btn-label-primary me-3" href="{{ route('patients.consents.index', $patient->public_id) }}">Consentimentos e termos</a>@endcan
 <a href="{{ route('patients.index') }}" class="btn btn-label-secondary">Voltar aos pacientes</a>
 </div></section>
 @endsection

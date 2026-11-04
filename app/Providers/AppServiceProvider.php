@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Domain\Catalog\Models\ExamAttachment;
 use App\Domain\Catalog\Models\ExamPreparation;
 use App\Domain\Catalog\Models\ExamType;
+use App\Domain\Catalog\Models\HealthQuestionGroup;
+use App\Domain\Catalog\Policies\ExamAttachmentPolicy;
 use App\Domain\Catalog\Policies\ExamPreparationPolicy;
 use App\Domain\Catalog\Policies\ExamTypePolicy;
+use App\Domain\Catalog\Policies\HealthQuestionGroupPolicy;
 use App\Domain\Companies\Models\Company;
 use App\Domain\Companies\Models\CompanyAccess;
 use App\Domain\Companies\Models\CompanyUnit;
@@ -22,6 +26,8 @@ use App\Domain\Identity\Services\SecurityAudit;
 use App\Domain\Occupational\Models\EmploymentLink;
 use App\Domain\Occupational\Policies\EmploymentLinkPolicy;
 use App\Domain\Patients\Models\Patient;
+use App\Domain\Patients\Models\PatientConsent;
+use App\Domain\Patients\Policies\PatientConsentPolicy;
 use App\Domain\Patients\Policies\PatientPolicy;
 use App\Domain\Professionals\Models\Professional;
 use App\Domain\Professionals\Policies\ProfessionalPolicy;
@@ -53,9 +59,12 @@ final class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Gate::policy(HealthQuestionGroup::class, HealthQuestionGroupPolicy::class);
+        Gate::policy(PatientConsent::class, PatientConsentPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(ExamType::class, ExamTypePolicy::class);
         Gate::policy(ExamPreparation::class, ExamPreparationPolicy::class);
+        Gate::policy(ExamAttachment::class, ExamAttachmentPolicy::class);
         Gate::policy(CompanyAccess::class, CompanyAccessPolicy::class);
         Gate::policy(EmploymentLink::class, EmploymentLinkPolicy::class);
         Gate::policy(Unit::class, UnitPolicy::class);

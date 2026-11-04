@@ -12,7 +12,7 @@
             <dt class="col-sm-4">Duração prevista</dt><dd class="col-sm-8">{{ $examType->default_duration_min === null ? 'Não informada' : $examType->default_duration_min.' min' }}</dd>
             <dt class="col-sm-4">Preço de referência</dt><dd class="col-sm-8">{{ $examType->price ?? 'Não informado' }}</dd>
         </dl>
-        <div class="d-flex gap-3 flex-wrap"><a class="btn btn-label-primary" href="{{ route('exam-types.preparations.index', $examType->public_id) }}">Preparos do exame</a><a class="btn btn-label-secondary" href="{{ route('exam-types.index') }}">Voltar ao catálogo</a></div>
+        <div class="d-flex gap-3 flex-wrap"><a class="btn btn-label-primary" href="{{ route('exam-types.preparations.index', $examType->public_id) }}">Preparos do exame</a><a class="btn btn-label-primary" href="{{ route('exam-types.attachments.index', $examType->public_id) }}">Anexos de orientação</a><a class="btn btn-label-secondary" href="{{ route('exam-types.index') }}">Voltar ao catálogo</a></div>
     </div>
 </section>
 @endsection

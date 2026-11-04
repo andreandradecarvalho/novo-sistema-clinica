@@ -39,6 +39,9 @@
         @can('viewAny', \App\Domain\Catalog\Models\ExamType::class)
         <li class="menu-item {{ request()->routeIs('exam-types.*') ? 'active' : '' }}"><a href="{{ route('exam-types.index') }}" class="menu-link" @if(request()->routeIs('exam-types.*')) aria-current="page" @endif><x-icon name="layout-dashboard" class="menu-icon" /><span>Catálogo de exames</span></a></li>
         @endcan
+        @can('viewAny', \App\Domain\Catalog\Models\HealthQuestionGroup::class)
+        <li class="menu-item {{ request()->routeIs('questionnaires.*') ? 'active' : '' }}"><a href="{{ route('questionnaires.index') }}" class="menu-link" @if(request()->routeIs('questionnaires.*')) aria-current="page" @endif><x-icon name="layout-dashboard" class="menu-icon" /><span>Questionários</span></a></li>
+        @endcan
         <li class="menu-header small"><span class="menu-header-text">Minha conta</span></li>
         <li class="menu-item {{ request()->routeIs('security') ? 'active' : '' }}">
             <a href="{{ route('security') }}" class="menu-link" @if(request()->routeIs('security')) aria-current="page" @endif>

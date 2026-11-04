@@ -1,0 +1,24 @@
+# Manifestações por finalidade do paciente
+
+[Confirmado] Entrega administrativa da etapa 3. Fonte dos requisitos de finalidade, bases e preservação de escolhas: [fluxo 24, §24.2](../fluxos/24-seguranca-retencao-operacao.md#242-criptografia-e-bases-de-tratamento). Estrutura: patient_consents no [schema](../schema/schema.sql). Execução, evidências e aceite somente no [fluxo 20](../fluxos/20-plano-desenvolvimento.md); mudanças executáveis no [CHANGELOG](../schema/CHANGELOG.md).
+
+## Operação
+
+1. [Confirmado] No cadastro do paciente, abra **Consentimentos e termos**. A consulta exige patients.view, consents.view e segundo fator confirmado; o registro exige também consents.manage. O provisionamento atribui as novas permissões ao clinic_admin do tenant, sem liberá-las automaticamente aos demais papéis. Isso não concede leitura de prontuário.
+2. [Confirmado] Use **Registrar manifestação**, informando finalidade, base de tratamento definida pela clínica, versão e texto exato do termo apresentado, manifestação e como ela foi conferida. Nenhum termo, base ou finalidade vem pré-preenchido. Não inserir dados clínicos no campo de evidência. Conferir a identidade e a manifestação é uma declaração obrigatória do integrante que faz o lançamento.
+3. [Confirmado] Cada envio cria um evento com data/hora UTC do servidor, responsável autenticado e origem staff_recorded. A listagem mostra o histórico completo em páginas de 20 registros. A consulta individual apresenta a cópia cifrada do termo/evidência após autorização e verificação de integridade. Não há edição, exclusão ou transferência do evento.
+
+[Inferido] Vocabulário técnico inicial da interface: granted (consentimento concedido), refused (recusado), withdrawn (retirado) e acknowledged (ciência de termos). Não há seleção padrão. Esses códigos representam a declaração registrada pelo integrante, não uma classificação automática da base de tratamento. Como o DDL permite VARCHAR, importações futuras precisam de mapeamento explícito para o enum da aplicação.
+
+[Confirmado] Recusa, retirada e ciência de termos acrescentam registros sem alterar os anteriores. Não se exige um evento concedido anterior para documentar uma retirada declarada: a interface registra a manifestação recebida e não presume que todo histórico externo já esteja no sistema. O registro manual contempla a manifestação conferida no momento; não oferece retrodatação ou importação de evidência histórica.
+
+## Segurança e limites
+
+- [Confirmado] TenantContext/BelongsToTenant existentes, Policy por paciente e bindings aninhados. FKs compostas impedem paciente ou responsável de outra clínica. Campos de identidade, data, origem, hash e ciphertext são definidos no servidor e recusados no formulário.
+- [Confirmado] Texto do termo e nota de evidência são cifrados conjuntamente pelo cast encrypted:array. O envelope também identifica tenant/paciente; a leitura confere esse vínculo e SHA-256 do texto contra policy_text_hash. Evidência ausente, inválida ou com hash divergente é recusada. O hash não equivale a assinatura digital ou prova independente de identidade.
+- [Confirmado] Escrita e auditoria são transacionais. O paciente é relido/bloqueado antes da escrita, impedindo novos lançamentos em um cadastro já arquivado por merge. O guard de merge existente recusa paciente com consentimentos como origem, sem mover essas manifestações. Auditoria contém evento, ator e referência, sem termo ou nota. A listagem não carrega ciphertext. Sem cache próprio; respostas HTTP usam private/no-store.
+- [Confirmado] O conteúdo não é enviado para old input da sessão em falhas de validação; a tela pede preenchimento novamente. A serialização do Model oculta evidence_encrypted. Models recusam alterações/exclusões por instância; raw SQL, Query Builder e bulk writes continuam fronteiras de revisão, sem trigger universal de imutabilidade.
+- [Confirmado] A gestão de chaves e a recuperação dependem dos contratos operacionais do fluxo 24. Não há envio de mensagem, ativação de marketing, alteração de acesso, eliminação de registros ou avaliação automática de consentimento vigente. Nenhum módulo deve usar o último evento sem considerar a finalidade, versão, manifestação e a política do processo correspondente.
+- [Confirmado] Esta entrega não inclui portal do paciente, assinatura eletrônica, representação legal estruturada, anexos de evidência, catálogo/versionamento aprovado de termos, validação jurídica da base informada ou automação de retirada nos módulos futuros. O responsável da clínica define e aprova o conteúdo aplicável antes de seu uso real; o sistema registra o que foi informado.
+
+[Confirmado] Implementação: [Models](../../app/Domain/Patients/Models/PatientConsent.php), [Action de registro](../../app/Domain/Patients/Actions/RecordPatientConsent.php) e [testes sintéticos](../../tests/Feature/PatientConsentTest.php). Não há importação ou modificação do legado.

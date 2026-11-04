@@ -40,6 +40,12 @@ final class ExamType extends Model
         return $this->hasMany(ExamPreparation::class);
     }
 
+    /** @return HasMany<ExamAttachment, $this> */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(ExamAttachment::class);
+    }
+
     protected static function booted(): void
     {
         self::creating(function (ExamType $examType): void {
