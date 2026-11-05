@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Orders\Models;
 
+use App\Domain\Executions\Services\ExecutionStartEvidence;
+use App\Domain\Orders\Services\OrderCompletionEvidence;
 use App\Domain\Patients\Models\Patient;
 use App\Domain\Tenancy\Concerns\BelongsToTenant;
 use App\Domain\Tenancy\Services\TenantContext;
@@ -16,6 +18,11 @@ use Illuminate\Validation\ValidationException;
 use LogicException;
 use Throwable;
 
+/**
+ * @property array<string, mixed>|null $pricing_snapshot
+ * @property string|null $creation_key_hash
+ * @property string|null $creation_request_hash
+ */
 final class ExamOrder extends Model
 {
     use BelongsToTenant;
@@ -24,7 +31,7 @@ final class ExamOrder extends Model
     protected $guarded = ['*'];
 
     #[\Override]
-    protected $hidden = ['context_encrypted'];
+    protected $hidden = ['context_encrypted', 'creation_key_hash', 'creation_request_hash'];
 
     protected function casts(): array
     {
@@ -43,6 +50,12 @@ final class ExamOrder extends Model
         return $this->hasMany(ExamOrderItem::class);
     }
 
+    /** @return HasMany<ClinicalReceivable, $this> */
+    public function receivables(): HasMany
+    {
+        return $this->hasMany(ClinicalReceivable::class);
+    }
+
     public function contextSnapshot(): array
     {
         if ((int) $this->tenant_id !== app(TenantContext::class)->id()) {
@@ -54,6 +67,13 @@ final class ExamOrder extends Model
                 || ! is_string($context['payer_name'] ?? null) || trim($context['payer_name']) === '') {
                 throw new LogicException('Unsupported order context.');
             }
+            if (($this->payer_type === 'patient' && ($this->company_id !== null || isset($context['company_id'])))
+                || ($this->payer_type === 'company' && (($context['payer_type'] ?? null) !== 'company' || $this->company_id === null
+                    || ($context['company_id'] ?? null) !== (int) $this->company_id || ! array_key_exists('payer_cnpj', $context)
+                    || ($context['payer_cnpj'] !== null && ! is_string($context['payer_cnpj']))))
+                || ! in_array($this->payer_type, ['patient', 'company'], true)) {
+                throw new LogicException('Unsupported payer evidence.');
+            }
             foreach (['authorization', 'cancellation'] as $key) {
                 if (array_key_exists($key, $context)) {
                     $event = $context[$key];
@@ -63,6 +83,21 @@ final class ExamOrder extends Model
                         throw new LogicException('Unsupported order transition evidence.');
                     }
                 }
+            }
+
+            if (in_array($this->status, ['in_progress', 'completed'], true)) {
+                $at = ExecutionStartEvidence::validate($context['start'] ?? null, orderId: (int) $this->id);
+                if ($this->authorized_at === null || $at->lessThan($this->authorized_at) || ! isset($context['authorization']) || isset($context['cancellation'])) {
+                    throw new LogicException('Invalid order start sequence.');
+                }
+            } elseif (isset($context['start'])) {
+                throw new LogicException('Unexpected order start.');
+            }
+
+            if ($this->status === 'completed') {
+                OrderCompletionEvidence::validate($this, $context['completion'] ?? null);
+            } elseif (isset($context['completion'])) {
+                throw new LogicException('Unexpected order completion.');
             }
 
             return $context;

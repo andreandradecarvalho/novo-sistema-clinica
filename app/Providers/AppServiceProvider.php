@@ -12,12 +12,18 @@ use App\Domain\Catalog\Policies\ExamAttachmentPolicy;
 use App\Domain\Catalog\Policies\ExamPreparationPolicy;
 use App\Domain\Catalog\Policies\ExamTypePolicy;
 use App\Domain\Catalog\Policies\HealthQuestionGroupPolicy;
+use App\Domain\Clinical\Models\HealthRecord;
+use App\Domain\Clinical\Policies\HealthRecordPolicy;
 use App\Domain\Companies\Models\Company;
 use App\Domain\Companies\Models\CompanyAccess;
 use App\Domain\Companies\Models\CompanyUnit;
 use App\Domain\Companies\Policies\CompanyAccessPolicy;
 use App\Domain\Companies\Policies\CompanyPolicy;
 use App\Domain\Companies\Policies\CompanyUnitPolicy;
+use App\Domain\Executions\Models\ExamExecution;
+use App\Domain\Executions\Models\ProfessionalExamAuthorization;
+use App\Domain\Executions\Policies\ExamExecutionPolicy;
+use App\Domain\Executions\Policies\ProfessionalExamAuthorizationPolicy;
 use App\Domain\Identity\Auth\TenantPasswordBrokerManager;
 use App\Domain\Identity\Auth\TenantSessionHandler;
 use App\Domain\Identity\Models\User;
@@ -29,7 +35,9 @@ use App\Domain\Occupational\Models\OccupationalProtocol;
 use App\Domain\Occupational\Policies\EmploymentLinkPolicy;
 use App\Domain\Occupational\Policies\OccupationalProgramPolicy;
 use App\Domain\Occupational\Policies\OccupationalProtocolPolicy;
+use App\Domain\Orders\Models\ClinicalReceivable;
 use App\Domain\Orders\Models\ExamOrder;
+use App\Domain\Orders\Policies\ClinicalReceivablePolicy;
 use App\Domain\Orders\Policies\ExamOrderPolicy;
 use App\Domain\Patients\Models\Patient;
 use App\Domain\Patients\Models\PatientConsent;
@@ -37,11 +45,17 @@ use App\Domain\Patients\Policies\PatientConsentPolicy;
 use App\Domain\Patients\Policies\PatientPolicy;
 use App\Domain\Professionals\Models\Professional;
 use App\Domain\Professionals\Policies\ProfessionalPolicy;
+use App\Domain\Scheduling\Models\Appointment;
+use App\Domain\Scheduling\Models\Room;
+use App\Domain\Scheduling\Policies\AppointmentPolicy;
+use App\Domain\Scheduling\Policies\RoomPolicy;
 use App\Domain\Tenancy\Exceptions\MissingTenant;
 use App\Domain\Tenancy\Models\Tenant;
 use App\Domain\Tenancy\Models\Unit;
 use App\Domain\Tenancy\Policies\UnitPolicy;
 use App\Domain\Tenancy\Services\TenantContext;
+use App\Domain\Visits\Models\Visit;
+use App\Domain\Visits\Policies\VisitPolicy;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\PasswordReset;
@@ -65,11 +79,13 @@ final class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Gate::policy(HealthRecord::class, HealthRecordPolicy::class);
         Gate::policy(HealthQuestionGroup::class, HealthQuestionGroupPolicy::class);
         Gate::policy(PatientConsent::class, PatientConsentPolicy::class);
         Gate::policy(OccupationalProgram::class, OccupationalProgramPolicy::class);
         Gate::policy(OccupationalProtocol::class, OccupationalProtocolPolicy::class);
         Gate::policy(ExamOrder::class, ExamOrderPolicy::class);
+        Gate::policy(ClinicalReceivable::class, ClinicalReceivablePolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(ExamType::class, ExamTypePolicy::class);
         Gate::policy(ExamPreparation::class, ExamPreparationPolicy::class);
@@ -81,6 +97,11 @@ final class AppServiceProvider extends ServiceProvider
         Gate::policy(Company::class, CompanyPolicy::class);
         Gate::policy(CompanyUnit::class, CompanyUnitPolicy::class);
         Gate::policy(Patient::class, PatientPolicy::class);
+        Gate::policy(Appointment::class, AppointmentPolicy::class);
+        Gate::policy(Visit::class, VisitPolicy::class);
+        Gate::policy(ProfessionalExamAuthorization::class, ProfessionalExamAuthorizationPolicy::class);
+        Gate::policy(ExamExecution::class, ExamExecutionPolicy::class);
+        Gate::policy(Room::class, RoomPolicy::class);
         $this->app['session']->extend('tenant-database', fn ($app) => new TenantSessionHandler(
             $app['db']->connection(config('session.connection')), config('session.table'), (int) config('session.lifetime'), $app,
         ));

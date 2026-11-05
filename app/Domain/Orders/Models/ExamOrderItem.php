@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use LogicException;
 
-/** @property string $unit_price */
+/**
+ * @property string $unit_price
+ * @property string $discount_amount
+ */
 final class ExamOrderItem extends Model
 {
     use BelongsToTenant;

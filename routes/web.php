@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\ClinicalReceivableController;
 use App\Http\Controllers\CompanyAccessController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyUnitController;
 use App\Http\Controllers\EmploymentController;
 use App\Http\Controllers\ExamAttachmentController;
+use App\Http\Controllers\ExamExecutionController;
 use App\Http\Controllers\ExamOrderController;
 use App\Http\Controllers\ExamPreparationController;
 use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\HealthQuestionController;
+use App\Http\Controllers\HealthRecordController;
 use App\Http\Controllers\MemberUnitController;
 use App\Http\Controllers\OccupationalProgramController;
 use App\Http\Controllers\OccupationalProtocolController;
@@ -20,17 +24,54 @@ use App\Http\Controllers\PatientMergeController;
 use App\Http\Controllers\PatientReviewController;
 use App\Http\Controllers\PatientSearchController;
 use App\Http\Controllers\ProfessionalController;
+use App\Http\Controllers\ProfessionalExamAuthorizationController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VisitController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function (): void {
+    Route::prefix('patients/{patient:public_id}/visits/{visit:public_id}/health-records')->name('patients.visits.health-records.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
+        Route::get('/', [HealthRecordController::class, 'index'])->name('index');
+        Route::get('/create', [HealthRecordController::class, 'create'])->name('create');
+        Route::post('/', [HealthRecordController::class, 'store'])->middleware('password.confirm')->name('store');
+        Route::get('/{healthRecord:public_id}', [HealthRecordController::class, 'show'])->name('show');
+    });
+    Route::prefix('patients/{patient:public_id}/visits/{visit:public_id}/executions')->name('patients.visits.executions.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
+        Route::post('{execution}/complete', [ExamExecutionController::class, 'complete'])->middleware('password.confirm')->name('complete');
+        Route::post('{execution}/start', [ExamExecutionController::class, 'start'])->middleware('password.confirm')->name('start');
+        Route::get('/', [ExamExecutionController::class, 'index'])->name('index');
+        Route::post('/', [ExamExecutionController::class, 'store'])->name('store');
+        Route::post('/{execution}/cancel', [ExamExecutionController::class, 'cancel'])->name('cancel');
+        Route::get('/{execution}/room', [ExamExecutionController::class, 'room'])->name('room');
+        Route::post('/{execution}/room', [ExamExecutionController::class, 'assignRoom'])->name('room.store');
+    });
+    Route::get('patients/{patient:public_id}/visits/{visit:public_id}', [VisitController::class, 'show'])->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->name('patients.visits.show');
+    Route::post('patients/{patient:public_id}/visits/{visit:public_id}/cancel', [VisitController::class, 'cancel'])->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->name('patients.visits.cancel');
+    Route::prefix('patients/{patient:public_id}/appointments')->name('patients.appointments.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
+        Route::get('/', [AppointmentController::class, 'index'])->name('index');
+        Route::get('/create', [AppointmentController::class, 'create'])->name('create');
+        Route::post('/', [AppointmentController::class, 'store'])->name('store');
+        Route::get('/{appointment:public_id}', [AppointmentController::class, 'show'])->name('show');
+        Route::post('/{appointment:public_id}/confirm', [AppointmentController::class, 'confirm'])->name('confirm');
+        Route::get('/{appointment:public_id}/check-in', [VisitController::class, 'create'])->name('check-in.create');
+        Route::post('/{appointment:public_id}/check-in', [VisitController::class, 'store'])->name('check-in.store');
+        Route::post('/{appointment:public_id}/cancel', [AppointmentController::class, 'cancel'])->name('cancel');
+    });
     Route::prefix('patients/{patient:public_id}/orders')->name('patients.orders.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
         Route::get('/', [ExamOrderController::class, 'index'])->name('index');
         Route::get('/create', [ExamOrderController::class, 'create'])->name('create');
         Route::post('/', [ExamOrderController::class, 'store'])->name('store');
+        Route::get('/payers', [ExamOrderController::class, 'payers'])->name('payers');
+        Route::get('/company/{company:public_id}/create', [ExamOrderController::class, 'createCompany'])->withoutScopedBindings()->name('company.create');
+        Route::post('/company/{company:public_id}', [ExamOrderController::class, 'storeCompany'])->withoutScopedBindings()->name('company.store');
+        Route::post('/{order:public_id}/receivables/{receivable}/settle', [ClinicalReceivableController::class, 'settle'])->name('receivables.settle');
+        Route::post('/{order:public_id}/receivables/{receivable}/cancel', [ClinicalReceivableController::class, 'cancel'])->name('receivables.cancel');
+        Route::get('/{order:public_id}/receivables', [ClinicalReceivableController::class, 'index'])->name('receivables.index');
+        Route::post('/{order:public_id}/receivables', [ClinicalReceivableController::class, 'store'])->name('receivables.store');
         Route::get('/{order:public_id}', [ExamOrderController::class, 'show'])->name('show');
         Route::post('/{order:public_id}/authorize', [ExamOrderController::class, 'authorize'])->name('authorize');
         Route::post('/{order:public_id}/cancel', [ExamOrderController::class, 'cancel'])->name('cancel');
@@ -80,8 +121,14 @@ Route::middleware('auth')->group(function (): void {
         Route::put('/{preparation}', [ExamPreparationController::class, 'update'])->name('update');
     });
     Route::resource('exam-types', ExamTypeController::class)->scoped(['exam_type' => 'public_id'])->except('destroy')->middleware('clinical.2fa');
+    Route::resource('units.rooms', RoomController::class)->scoped(['unit' => 'public_id'])->except('destroy')->middleware(['clinical.2fa', 'cache.headers:private;no_store']);
     Route::resource('units', UnitController::class)->scoped(['unit' => 'public_id'])->except('destroy')->middleware('clinical.2fa');
     Route::get('/professionals/register/{user:public_id}', [ProfessionalController::class, 'registration'])->middleware('clinical.2fa')->name('professionals.registration');
+    Route::prefix('professionals/{professional}/exam-authorizations')->name('professionals.authorizations.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
+        Route::get('/', [ProfessionalExamAuthorizationController::class, 'index'])->name('index');
+        Route::post('/', [ProfessionalExamAuthorizationController::class, 'store'])->middleware('password.confirm')->name('store');
+        Route::post('/{authorization}/revoke', [ProfessionalExamAuthorizationController::class, 'revoke'])->middleware('password.confirm')->name('revoke');
+    });
     Route::resource('professionals', ProfessionalController::class)->except('destroy')->middleware('clinical.2fa');
     Route::prefix('companies/{company:public_id}/accesses')->name('companies.accesses.')->middleware('clinical.2fa')->group(function (): void {
         Route::get('/', [CompanyAccessController::class, 'index'])->name('index');

@@ -8,6 +8,7 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Tenancy\Models\Tenant;
 use App\Domain\Tenancy\Services\TenantContext;
 use App\Support\LocalHomologation;
+use App\Support\OrderHomologation;
 use App\Support\RegistryHomologation;
 use App\Support\StageThreeHomologation;
 use GuzzleHttp\Cookie\CookieJar;
@@ -27,7 +28,7 @@ use Throwable;
 final class CheckHomologation extends Command
 {
     #[\Override]
-    protected $signature = 'homologation:check {--registries : Include temporary registry/identity fixtures through HTTP} {--stage3 : Include registries and stage three flows through HTTP}';
+    protected $signature = 'homologation:check {--registries : Include temporary registry/identity fixtures through HTTP} {--stage3 : Include registries and stage three flows through HTTP} {--orders : Include stage three and temporary order flows through HTTP}';
 
     #[\Override]
     protected $description = 'Validate the isolated local homologation through real HTTP and Horizon.';
@@ -61,10 +62,10 @@ final class CheckHomologation extends Command
             'php' => PHP_VERSION, 'laravel' => app()->version(),
             'database' => DB::selectOne('SELECT VERSION() AS version')->version,
             'foreign_key_checks' => (int) DB::selectOne('SELECT @@foreign_key_checks AS enabled')->enabled,
-            'passed' => $passed, 'registries_included' => (bool) ($this->option('registries') || $this->option('stage3')), 'stage3_included' => (bool) $this->option('stage3'), 'checks' => $this->checks,
+            'passed' => $passed, 'registries_included' => (bool) ($this->option('registries') || $this->option('stage3') || $this->option('orders')), 'stage3_included' => (bool) ($this->option('stage3') || $this->option('orders')), 'orders_included' => (bool) $this->option('orders'), 'checks' => $this->checks,
             'limits' => ['HTTP local; HTTPS externo não homologado', 'Somente dados sintéticos', 'Não substitui CI remota ou revisão de PR'],
         ];
-        $reportPath = $this->option('stage3') ? 'app/homologacao-stage3-report.json' : ($this->option('registries') ? 'app/homologacao-registries-report.json' : 'app/homologacao-report.json');
+        $reportPath = $this->option('orders') ? 'app/homologacao-orders-report.json' : ($this->option('stage3') ? 'app/homologacao-stage3-report.json' : ($this->option('registries') ? 'app/homologacao-registries-report.json' : 'app/homologacao-report.json'));
         file_put_contents(storage_path($reportPath), json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR).PHP_EOL);
         $this->info(($passed ? 'PASS' : 'FAIL').' — '.count($this->checks).' verificações. Relatório sem segredos em storage/'.$reportPath.'.');
 
@@ -139,11 +140,14 @@ final class CheckHomologation extends Command
         $adminB = $context->run($b, fn () => User::query()->where('email', 'admin.homologacao@example.test')->sole());
         $cookiesA = $this->adminLogin('A', $a);
         $cookiesB = $this->adminLogin('B', $b);
-        if ($this->option('registries') || $this->option('stage3')) {
+        if ($this->option('registries') || $this->option('stage3') || $this->option('orders')) {
             new RegistryHomologation($this->request(...), $this->verify(...), $this->token(...))->run(['A' => [$a, $cookiesA], 'B' => [$b, $cookiesB]]);
         }
-        if ($this->option('stage3')) {
+        if ($this->option('stage3') || $this->option('orders')) {
             new StageThreeHomologation($this->request(...), $this->verify(...), $this->token(...))->run(['A' => [$a, $cookiesA], 'B' => [$b, $cookiesB]]);
+        }
+        if ($this->option('orders')) {
+            new OrderHomologation($this->request(...), $this->verify(...), $this->token(...))->run(['A' => [$a, $cookiesA], 'B' => [$b, $cookiesB]]);
         }
         $this->verify($this->request('clinica-a.localhost', $cookiesA, 'GET', '/users')->ok(), 'Administrador consulta equipe própria');
         $this->verify($this->request('clinica-a.localhost', $cookiesA, 'GET', '/users/'.$adminB->public_id)->status() === 404, 'Binding não expõe integrante da outra clínica');

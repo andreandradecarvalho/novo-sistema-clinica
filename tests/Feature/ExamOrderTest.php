@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Domain\Catalog\Models\ExamType;
+use App\Domain\Companies\Models\Company;
+use App\Domain\Identity\Models\User;
 use App\Domain\Orders\Actions\CreateExamOrder;
 use App\Domain\Orders\Actions\ReadExamOrder;
 use App\Domain\Orders\Actions\TransitionExamOrder;
@@ -17,7 +19,9 @@ use App\Domain\Tenancy\Services\TenantContext;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
@@ -44,7 +48,7 @@ beforeEach(function (): void {
         });
     }
     $this->base = 'http://'.$this->a['host'].'/patients/'.$this->dataA['patient']->public_id.'/orders';
-    $this->input = ['exam_ids' => [$this->dataA['exam']->id, $this->dataA['other']->id]];
+    $this->input = ['idempotency_key' => (string) Str::uuid(), 'exam_ids' => [$this->dataA['exam']->id, $this->dataA['other']->id]];
     $this->postJson('http://'.$this->a['host'].'/login', ['email' => $this->a['user']->email, 'password' => $this->a['password']])->assertOk();
 });
 
@@ -75,7 +79,7 @@ it('creates a multi exam draft without appointment and preserves exact historica
 
 it('rejects duplicate missing malformed foreign inactive and unpriced exams without partial writes', function (): void {
     foreach ([[], [$this->dataA['exam']->id, $this->dataA['exam']->id], [$this->dataB['exam']->id], ['x'], [0], range(100, 120), ['named' => $this->dataA['exam']->id]] as $ids) {
-        $this->postJson($this->base, ['exam_ids' => $ids])->assertUnprocessable();
+        $this->postJson($this->base, ['idempotency_key' => $this->input['idempotency_key'], 'exam_ids' => $ids])->assertUnprocessable();
     }
     foreach ([['is_active' => false], ['is_active' => true, 'price' => null]] as $input) {
         $this->context->run($this->a['tenant'], fn () => $this->dataA['exam']->update($input));
@@ -95,7 +99,7 @@ it('refuses foreign or wrong patient bindings and action models even with known 
     $orderB = $this->context->run($this->b['tenant'], function (): ExamOrder {
         auth()->setUser($this->b['user']->fresh());
 
-        return app(CreateExamOrder::class)->execute($this->dataB['patient'], [$this->dataB['exam']->id]);
+        return app(CreateExamOrder::class)->execute($this->dataB['patient'], [$this->dataB['exam']->id], (string) Str::uuid());
     });
     $this->get($this->base.'/'.$orderB->public_id)->assertNotFound();
     $foreignBase = 'http://'.$this->a['host'].'/patients/'.$this->dataB['patient']->public_id.'/orders';
@@ -106,7 +110,7 @@ it('refuses foreign or wrong patient bindings and action models even with known 
     $this->get('http://'.$this->a['host'].'/patients/'.$another->public_id.'/orders/'.$order->public_id)->assertNotFound();
     $this->context->run($this->a['tenant'], function () use ($orderB): void {
         auth()->setUser($this->a['user']->fresh());
-        expect(fn () => app(CreateExamOrder::class)->execute($this->dataB['patient'], [$this->dataA['exam']->id]))->toThrow(ModelNotFoundException::class);
+        expect(fn () => app(CreateExamOrder::class)->execute($this->dataB['patient'], [$this->dataA['exam']->id], (string) Str::uuid()))->toThrow(ModelNotFoundException::class);
         expect(fn () => app(ReadExamOrder::class)->execute($this->dataA['patient'], $orderB))->toThrow(ModelNotFoundException::class);
     });
 });
@@ -119,7 +123,7 @@ it('separates order read management patient catalogue and confirmed second facto
         $this->a['user']->givePermissionTo('orders.manage');
         $this->a['user']->revokePermissionTo('catalog.view');
         auth()->setUser($this->a['user']->fresh());
-        expect(fn () => app(CreateExamOrder::class)->execute($this->dataA['patient'], [$this->dataA['exam']->id]))->toThrow(AuthorizationException::class);
+        expect(fn () => app(CreateExamOrder::class)->execute($this->dataA['patient'], [$this->dataA['exam']->id], (string) Str::uuid()))->toThrow(AuthorizationException::class);
     });
     $this->get($this->base.'/create')->assertForbidden();
     $this->context->run($this->a['tenant'], fn () => $this->a['user']->revokePermissionTo('patients.view'));
@@ -178,9 +182,9 @@ it('enforces composite order patient and exam foreign keys and nonnegative amoun
 it('refuses archived patients and direct invalid item lists before writing', function (): void {
     $this->context->run($this->a['tenant'], function (): void {
         auth()->setUser($this->a['user']->fresh());
-        expect(fn () => app(CreateExamOrder::class)->execute($this->dataA['patient'], []))->toThrow(ValidationException::class);
+        expect(fn () => app(CreateExamOrder::class)->execute($this->dataA['patient'], [], (string) Str::uuid()))->toThrow(ValidationException::class);
         $this->dataA['patient']->delete();
-        expect(fn () => app(CreateExamOrder::class)->execute($this->dataA['patient'], [$this->dataA['exam']->id]))->toThrow(ModelNotFoundException::class);
+        expect(fn () => app(CreateExamOrder::class)->execute($this->dataA['patient'], [$this->dataA['exam']->id], (string) Str::uuid()))->toThrow(ModelNotFoundException::class);
     });
     $this->postJson($this->base, $this->input)->assertNotFound();
 });
@@ -193,7 +197,7 @@ it('paginates only the selected patients orders and escapes historical descripti
     $this->context->run($this->a['tenant'], function (): void {
         auth()->setUser($this->a['user']->fresh());
         foreach (range(1, 20) as $number) {
-            app(CreateExamOrder::class)->execute($this->dataA['patient'], [$this->dataA['other']->id]);
+            app(CreateExamOrder::class)->execute($this->dataA['patient'], [$this->dataA['other']->id], (string) Str::uuid());
         }
     });
     $this->get($this->base)->assertOk()->assertSee('page=2', false);
@@ -346,4 +350,213 @@ it('fails closed on inconsistent items unsupported order states or corrupt encry
     DB::table('exam_orders')->where('id', $order->id)->update(['status' => 'draft', 'context_encrypted' => 'corrupted']);
     $this->postJson($path.'/authorize', ['expected_status' => 'draft'])->assertUnprocessable()->assertJsonValidationErrors('transition');
     expect(DB::table('exam_orders')->where('id', $order->id)->value('status'))->toBe('draft');
+});
+
+describe('company payers', function (): void {
+    beforeEach(function (): void {
+        foreach (['a', 'b'] as $key) {
+            $clinic = $this->$key;
+            $this->{'company'.strtoupper($key)} = $this->context->run($clinic['tenant'], function () use ($clinic, $key) {
+                $clinic['user']->givePermissionTo('companies.view');
+
+                return Company::query()->create(['name' => 'Empresa sintética '.$key, 'is_active' => true]);
+            });
+        }
+        $this->companyBase = $this->base.'/company/'.$this->companyA->public_id;
+    });
+
+    it('creates company payer orders with encrypted historic identity without changing the patients employer or granting portal access', function (): void {
+        $this->context->run($this->a['tenant'], fn () => $this->companyA->forceFill(['cnpj' => '12ABC34501DE35'])->save());
+        $this->get($this->base.'/payers')->assertOk()->assertSee('Empresa sintética a')->assertDontSee('Empresa sintética b');
+        $this->get($this->companyBase.'/create')->assertOk()->assertSee('Exames do pedido empresarial');
+        $this->post($this->companyBase, $this->input)->assertRedirect();
+        $order = $this->context->run($this->a['tenant'], fn () => ExamOrder::query()->sole());
+        $this->context->run($this->a['tenant'], function () use ($order): void {
+            expect($order->payer_type)->toBe('company')->and((int) $order->company_id)->toBe($this->companyA->id);
+            expect($order->company_unit_id)->toBeNull()->and($order->contextSnapshot()['payer_name'])->toBe('Empresa sintética a');
+            expect($order->contextSnapshot()['company_id'])->toBe($this->companyA->id);
+            expect($order->contextSnapshot()['payer_cnpj'])->toBe('12ABC34501DE35');
+            expect($order->getRawOriginal('context_encrypted'))->not->toContain('Empresa sintética a');
+            expect($order->pricing_snapshot)->toBe(['schema_version' => 1, 'source' => 'catalog', 'payer_type' => 'company']);
+            expect($this->dataA['patient']->fresh()->company_id)->toBeNull();
+            $this->companyA->forceFill(['name' => 'Nome empresarial alterado', 'cnpj' => null])->save();
+            $this->dataA['exam']->update(['price' => '88.88']);
+        });
+        $this->get($this->base.'/'.$order->public_id)->assertOk()->assertSee('Empresa sintética a')->assertSee('12ABC34501DE35')->assertDontSee('Nome empresarial alterado')->assertSee('12.34')->assertDontSee('88.88');
+        $this->post($this->base.'/'.$order->public_id.'/authorize', ['expected_status' => 'draft'])->assertRedirect();
+        expect(DB::table('company_user_access')->count())->toBe(0);
+    });
+
+    it('refuses inactive companies at creation and authorization but allows cancellation and historic reading', function (): void {
+        $this->context->run($this->a['tenant'], fn () => $this->companyA->update(['is_active' => false]));
+        $this->get($this->companyBase.'/create')->assertNotFound();
+        $this->postJson($this->companyBase, $this->input)->assertUnprocessable()->assertJsonValidationErrors('payer');
+        $this->context->run($this->a['tenant'], fn () => $this->companyA->update(['is_active' => true]));
+        $this->post($this->companyBase, $this->input)->assertRedirect();
+        $id = DB::table('exam_orders')->value('public_id');
+        $this->context->run($this->a['tenant'], fn () => $this->companyA->delete());
+        $this->get($this->base.'/'.$id)->assertOk()->assertSee('Empresa sintética a');
+        $this->postJson($this->base.'/'.$id.'/authorize', ['expected_status' => 'draft'])->assertUnprocessable();
+        $this->post($this->base.'/'.$id.'/cancel', ['expected_status' => 'draft', 'reason' => 'Sintético'])->assertRedirect();
+    });
+
+    it('requires company visibility for selection creation consultation and transitions without changing particular access', function (): void {
+        $this->post($this->companyBase, $this->input)->assertRedirect();
+        $id = DB::table('exam_orders')->value('public_id');
+        $this->context->run($this->a['tenant'], fn () => $this->a['user']->revokePermissionTo('companies.view'));
+        $this->get($this->base.'/payers')->assertForbidden();
+        $this->postJson($this->companyBase, $this->input)->assertForbidden();
+        $this->get($this->base.'/'.$id)->assertForbidden();
+        $this->get($this->base)->assertOk()->assertDontSee($id)->assertDontSee('Novo pedido empresarial');
+        $this->postJson($this->base.'/'.$id.'/authorize', ['expected_status' => 'draft'])->assertForbidden();
+        $this->get($this->base.'/create')->assertOk();
+    });
+
+    it('refuses foreign company route bindings and action instances and forbids payer snapshot injection', function (): void {
+        $foreign = $this->base.'/company/'.$this->companyB->public_id;
+        $this->get($foreign.'/create')->assertNotFound();
+        $this->postJson($foreign, $this->input)->assertNotFound();
+        $this->context->run($this->a['tenant'], function (): void {
+            auth()->setUser($this->a['user']->fresh());
+            expect(fn () => app(CreateExamOrder::class)->execute($this->dataA['patient'], $this->input['exam_ids'], (string) Str::uuid(), $this->companyB))->toThrow(ModelNotFoundException::class);
+        });
+        foreach (['payer_type' => 'patient', 'company_id' => $this->companyB->id, 'company_unit_id' => 1, 'pricing_snapshot' => ['fake'], 'context_encrypted' => 'fake'] as $field => $value) {
+            $this->postJson($this->companyBase, [$field => $value] + $this->input)->assertUnprocessable()->assertJsonValidationErrors($field);
+        }
+        expect(DB::table('exam_orders')->count())->toBe(0);
+    });
+
+    it('fails closed on mismatched encrypted company evidence', function (): void {
+        $this->post($this->companyBase, $this->input)->assertRedirect();
+        $order = $this->context->run($this->a['tenant'], fn () => ExamOrder::query()->sole());
+        $context = $this->context->run($this->a['tenant'], fn () => $order->contextSnapshot());
+        $context['company_id'] = $this->companyB->id;
+        DB::table('exam_orders')->where('id', $order->id)->update(['context_encrypted' => Crypt::encryptString(json_encode($context, JSON_THROW_ON_ERROR))]);
+        $this->getJson($this->base.'/'.$order->public_id)->assertUnprocessable();
+        $this->postJson($this->base.'/'.$order->public_id.'/authorize', ['expected_status' => 'draft'])->assertUnprocessable();
+        expect(DB::table('exam_orders')->where('id', $order->id)->value('status'))->toBe('draft');
+    });
+
+    it('rolls back company payer creation when audit fails', function (): void {
+        app()->instance(RegistryAudit::class, new class
+        {
+            public function record(mixed ...$arguments): never
+            {
+                throw new RuntimeException('Synthetic company order audit failure');
+            }
+        });
+        $this->withoutExceptionHandling();
+        try {
+            expect(fn () => $this->post($this->companyBase, $this->input))->toThrow(RuntimeException::class);
+            expect(DB::table('exam_orders')->count())->toBe(0)->and(DB::table('exam_order_items')->count())->toBe(0);
+        } finally {
+            app()->forgetInstance(RegistryAudit::class);
+        }
+    });
+
+    it('paginates company choices and escapes company names and encrypted payer identity', function (): void {
+        $this->context->run($this->a['tenant'], function (): void {
+            $this->companyA->update(['name' => '<script>payer()</script>']);
+            foreach (range(1, 20) as $number) {
+                Company::query()->create(['name' => 'Pagadora '.$number, 'is_active' => true]);
+            }
+        });
+        $this->get($this->base.'/payers')->assertOk()->assertSee('page=2', false)->assertSee('&lt;script&gt;payer()&lt;/script&gt;', false)->assertDontSee('<script>payer()</script>', false);
+        $this->post($this->companyBase, $this->input)->assertRedirect();
+        $id = DB::table('exam_orders')->value('public_id');
+        $this->get($this->base.'/'.$id)->assertOk()->assertSee('&lt;script&gt;payer()&lt;/script&gt;', false)->assertDontSee('<script>payer()</script>', false);
+    });
+});
+
+describe('creation idempotency', function (): void {
+    it('replays one order for equivalent input without repricing or recreating canceled orders', function (): void {
+        $this->post($this->base, $this->input)->assertRedirect();
+        $order = $this->context->run($this->a['tenant'], fn () => ExamOrder::query()->sole());
+        $this->context->run($this->a['tenant'], fn () => $this->dataA['exam']->update(['price' => '77.77', 'is_active' => false]));
+        $response = $this->post($this->base, ['exam_ids' => array_reverse($this->input['exam_ids']), 'idempotency_key' => strtoupper($this->input['idempotency_key'])]);
+        $response->assertRedirect($this->base.'/'.$order->public_id);
+        $this->post($this->base.'/'.$order->public_id.'/cancel', ['expected_status' => 'draft', 'reason' => 'Sintético'])->assertRedirect();
+        $this->post($this->base, $this->input)->assertRedirect($this->base.'/'.$order->public_id);
+        $this->context->run($this->a['tenant'], function () use ($order): void {
+            expect(ExamOrder::query()->count())->toBe(1);
+            expect($order->fresh()->status)->toBe('canceled');
+            expect($order->items()->orderBy('id')->pluck('unit_price')->all())->toBe(['12.34', '0.00']);
+            expect($order->toArray())->not->toHaveKeys(['creation_key_hash', 'creation_request_hash']);
+            expect($order->getRawOriginal('creation_key_hash'))->not->toBe($this->input['idempotency_key']);
+        });
+        expect(DB::table('activity_log')->where('event', 'exam_order_created')->count())->toBe(1);
+        expect(DB::table('activity_log')->where('event', 'exam_order_replayed')->count())->toBe(2);
+    });
+
+    it('rejects reuse for different exams patient or payer and accepts a new submission key', function (): void {
+        $this->post($this->base, $this->input)->assertRedirect();
+        $this->postJson($this->base, ['exam_ids' => [$this->dataA['other']->id]] + $this->input)->assertUnprocessable()->assertJsonValidationErrors('idempotency_key');
+        $patient = $this->context->run($this->a['tenant'], fn () => Patient::query()->create(['name' => 'Outra pessoa sintética']));
+        $this->postJson('http://'.$this->a['host'].'/patients/'.$patient->public_id.'/orders', $this->input)->assertUnprocessable()->assertJsonValidationErrors('idempotency_key');
+        $company = $this->context->run($this->a['tenant'], function (): Company {
+            $this->a['user']->givePermissionTo('companies.view');
+
+            return Company::query()->create(['name' => 'Pagadora sintética', 'is_active' => true]);
+        });
+        $this->postJson($this->base.'/company/'.$company->public_id, $this->input)->assertUnprocessable()->assertJsonValidationErrors('idempotency_key');
+        $this->post($this->base, ['idempotency_key' => (string) Str::uuid()] + $this->input)->assertRedirect();
+        expect(DB::table('exam_orders')->count())->toBe(2);
+    });
+
+    it('requires a UUID and rejects server hashes while preserving the key after validation errors', function (): void {
+        foreach (['', 'not-a-uuid', ['unexpected']] as $key) {
+            $this->postJson($this->base, ['idempotency_key' => $key] + $this->input)->assertUnprocessable()->assertJsonValidationErrors('idempotency_key');
+        }
+        $this->postJson($this->base, ['exam_ids' => $this->input['exam_ids']])->assertUnprocessable()->assertJsonValidationErrors('idempotency_key');
+        foreach (['creation_key_hash', 'creation_request_hash'] as $field) {
+            $this->postJson($this->base, [$field => str_repeat('a', 64)] + $this->input)->assertUnprocessable()->assertJsonValidationErrors($field);
+        }
+        $this->from($this->base.'/create')->post($this->base, ['exam_ids' => []] + $this->input)->assertSessionHasErrors('exam_ids')->assertSessionHas('_old_input.idempotency_key', $this->input['idempotency_key']);
+        $this->get($this->base.'/create')->assertOk()->assertSee($this->input['idempotency_key']);
+    });
+
+    it('revalidates authorization before replay and leaves the key reusable after a rolled back creation', function (): void {
+        app()->instance(RegistryAudit::class, new class
+        {
+            public function record(mixed ...$arguments): never
+            {
+                throw new RuntimeException('Synthetic audit failure');
+            }
+        });
+        $this->withoutExceptionHandling();
+        try {
+            expect(fn () => $this->post($this->base, $this->input))->toThrow(RuntimeException::class);
+        } finally {
+            app()->forgetInstance(RegistryAudit::class);
+        }
+        $this->withExceptionHandling();
+        $this->post($this->base, $this->input)->assertRedirect();
+        $this->context->run($this->a['tenant'], fn () => $this->a['user']->revokePermissionTo('orders.manage'));
+        $this->postJson($this->base, $this->input)->assertForbidden();
+        expect(DB::table('exam_orders')->count())->toBe(1);
+        expect(DB::table('activity_log')->where('event', 'exam_order_created')->count())->toBe(1);
+    });
+
+    it('scopes the same client key by clinic and actor and enforces the unique index and hash pair in SQL', function (): void {
+        $this->post($this->base, $this->input)->assertRedirect();
+        $this->postJson('http://'.$this->a['host'].'/logout')->assertSuccessful();
+        $this->postJson('http://'.$this->b['host'].'/login', ['email' => $this->b['user']->email, 'password' => $this->b['password']])->assertOk();
+        $baseB = 'http://'.$this->b['host'].'/patients/'.$this->dataB['patient']->public_id.'/orders';
+        $this->post($baseB, ['exam_ids' => [$this->dataB['exam']->id]] + $this->input)->assertRedirect();
+        $this->context->run($this->a['tenant'], function (): void {
+            $otherActor = User::query()->create(['name' => 'Outro operador sintético', 'email' => 'outro@example.test', 'password' => Str::random(40)]);
+            $otherActor->givePermissionTo(['patients.view', 'orders.view', 'orders.manage', 'catalog.view']);
+            $otherActor->forceFill(['two_factor_confirmed_at' => now()])->save();
+            auth()->setUser($otherActor);
+            app(CreateExamOrder::class)->execute($this->dataA['patient'], $this->input['exam_ids'], $this->input['idempotency_key']);
+            expect(ExamOrder::query()->count())->toBe(2);
+        });
+        $row = (array) DB::table('exam_orders')->where('tenant_id', $this->a['tenant']->id)->first();
+        unset($row['id']);
+        $row['public_id'] = (string) Str::ulid();
+        expect(fn () => DB::table('exam_orders')->insert($row))->toThrow(QueryException::class);
+        $row['public_id'] = (string) Str::ulid();
+        $row['creation_key_hash'] = null;
+        expect(fn () => DB::table('exam_orders')->insert($row))->toThrow(QueryException::class);
+    });
 });

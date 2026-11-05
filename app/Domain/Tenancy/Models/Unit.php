@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Tenancy\Models;
 
+use App\Domain\Scheduling\Models\Room;
 use App\Domain\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -20,6 +22,12 @@ final class Unit extends Model
     protected function casts(): array
     {
         return ['is_active' => 'boolean'];
+    }
+
+    /** @return HasMany<Room, $this> */
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(Room::class);
     }
 
     protected static function booted(): void

@@ -33,16 +33,19 @@ erDiagram
 
 ```mermaid
 erDiagram
+  professionals ||--o{ professional_exam_authorizations : recebe
+  exam_types ||--o{ professional_exam_authorizations : especifica
   patients ||--o{ exam_orders : solicita
   exam_orders ||--o{ exam_order_items : contem
   patients ||--o{ appointments : reserva
-  appointments o|--o{ visits : origina
+  appointments o|--o| visits : origina
   visits ||--o{ exam_executions : realiza
   exam_order_items o|--o{ exam_executions : atende
   exam_executions o|--o{ exam_results : produz
   exam_results ||--o{ exam_measurements : contem
   exam_results ||--o{ exam_conclusions : conclui
   patients ||--o{ health_records : responde
+  visits ||--o{ health_records : contextualiza
   health_records ||--o{ health_answers : preserva
   health_questions ||--o{ health_answers : referencia
   patients ||--o{ documents : recebe
@@ -65,3 +68,5 @@ erDiagram
 [Confirmado] Salas/chamada: rooms, room_states, tv_calls; comunicação: message_templates, campaigns, messages; pesquisa: surveys; preferências: settings. Questionários versionados e medições preservam snapshots. Contrato de migração: [13](13-plano-migracao-dados.md); rastreabilidade usa legacy_references, migration_runs, migration_issues e patient_match_candidates.
 
 [Inferido] FKs validam existência e tenant; relações redundantes ainda exigem igualdade de paciente, empregador, unidade e item na Action. JSON versionado guarda contexto variável, sem autorizar conteúdo arbitrário: validar forma, versão e campos obrigatórios no servidor.
+
+[Confirmado] O incremento de [check-in](../outros/check-in-atendimento.md) acrescenta unique tenant/appointment_id em visits: uma reserva não nula origina no máximo um atendimento, alinhado ao diagrama acima. Vínculo ao pedido não é único: exames/dias distintos podem usar reservas diferentes; nullable permanece para históricos/encaixes futuros.

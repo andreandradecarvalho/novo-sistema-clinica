@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Orders\Policies;
 
+use App\Domain\Companies\Models\Company;
 use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Services\TenantPermission;
 use App\Domain\Orders\Models\ExamOrder;
@@ -26,7 +27,18 @@ final class ExamOrderPolicy
     public function view(User $actor, ExamOrder $order): bool
     {
         return (int) $order->tenant_id === app(TenantContext::class)->id()
-            && $order->patient !== null && $this->viewAny($actor, $order->patient);
+            && $order->patient !== null && $this->viewAny($actor, $order->patient)
+            && ($order->payer_type === 'patient' || ($order->payer_type === 'company' && app(TenantPermission::class)->allows($actor, 'companies.view')));
+    }
+
+    public function chooseCompany(User $actor, Patient $patient): bool
+    {
+        return $this->create($actor, $patient) && app(TenantPermission::class)->allows($actor, 'companies.view');
+    }
+
+    public function createForCompany(User $actor, Patient $patient, Company $company): bool
+    {
+        return $this->chooseCompany($actor, $patient) && $actor->can('view', $company);
     }
 
     public function authorize(User $actor, ExamOrder $order): bool

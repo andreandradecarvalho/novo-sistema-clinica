@@ -64,3 +64,23 @@ No legado a autorização rodava no cliente e o `header()` sem `exit` não bloqu
 [Confirmado] Matriz normativa e concessões excepcionais: [24 §24.1](24-seguranca-retencao-operacao.md). Acesso empresarial: [23 §23.3](23-saude-ocupacional.md). Estruturas de concessão/dispositivos/download em schema.sql. RBAC isolado não substitui essas Policies.
 
 [Confirmado] Atribuição administrativa de unidade implementada na etapa 2: [uso, autorização e limites](../outros/atribuicao-unidades.md). O vínculo usa users.unit_id; restrições operacionais da recepção continuam obrigatórias nas Policies dos módulos de atendimento.
+
+[Confirmado] Permissões financeiras do incremento da etapa 4 distinguem consulta/criação de baixa/cancelamento internos. [Operação e limites](../outros/contas-a-receber.md#baixa-e-cancelamento-auditados). Provisionamento atribui o conjunto ao clinic_admin; demais papéis/concessões existentes não são ampliados automaticamente.
+
+[Confirmado] Reserva diária implementa a restrição à unidade do integrante, com permissão explícita para todas as unidades da mesma clínica. [Permissões, operação e limites](../outros/reservas-diarias.md#autorização-por-unidade). Não conceder acesso clínico, de outra clínica ou todas as unidades apenas pelo nome do papel.
+
+[Confirmado] [Confirmação/check-in/atendimento](../outros/check-in-atendimento.md#permissões-e-endpoints) têm permissões distintas e mantêm o escopo de unidade da reserva e autorização sobre o pedido. Registro administrativo não concede autorização de execução ou aprovação clínica.
+
+[Confirmado] Cancelamento de atendimento exige `visits.cancel`, além da consulta autorizada à visita/reserva/pedido/unidade e integrante ativo/2FA, inclusive em reenvio. Não concede cancelamento financeiro. [Contrato](../outros/check-in-atendimento.md#cancelar-atendimento-antes-da-execução).
+
+[Confirmado] [Salas das unidades](../outros/salas-unidades.md#operação-e-acesso): consulta com rooms.view/units.view; gestão adicional com rooms.manage. Catálogo administrativo da clínica, sem restringir à unidade atribuída ao integrante e sem conceder acesso à agenda ou execução. Actions reautorizam com ator ativo/2FA/contexto atual; binding exige unidade exata.
+
+[Confirmado] [Tentativas de exame](../outros/tentativas-exames.md#operação-e-permissões): executions.view para consulta, executions.prepare para preparação e executions.cancel para cancelar pendência antes do início. Mantêm autorização do atendimento/unidade/pedido e não concedem habilitação clínica, atribuição ou assinatura.
+
+[Confirmado] [Atribuição de sala à tentativa](../outros/atribuicao-salas-tentativas.md): executions.assign_room e rooms.view adicionais ao acesso da tentativa/atendimento. Não concede atribuição profissional nem autorização para executar exame; autorização clínica de início seguirá a concessão específica escolhida no fluxo 19.
+
+[Confirmado] Decisão do usuário: concessão explícita por profissional/tipo de exame. [Gestão e verificação](../outros/concessoes-profissional-exame.md): executions.authorizations.view/manage e executions.perform sem concessão automática a papéis; clinical.access/perfil/2FA e concessão vigente exigidos no verificador por tipo. O [início separado](../outros/tentativas-exames.md#assumir-e-iniciar-exame) combina Policy de atendimento/unidade, atribuição do próprio profissional e revalidação transacional da concessão; reenvio histórico exige direitos atuais, sem nova concessão para o ato já registrado.
+
+[Confirmado] [Respostas clínicas](../outros/respostas-clinicas.md) exigem clinical.access e health_records.view/create, além do acesso ao atendimento/unidade/paciente/pedido; coleta exige catalog.view e senha recente. Permissões novas sem atribuição automática a papéis. Direitos de catálogo/financeiro/execução e vínculos empresariais não concedem essas permissões. Não há portal empresarial de respostas.
+
+[Confirmado] [Conclusão de execução](../outros/tentativas-exames.md#concluir-execução-e-itens-do-pedido) acrescenta executions.complete sem concessão automática a papéis. Requer direitos clínicos/de execução/acesso ao recurso e próprio executor; novo ato exige concessão específica atual e tipo ativo. Reenvio concluído exige direitos atuais e evidência histórica, preservando ato anterior após revogação. Não concede revisão/liberação de laudo ou emissão de ASO.

@@ -40,3 +40,10 @@
 - [Inferido] Parâmetros clínicos antes de ativar um tenant: portfólio de exames, terceirização/coleta/imagens, protocolos/riscos e periodicidade ocupacional, responsável por PCMSO, modelo de ASO, profissionais habilitados, regras de acesso da empresa e histórico de vínculo. Não inventar respostas clínicas nesta conciliação.
 - [Inferido] Parâmetros comerciais antes da etapa afetada: tabela/contrato e pagadores, financeiro mínimo, nº de unidades/usuários/volume, SLA e necessidade de banco dedicado; eSocial fora da transmissão automática inicial, conforme fluxo 23.
 - [Inferido] Produção só após homologação dos fluxos por responsável técnico/operação, assinatura conforme documento e recuperação ensaiada. Pendência de parametrização não deve ser marcada como resposta já fornecida pelo negócio.
+
+<a id="autorização-para-início-real-de-exames--decisão-pendente"></a>
+
+## Autorização para início real de exames — decisão do usuário
+
+- [Confirmado] Cadastro profissional não comprova habilitação; o fluxo 11 exige autorização conforme habilitação/atribuição/tipo e o fluxo 22 exige profissional autorizado. Preparação e atribuição administrativa de sala não implementam essa autorização.
+- [Confirmado] O usuário decidiu: **“Concessão explícita por profissional e tipo de exame”**. A decisão define o contrato de autorização do sistema; não equivale à concessão para qualquer profissional real nem à aprovação clínica do conteúdo/P14. Cadastro, permissões gerais ou sala atribuída não substituem a concessão específica.

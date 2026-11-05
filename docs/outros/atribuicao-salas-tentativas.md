@@ -1,0 +1,24 @@
+# Atribuição de sala à tentativa pendente
+
+[Confirmado] Incremento administrativo da etapa 4. Usa a tentativa já [preparada](tentativas-exames.md) e o [cadastro de salas](salas-unidades.md), conforme o [fluxo 22](../fluxos/22-atendimento-clinico.md). Estado da execução do projeto, evidências e continuidade somente no [fluxo 20](../fluxos/20-plano-desenvolvimento.md#2041-ponto-de-retomada--04112026).
+
+## Uso e autorização
+
+- [Confirmado] Em **Atendimento → Tentativas dos exames**, uma tentativa pendente sem sala oferece **Atribuir sala** para integrantes autorizados. A seleção lista somente salas ativas da unidade exata do atendimento, paginadas de 20 em 20 e ordenadas por ordem/nome/ID. Escolher uma sala é explícito, sem seleção automática.
+- [Confirmado] Exige `executions.assign_room`, `rooms.view` e o acesso atual à tentativa/atendimento/paciente/reserva/pedido/unidade (`executions.view` e permissões anteriores, inclusive de empresa pagadora). Integrante ativo, 2FA e escopo de unidade continuam obrigatórios. Consultar salas ou preparar/cancelar tentativas não concede atribuição. Novo provisionamento de clinic_admin inclui a permissão; seed do catálogo não amplia papéis existentes.
+- [Confirmado] GET/POST `patients/{patient:public_id}/visits/{visit:public_id}/executions/{execution}/room`. POST recebe apenas sala selecionada (`room_id`), `expected_status=pending` e UUID `idempotency_key`. Identificadores de propriedade, unidade, executor, número, status final, datas, origem e evidências enviados no corpo são proibidos. Binding exige o paciente/atendimento/tentativa exatos; escrita com CSRF, seleção e consultas privadas/sem cache.
+
+## Integridade e histórico
+
+- [Confirmado] Nova atribuição exige tentativa pendente e sem sala/executor/início/fim, visita aberta/em execução, pedido autorizado/em execução e item autorizado, quantidade 1, unidade ativa/não arquivada e sala ativa pertencente àquela unidade. Não basta pertencer à mesma clínica. Sala de outro tenant/unidade ou inativada após a seleção é recusada pelo servidor.
+- [Confirmado] A transação relê/bloqueia paciente, reserva, pedido, unidade, ator, atendimento, tentativa, item e sala, reautorizando com ator fresco. Unidade é bloqueada antes do ator também na preparação/cancelamento de tentativas, compatível com o cadastro de salas; essas operações históricas não passam a exigir unidade ativa apenas por esse lock.
+- [Confirmado] Preenche somente room_id e evento `room_assignment` no contexto cifrado existente: sala/unidade, chave/nome históricos, ator, instante UTC não anterior à preparação e hash da intenção. Mantém `pending`, executor/início/fim nulos, estados atuais de visita/pedido e item autorizado. Não altera cobrança, reserva horário, mede disponibilidade/capacidade, chama TV ou indica que exame foi realizado.
+- [Confirmado] Mesmo ator/UUID/sala recupera a atribuição sem nova alteração, inclusive após inativar/renomear sala, cancelar a pendência ou cancelar o atendimento. Exige autorização atual e evidência coerente; não exige reativação do catálogo para recuperar história. Outro UUID/ator/sala após atribuição é recusado. Este incremento não implementa troca/desatribuição: correções operacionais podem cancelar a pendência e preparar nova tentativa, preservando a anterior.
+- [Confirmado] Nome/chave históricos são exibidos com escaping; alteração do cadastro não reescreve o contexto. Leitura confere room_id, unidade do atendimento e propriedade atual da sala, integridade dos campos/instantes e evidência do cancelamento quando houver. Unidade/sala divergentes, contexto ausente/trocado/corrompido ou status forjado falham fechados.
+- [Confirmado] Cancelar a pendência mantém sala e evidência; o instante do cancelamento não pode anteceder a atribuição. Após todas as tentativas serem canceladas antes de execução, o atendimento segue suas regras anteriores de cancelamento. Auditoria de atribuição/reenvio participa da transação, sem nomes/contexto/chave bruta; falha reverte a atribuição. Bulk write é filtrado por tenant/atendimento/item/tentativa/estado anterior e sala ainda nula.
+
+## Limites e continuidade
+
+- [Confirmado] Não há migration ou alteração de DDL: reutiliza room_id/FK e context_encrypted da migration 000022. Compatível com preparações anteriores sem sala; não importa nem altera legado.
+- [Confirmado] Atribuição de sala não atribui profissional nem habilitação clínica. Não há autorização inferida do cadastro de conselho, papel administrativo ou sala ativa. O [início pelo próprio profissional](tentativas-exames.md#assumir-e-iniciar-exame) exige operação separada; conclusão, ocupação de sala, troca de executor, respostas e resultados continuam futuros.
+- [Confirmado] O usuário escolheu concessão explícita por profissional/tipo de exame. A [base de concessões](concessoes-profissional-exame.md) implementa esse contrato; é revalidada no início separado e não equivale a aprovação de conteúdo/P14.

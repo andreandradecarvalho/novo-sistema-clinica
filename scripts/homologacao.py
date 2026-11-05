@@ -66,9 +66,10 @@ def main():
     parser.add_argument('action', choices=['prepare', 'up', 'check', 'status', 'down'])
     parser.add_argument('--registries', action='store_true', help='Incluir cadastros/identidade por HTTP na ação check')
     parser.add_argument('--stage3', action='store_true', help='Incluir fundação, cadastros e fluxos da etapa 3 na ação check')
+    parser.add_argument('--orders', action='store_true', help='Incluir etapa 3 e pedidos particulares por HTTP na ação check')
     args = parser.parse_args()
-    if (args.registries or args.stage3) and args.action != 'check':
-        parser.error('--registries/--stage3 só podem ser usados com check')
+    if (args.registries or args.stage3 or args.orders) and args.action != 'check':
+        parser.error('--registries/--stage3/--orders só podem ser usados com check')
     prepare()
     if args.action == 'prepare':
         print('Ambiente privado preparado em .env.homologacao; nenhum segredo exibido.')
@@ -86,14 +87,14 @@ def main():
         run('up', '-d', '--wait', 'app', 'horizon')
         print('Homologação iniciada em clinica-a.localhost:8082 e clinica-b.localhost:8082.')
     elif args.action == 'check':
-        flags = ['--stage3'] if args.stage3 else (['--registries'] if args.registries else [])
+        flags = ['--orders'] if args.orders else (['--stage3'] if args.stage3 else (['--registries'] if args.registries else []))
         result = run('exec', '-T', 'app', 'php', 'artisan', 'homologation:check', *flags, capture=True)
         print(result.stdout)
-        report_path = '/app/storage/app/homologacao-stage3-report.json' if args.stage3 else ('/app/storage/app/homologacao-registries-report.json' if args.registries else '/app/storage/app/homologacao-report.json')
+        report_path = '/app/storage/app/homologacao-orders-report.json' if args.orders else ('/app/storage/app/homologacao-stage3-report.json' if args.stage3 else ('/app/storage/app/homologacao-registries-report.json' if args.registries else '/app/storage/app/homologacao-report.json'))
         report = json.loads(run('exec', '-T', 'app', 'cat', report_path, capture=True).stdout)
         report['source_revision'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
         report['working_tree_dirty'] = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip())
-        prefix = 'homologacao-etapa-03-' if args.stage3 else ('homologacao-etapa-02-' if args.registries else 'homologacao-local-')
+        prefix = 'homologacao-pedidos-etapa-04-' if args.orders else ('homologacao-etapa-03-' if args.stage3 else ('homologacao-etapa-02-' if args.registries else 'homologacao-local-'))
         filename = ROOT / 'docs/outros' / (prefix + datetime.now(timezone.utc).date().isoformat() + '.json')
         filename.write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n')
         print('Evidência sem segredos: ' + str(filename.relative_to(ROOT)))

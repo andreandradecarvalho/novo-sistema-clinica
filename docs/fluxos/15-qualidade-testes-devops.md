@@ -2,6 +2,8 @@
 
 ## 15.1 Estratégia de testes (Pest 4)
 
+[Confirmado] A suíte local configura `memory_limit=256M` em [phpunit.xml](../../phpunit.xml), restrito ao processo de testes. O limite padrão de 128 MiB foi atingido pela execução integral; essa configuração não altera PHP da aplicação ou do worker. Evidências de execução no fluxo 20.
+
 | Tipo | O que cobre | Meta |
 |---|---|---|
 | **Unitários** | Value Objects (`Cpf`, `Money`, `PeriodoAgenda`), regras de agenda, derivação de status, dedupe | alta p/ regras críticas |

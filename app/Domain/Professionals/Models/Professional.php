@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Professionals\Models;
 
+use App\Domain\Executions\Models\ProfessionalExamAuthorization;
 use App\Domain\Identity\Models\User;
 use App\Domain\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 
 final class Professional extends Model
@@ -21,6 +23,12 @@ final class Professional extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** @return HasMany<ProfessionalExamAuthorization, $this> */
+    public function authorizations(): HasMany
+    {
+        return $this->hasMany(ProfessionalExamAuthorization::class);
     }
 
     protected static function booted(): void

@@ -40,3 +40,5 @@
 [Confirmado] Histórico de vínculos com vigência disponível em [vínculos empregatícios](vinculos-empregaticios.md).
 
 [Confirmado] Gestão administrativa de concessões disponível em [concessões empresariais](concessoes-empresariais.md); integração dos portais permanece futura.
+
+[Confirmado] Unidades agora oferecem o [cadastro administrativo de salas](salas-unidades.md), com permissões próprias e sem concessão de habilitação clínica ou operação de agenda/TV.

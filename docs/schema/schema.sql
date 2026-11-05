@@ -783,6 +783,11 @@ CREATE TABLE `appointments` (
   `active_flag`     TINYINT UNSIGNED GENERATED ALWAYS AS (IF(`deleted_at` IS NULL AND `canceled_at` IS NULL AND `status` NOT IN ('cancelado','canceled'), 1, NULL)) STORED,
   `unit_scope` BIGINT UNSIGNED GENERATED ALWAYS AS (IFNULL(`unit_id`, 0)) STORED,
   `slot_key` INT GENERATED ALWAYS AS (IFNULL(HOUR(`scheduled_at`) * 3600 + MINUTE(`scheduled_at`) * 60 + SECOND(`scheduled_at`), -1)) STORED,
+  `context_encrypted` TEXT NULL,
+  `creation_key_hash` CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL,
+  `creation_request_hash` CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL,
+  UNIQUE KEY `uq_appt_creation` (`tenant_id`,`creation_key_hash`),
+  CONSTRAINT `ck_appt_creation_pair` CHECK ((`creation_key_hash` IS NULL AND `creation_request_hash` IS NULL) OR (`creation_key_hash` IS NOT NULL AND `creation_request_hash` IS NOT NULL)),
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_appt_public` (`public_id`),
   UNIQUE KEY `uq_appt_patient_date` (`tenant_id`,`patient_id`,`scheduled_date`,`unit_scope`,`slot_key`,`active_flag`),
@@ -862,7 +867,11 @@ CREATE TABLE `exam_orders` (
   `authorized_at` DATETIME NULL,
   `created_at` TIMESTAMP NULL,
   `updated_at` TIMESTAMP NULL,
+  `creation_key_hash` CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL,
+  `creation_request_hash` CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_exam_orders_creation` (`tenant_id`,`creation_key_hash`),
+  CONSTRAINT `ck_exam_orders_creation_pair` CHECK ((`creation_key_hash` IS NULL AND `creation_request_hash` IS NULL) OR (`creation_key_hash` IS NOT NULL AND `creation_request_hash` IS NOT NULL)),
   KEY `ix_exam_orders_tenant` (`tenant_id`),
   UNIQUE KEY `uq_exam_orders_0` (`public_id`),
   CONSTRAINT `fk_exam_orders_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`id`) ON DELETE RESTRICT,
@@ -921,28 +930,6 @@ CREATE TABLE `patient_match_candidates` (
   CONSTRAINT `fk_patient_match_candidates_2` FOREIGN KEY (`tenant_id`,`reviewed_by`) REFERENCES `users` (`tenant_id`,`id`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `health_records` (
-  `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `tenant_id`   BIGINT UNSIGNED NOT NULL,
-  `public_id`   CHAR(26) NOT NULL,
-  `patient_id`  BIGINT UNSIGNED NOT NULL,
-  `appointment_id` BIGINT UNSIGNED NULL,
-  `filled_at`   DATETIME NULL,
-  `filled_by`   BIGINT UNSIGNED NULL,
-  `legacy_id`   BIGINT UNSIGNED NULL,
-  `created_at`  TIMESTAMP NULL,
-  `updated_at`  TIMESTAMP NULL,
-  `deleted_at`  TIMESTAMP NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_hr_public` (`public_id`),
-  KEY `ix_hr_tenant_patient` (`tenant_id`,`patient_id`,`filled_at`),
-  KEY `ix_hr_legacy` (`tenant_id`,`legacy_id`),
-  CONSTRAINT `fk_hr_tenant`  FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_hr_patient` FOREIGN KEY (`tenant_id`,`patient_id`) REFERENCES `patients` (`tenant_id`,`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_hr_appt`    FOREIGN KEY (`tenant_id`,`appointment_id`) REFERENCES `appointments` (`tenant_id`,`id`) ON DELETE RESTRICT,
-  CONSTRAINT `fk_hr_filledby` FOREIGN KEY (`tenant_id`,`filled_by`) REFERENCES `users` (`tenant_id`,`id`) ON DELETE RESTRICT,
-  UNIQUE KEY `uq_health_records_tenant_id` (`tenant_id`,`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `appointment_events` (
   `id`             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1110,6 +1097,8 @@ CREATE TABLE `visits` (
   `source` VARCHAR(40) NOT NULL DEFAULT 'manual',
   `created_at` TIMESTAMP NULL,
   `updated_at` TIMESTAMP NULL,
+  `context_encrypted` TEXT NULL,
+  UNIQUE KEY `uq_visits_appointment` (`tenant_id`,`appointment_id`),
   PRIMARY KEY (`id`),
   KEY `ix_visits_tenant` (`tenant_id`),
   UNIQUE KEY `uq_visits_0` (`public_id`),
@@ -1121,6 +1110,36 @@ CREATE TABLE `visits` (
   CONSTRAINT `fk_visits_4` FOREIGN KEY (`tenant_id`,`created_by`) REFERENCES `users` (`tenant_id`,`id`) ON DELETE RESTRICT,
   UNIQUE KEY `uq_visits_tenant_id` (`tenant_id`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `health_records` (
+  `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `tenant_id`   BIGINT UNSIGNED NOT NULL,
+  `public_id`   CHAR(26) NOT NULL,
+  `patient_id`  BIGINT UNSIGNED NOT NULL,
+  `appointment_id` BIGINT UNSIGNED NULL,
+  `visit_id` BIGINT UNSIGNED NULL,
+  `context_encrypted` TEXT NULL,
+  `creation_key_hash` CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL,
+  UNIQUE KEY `uq_hr_creation` (`tenant_id`,`creation_key_hash`),
+  KEY `ix_hr_visit` (`tenant_id`,`visit_id`,`id`),
+  CONSTRAINT `fk_hr_visit` FOREIGN KEY (`tenant_id`,`visit_id`) REFERENCES `visits` (`tenant_id`,`id`) ON DELETE RESTRICT,
+  `filled_at`   DATETIME NULL,
+  `filled_by`   BIGINT UNSIGNED NULL,
+  `legacy_id`   BIGINT UNSIGNED NULL,
+  `created_at`  TIMESTAMP NULL,
+  `updated_at`  TIMESTAMP NULL,
+  `deleted_at`  TIMESTAMP NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_hr_public` (`public_id`),
+  KEY `ix_hr_tenant_patient` (`tenant_id`,`patient_id`,`filled_at`),
+  KEY `ix_hr_legacy` (`tenant_id`,`legacy_id`),
+  CONSTRAINT `fk_hr_tenant`  FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_hr_patient` FOREIGN KEY (`tenant_id`,`patient_id`) REFERENCES `patients` (`tenant_id`,`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_hr_appt`    FOREIGN KEY (`tenant_id`,`appointment_id`) REFERENCES `appointments` (`tenant_id`,`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_hr_filledby` FOREIGN KEY (`tenant_id`,`filled_by`) REFERENCES `users` (`tenant_id`,`id`) ON DELETE RESTRICT,
+  UNIQUE KEY `uq_health_records_tenant_id` (`tenant_id`,`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE `occupational_protocols` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1156,6 +1175,7 @@ CREATE TABLE `clinical_receivables` (
   `settled_at` DATETIME NULL,
   `external_ref` VARCHAR(120) NULL,
   `idempotency_key` VARCHAR(120) NOT NULL,
+  `transition_encrypted` TEXT NULL,
   `created_at` TIMESTAMP NULL,
   `updated_at` TIMESTAMP NULL,
   PRIMARY KEY (`id`),
@@ -1201,6 +1221,13 @@ CREATE TABLE `exam_executions` (
   `source` VARCHAR(40) NOT NULL DEFAULT 'manual',
   `created_at` TIMESTAMP NULL,
   `updated_at` TIMESTAMP NULL,
+  `created_by` BIGINT UNSIGNED NULL,
+  `context_encrypted` TEXT NULL,
+  `creation_key_hash` CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL,
+  `creation_request_hash` CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL,
+  UNIQUE KEY `uq_execution_creation` (`tenant_id`,`creation_key_hash`),
+  CONSTRAINT `ck_execution_creation_pair` CHECK ((`creation_key_hash` IS NULL AND `creation_request_hash` IS NULL) OR (`creation_key_hash` IS NOT NULL AND `creation_request_hash` IS NOT NULL)),
+  CONSTRAINT `fk_execution_creator` FOREIGN KEY (`tenant_id`,`created_by`) REFERENCES `users` (`tenant_id`,`id`) ON DELETE RESTRICT,
   PRIMARY KEY (`id`),
   KEY `ix_exam_executions_tenant` (`tenant_id`),
   UNIQUE KEY `uq_exam_executions_0` (`tenant_id`,`visit_id`,`exam_type_id`,`attempt_no`),
@@ -1440,4 +1467,29 @@ CREATE TABLE `download_grants` (
   CONSTRAINT `fk_download_grants_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`id`) ON DELETE RESTRICT,
   CONSTRAINT `fk_download_grants_0` FOREIGN KEY (`tenant_id`,`document_id`) REFERENCES `documents` (`tenant_id`,`id`) ON DELETE RESTRICT,
   CONSTRAINT `fk_download_grants_1` FOREIGN KEY (`tenant_id`,`issued_by`) REFERENCES `users` (`tenant_id`,`id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `professional_exam_authorizations` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `tenant_id` BIGINT UNSIGNED NOT NULL,
+  `professional_id` BIGINT UNSIGNED NOT NULL,
+  `exam_type_id` BIGINT UNSIGNED NOT NULL,
+  `granted_by` BIGINT UNSIGNED NOT NULL,
+  `granted_at` DATETIME NOT NULL,
+  `grant_reason_encrypted` TEXT NOT NULL,
+  `revoked_by` BIGINT UNSIGNED NULL,
+  `revoked_at` DATETIME NULL,
+  `revocation_reason_encrypted` TEXT NULL,
+  `created_at` TIMESTAMP NULL,
+  `updated_at` TIMESTAMP NULL,
+  `active_flag` TINYINT UNSIGNED GENERATED ALWAYS AS (IF(`revoked_at` IS NULL, 1, NULL)) STORED,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_prof_exam_active` (`tenant_id`,`professional_id`,`exam_type_id`,`active_flag`),
+  UNIQUE KEY `uq_prof_exam_tenant_id` (`tenant_id`,`id`),
+  CONSTRAINT `fk_prof_exam_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_prof_exam_professional` FOREIGN KEY (`tenant_id`,`professional_id`) REFERENCES `professionals` (`tenant_id`,`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_prof_exam_exam` FOREIGN KEY (`tenant_id`,`exam_type_id`) REFERENCES `exam_types` (`tenant_id`,`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_prof_exam_granter` FOREIGN KEY (`tenant_id`,`granted_by`) REFERENCES `users` (`tenant_id`,`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_prof_exam_revoker` FOREIGN KEY (`tenant_id`,`revoked_by`) REFERENCES `users` (`tenant_id`,`id`) ON DELETE RESTRICT,
+  CONSTRAINT `ck_prof_exam_revocation` CHECK ((`revoked_at` IS NULL AND `revoked_by` IS NULL AND `revocation_reason_encrypted` IS NULL) OR (`revoked_at` IS NOT NULL AND `revoked_by` IS NOT NULL AND `revocation_reason_encrypted` IS NOT NULL AND `revoked_at` >= `granted_at`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

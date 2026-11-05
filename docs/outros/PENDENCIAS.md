@@ -20,7 +20,7 @@
 | [Confirmado] P14 | CONCILIADA POR DECISÃO DO USUÁRIO | Aceite técnico da etapa 3 autorizado e desenvolvimento da etapa 4 com dados sintéticos; aprovação do conteúdo real obrigatória antes do uso clínico. |
 | [Confirmado] P12 | REFERÊNCIAS/POLÍTICA CORRIGIDAS | Tutela da saúde em art. 11, II, f; marcos distintos de guarda e assinatura por processo no [24](../fluxos/24-seguranca-retencao-operacao.md). Aprovação da política por responsável técnico/jurídico antes do uso correspondente. |
 
-[Confirmado] Preparação documental complementada com [mapa central](../README.md), [banco legado](banco-legado.md) e [índice legado](indice-legado.md). Verificação SQL: 69 tabelas/170 FKs, 25 verificações sintéticas aprovadas em MariaDB 13.0.2. Resultado, hash do DDL e limites no CHANGELOG. Não houve importação no banco de trabalho nem ampliação de privilégios do usuário local.
+[Confirmado] Preparação documental complementada com [mapa central](../README.md), [banco legado](banco-legado.md) e [índice legado](indice-legado.md). Verificação SQL: 70 tabelas/177 FKs, 25 verificações sintéticas aprovadas em MariaDB 13.0.2. Resultado, hash do DDL e limites no CHANGELOG. Não houve importação no banco de trabalho nem ampliação de privilégios do usuário local.
 
 ## O que continua necessário na implementação/implantação
 

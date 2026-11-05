@@ -107,4 +107,24 @@
 
 [Confirmado] Revisão técnica conjunta da configuração clínica e homologação ampliada: [relatório da etapa 3](outros/revisao-etapa-03.md). Status e aceite continuam no fluxo 20.
 
-[Confirmado] Primeiro incremento da etapa 4: [pedidos particulares, autorização/cancelamento e preços preservados](outros/pedidos-exames.md), conforme fluxo 22.
+[Confirmado] Primeiro incremento da etapa 4: [pedidos particulares/empresariais, reenvio seguro, autorização/cancelamento e preços preservados](outros/pedidos-exames.md), conforme fluxo 22.
+
+[Confirmado] Pedidos particulares e empresariais homologados por HTTP real em duas clínicas sintéticas: [roteiro/cobertura](outros/homologacao-local.md#pedidos-particulares--incremento-da-etapa-4); andamento e limites no fluxo 20.
+
+[Confirmado] Etapa 4 — [contas a receber: registro integral, baixa e cancelamento internos](outros/contas-a-receber.md), conforme fluxo 22; evidências e próximos incrementos no fluxo 20.
+
+[Confirmado] Etapa 4 — [reservas diárias por paciente/unidade](outros/reservas-diarias.md): operação, escopo por unidade, reenvio e cancelamento; fonte funcional no fluxo 22 e evidências/status no fluxo 20.
+
+[Confirmado] Etapa 4 — [confirmação manual, check-in e atendimento](outros/check-in-atendimento.md): ligação da reserva ao pedido, cancelamento antes da execução, permissões por unidade, histórico e limites; andamento no fluxo 20.
+
+[Confirmado] Etapa 4 — [salas das unidades](outros/salas-unidades.md): cadastro administrativo, chave única por clínica, permissões próprias e pré-requisito das FKs de execução. Status e evidências somente no fluxo 20.
+
+[Confirmado] Etapa 4 — [tentativas de exames](outros/tentativas-exames.md): preparação pendente, cancelamento antes do início, início pelo próprio profissional autorizado, histórico e permissões; evolução e aceite no fluxo 20.
+
+[Confirmado] Etapa 4 — [atribuição de sala à tentativa](outros/atribuicao-salas-tentativas.md): seleção na unidade exata, reenvio, histórico e limites administrativos. Evidências/andamento somente no fluxo 20.
+
+[Confirmado] Etapa 4 — [concessões por profissional/exame](outros/concessoes-profissional-exame.md): decisão do usuário, gestão/revogação e verificador específico integrado ao início real da tentativa.
+
+[Confirmado] Etapa 4 — [coleta individual de respostas clínicas](outros/respostas-clinicas.md): seleção explícita da versão, snapshot, cifra, autoria, histórico e permissões próprias. Evidências/andamento no fluxo 20.
+
+[Confirmado] Etapa 4 — [conclusão de execuções/itens](outros/tentativas-exames.md#concluir-execução-e-itens-do-pedido): próprio executor, término, concessão atual, reenvio e pedido derivado de todos os itens, com financeiro/respostas preservados. Fechamento de atendimento e resultados são fluxos separados. Evidências no fluxo 20.

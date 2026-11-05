@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Domain\Orders\Actions;
 
 use App\Domain\Catalog\Models\ExamType;
+use App\Domain\Companies\Models\Company;
 use App\Domain\Identity\Models\User;
 use App\Domain\Orders\Enums\OrderTransition;
 use App\Domain\Orders\Models\ExamOrder;
 use App\Domain\Patients\Models\Patient;
 use App\Domain\Shared\Services\RegistryAudit;
 use App\Domain\Tenancy\Services\TenantContext;
+use App\Domain\Visits\Models\Visit;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -29,10 +31,26 @@ final class TransitionExamOrder
         return DB::transaction(function () use ($patient, $order, $transition, $expectedStatus, $reason): ExamOrder {
             $patient = Patient::query()->whereKey($patient->getKey())->lockForUpdate()->firstOrFail();
             $order = $patient->orders()->whereKey($order->getKey())->lockForUpdate()->firstOrFail();
+            $company = $transition === OrderTransition::Authorize && $order->payer_type === 'company'
+                ? Company::query()->whereKey($order->company_id)->lockForUpdate()->first() : null;
             $actor = User::query()->whereKey(auth()->id())->lockForUpdate()->firstOrFail();
             Gate::forUser($actor)->authorize($transition->value, $order);
+            if ($transition === OrderTransition::Authorize && $order->payer_type === 'company' && ($company === null || ! $company->is_active)) {
+                throw ValidationException::withMessages(['transition' => 'A empresa pagadora está indisponível. Revise o pedido antes de autorizar.']);
+            }
             if ($order->status !== $expectedStatus || ($transition === OrderTransition::Authorize && $order->status !== 'draft')) {
                 $this->refuse();
+            }
+            if ($transition === OrderTransition::Cancel) {
+                if (Visit::query()->where('exam_order_id', $order->id)->lockForUpdate()->first(['id']) !== null) {
+                    throw ValidationException::withMessages(['transition' => 'O pedido possui atendimento. Solicite revisão autorizada antes de cancelar.']);
+                }
+                foreach ($order->receivables()->orderBy('id')->lockForUpdate()->get() as $receivable) {
+                    $receivable->transitionSnapshot();
+                    if ($receivable->status !== 'canceled') {
+                        throw ValidationException::withMessages(['transition' => 'O pedido possui recebível não cancelado. É necessária revisão financeira antes do cancelamento.']);
+                    }
+                }
             }
             $items = $order->items()->select(['id', 'tenant_id', 'exam_order_id', 'exam_type_id', 'status'])->orderBy('id')->lockForUpdate()->get();
             if ($items->isEmpty() || $items->contains(fn ($item) => $item->status !== $order->status)

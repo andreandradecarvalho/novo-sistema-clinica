@@ -8,7 +8,9 @@ use App\Domain\Occupational\Models\EmploymentLink;
 use App\Domain\Orders\Models\ExamOrder;
 use App\Domain\Patients\Services\PatientIdentity;
 use App\Domain\Patients\Services\PatientIdentityGroup;
+use App\Domain\Scheduling\Models\Appointment;
 use App\Domain\Tenancy\Concerns\BelongsToTenant;
+use App\Domain\Visits\Models\Visit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -45,6 +47,18 @@ final class Patient extends Model
     public function consents(): HasMany
     {
         return $this->hasMany(PatientConsent::class);
+    }
+
+    /** @return HasMany<Visit, $this> */
+    public function visits(): HasMany
+    {
+        return $this->hasMany(Visit::class);
+    }
+
+    /** @return HasMany<Appointment, $this> */
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class);
     }
 
     /** @return HasMany<ExamOrder, $this> */
