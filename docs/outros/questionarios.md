@@ -21,3 +21,13 @@
 - [Confirmado] Proteções de imutabilidade dos Models cobrem save/update/delete por instância. Query Builder, bulk update, raw SQL e escritores externos continuam fronteiras obrigatórias de revisão; não há trigger de imutabilidade universal no banco. Nenhum SQL recebido do usuário é concatenado.
 
 [Confirmado] Testes automatizados: [HealthQuestionTest.php](../../tests/Feature/HealthQuestionTest.php), com fixtures sintéticas em banco exclusivo MariaDB. Evidências executadas e lacunas ficam somente no fluxo 20; sem certificação de MySQL, concorrência real ou CI remota por existência da suíte.
+
+## Snapshot da definição da pergunta
+
+[Confirmado] Decisão do usuário em 04/11/2026: modelos e snapshots de perguntas são preparados na etapa 3; coleta/cifra/persistência de respostas ficam na etapa 4, com appointments disponível. Conciliação registrada na [P13](PENDENCIAS.md#p13-sequencia-questionarios); sequência normativa no fluxo 20 e contrato clínico no fluxo 22.
+
+[Confirmado] [BuildHealthQuestionSnapshot](../../app/Domain/Catalog/Actions/BuildHealthQuestionSnapshot.php) relê a pergunta pela clínica/grupo, autoriza a consulta e retorna [HealthQuestionSnapshot](../../app/Domain/Catalog/ValueObjects/HealthQuestionSnapshot.php), um objeto readonly separado do Model. Preserva tenant, ID, código, versão, enunciado, tipo e opções; answerColumns fornece os campos da definição previstos em health_answers. A consulta individual já usa esse snapshot para o enunciado exibido.
+
+[Confirmado] A versão é explícita: construir o snapshot de v1 não passa a apontar para v2 após cadastrar uma nova versão. Somente texto livre/all/options=null tem suporte atual; outras configurações são recusadas. Nenhuma tabela health_records/health_answers ou de agenda foi criada por esta preparação.
+
+[Confirmado] O objeto não contém resposta de paciente, não grava prontuário e não é autorização clínica. Na etapa 4, a Action de coleta deve revalidar tenant, paciente, versão escolhida e permissão clínica própria, obter a definição no servidor, cifrar a resposta e persistir atomicamente com autoria/data/origem e referências de atendimento. Nunca aceitar o snapshot ou ciphertext enviado pelo cliente como fonte confiável.

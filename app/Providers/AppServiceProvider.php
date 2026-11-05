@@ -24,7 +24,13 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Identity\Policies\UserPolicy;
 use App\Domain\Identity\Services\SecurityAudit;
 use App\Domain\Occupational\Models\EmploymentLink;
+use App\Domain\Occupational\Models\OccupationalProgram;
+use App\Domain\Occupational\Models\OccupationalProtocol;
 use App\Domain\Occupational\Policies\EmploymentLinkPolicy;
+use App\Domain\Occupational\Policies\OccupationalProgramPolicy;
+use App\Domain\Occupational\Policies\OccupationalProtocolPolicy;
+use App\Domain\Orders\Models\ExamOrder;
+use App\Domain\Orders\Policies\ExamOrderPolicy;
 use App\Domain\Patients\Models\Patient;
 use App\Domain\Patients\Models\PatientConsent;
 use App\Domain\Patients\Policies\PatientConsentPolicy;
@@ -61,6 +67,9 @@ final class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(HealthQuestionGroup::class, HealthQuestionGroupPolicy::class);
         Gate::policy(PatientConsent::class, PatientConsentPolicy::class);
+        Gate::policy(OccupationalProgram::class, OccupationalProgramPolicy::class);
+        Gate::policy(OccupationalProtocol::class, OccupationalProtocolPolicy::class);
+        Gate::policy(ExamOrder::class, ExamOrderPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(ExamType::class, ExamTypePolicy::class);
         Gate::policy(ExamPreparation::class, ExamPreparationPolicy::class);

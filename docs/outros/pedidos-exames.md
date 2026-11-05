@@ -1,0 +1,35 @@
+# Pedidos de exames — etapa 4
+
+[Confirmado] Contrato funcional em [22 — Atendimento](../fluxos/22-atendimento-clinico.md), especialmente identidade/sequência e financeiro clínico. DDL de referência: exam_orders/exam_order_items no [schema](../schema/schema.sql); migration/recuperação no [CHANGELOG](../schema/CHANGELOG.md). Status, testes e aceite pertencem ao [fluxo 20](../fluxos/20-plano-desenvolvimento.md). Continuidade técnica autorizada na P14 com dados sintéticos; conteúdo real exige validação antes do uso clínico.
+
+## Uso e comportamento entregue
+
+1. [Confirmado] Abra Pacientes → paciente → **Pedidos de exames** → **Novo pedido**. A permissão de consulta mostra a lista; criar exige também gestão de pedidos e consulta ao catálogo, além do segundo fator confirmado.
+2. [Confirmado] Selecione de 1 a 20 exames ativos com preço definido na página atual e clique em **Registrar rascunho**. A lista é paginada; mudar de página descarta a seleção. Nesta entrega cada exame tem quantidade 1 e desconto zero; o pagador é particular. Não inclui empresas, convênios, negociação ou tabelas contratuais.
+3. [Confirmado] O servidor reconsulta paciente e exames da própria clínica com locks, copia preços decimais e descrições e registra pedido/itens como draft. Alterar nome/preço ou inativar o exame no catálogo depois não muda o histórico do pedido. Preço zero explícito é permitido; preço ausente é recusado. Valores enviados pelo navegador não podem substituir o catálogo.
+4. [Confirmado] Consulte o pedido para conferir os itens registrados. O rascunho não gera reserva, atendimento, execução, autorização, conta a receber ou documento; não exige agendamento prévio. Não há edição/exclusão genérica; autorização e cancelamento usam as operações abaixo. Pedidos repetidos são registros distintos; não há promessa de idempotência de submissão.
+
+## Segurança e histórico
+
+- [Confirmado] orders.view/manage são permissões globais com atribuição por clínica. Provisionamento idempotente concede ambas somente ao clinic_admin; não concede gestão automaticamente a recepcionista, médico, técnico ou empresa. Atualizar o catálogo global de permissões com db:seed não altera papéis de clínicas existentes; o provisionamento tenant:create reaplica a configuração de papéis descrita no README e deve ser usado considerando suas atribuições atuais. Não altera senhas nem cria um aprovador clínico.
+- [Confirmado] Policy exige consulta do paciente e orders.view; criação também exige orders.manage e catalog.view. TenantPermission verifica usuário ativo, tenant e segundo fator. Bindings aninhados recusam pedido de outro paciente ou clínica. A Action reconsulta os modelos dentro do contexto e valida novamente a lista mesmo em chamada direta.
+- [Confirmado] Paciente/pagador são registrados pelo vínculo do pedido; nome do pagador no instante de criação fica no contexto cifrado e oculto na serialização. A tela identifica o paciente pelo cadastro atual, sem representar documento histórico assinado. Não copia CPF/contatos, conteúdo clínico ou preços para a auditoria operacional: apenas evento/ator/IDs.
+- [Confirmado] Uma transação reúne pedido, itens e auditoria; falha da auditoria reverte a criação. FKs compostas impedem paciente/pedido/exame de outra clínica e o CHECK limita quantidades/valores/desconto. Eventos dos Models impedem edição/exclusão por instância. A Action de transição usa updates explícitos somente de estado/evidência/data, restringindo tenant, pedido/paciente, IDs dos itens e estado anterior após locks. Outros SQL bruto/atualizações em massa continuam fronteiras de revisão, sem proteção universal por trigger.
+- [Confirmado] Lista e catálogo são paginados, HTML escapado e respostas privadas/no-store. IDs selecionados ficam fora do old input; ao ocorrer erro, a seleção deve ser refeita. Não há cache de domínio, jobs, envio ou importação de dados legados.
+
+## Autorizar ou cancelar
+
+1. [Confirmado] Consulte o rascunho e use **Autorizar pedido**. Requer orders.view/manage, consulta do paciente, catalog.view e segundo fator. A Action reconsulta o usuário ativo, paciente, pedido, itens e exames ativos da clínica. Preços e descrições permanecem aqueles registrados no pedido; mudança do catálogo não reprifica os itens. Exame inativo impede a autorização, permitindo cancelar e registrar outro pedido revisado.
+2. [Confirmado] Para cancelar um rascunho ou pedido autorizado, informe **Motivo do cancelamento** (até 1.000 caracteres) e use **Cancelar pedido**. Requer consulta/gestão do pedido e segundo fator; não exige permissão do catálogo nem exame ainda ativo. Motivo não retorna no old input ou flash e não é copiado para logs operacionais.
+3. [Confirmado] Operações aceitas: draft → authorized; draft/authorized → canceled. O formulário envia o estado esperado, conferido contra a linha bloqueada; estado obsoleto, operação repetida, item divergente/ausente ou contexto cifrado inconsistente são recusados. Não há reabertura, retorno a rascunho ou cancelamento de in_progress/completed. Não são alteradas quantidades, descontos, preços, descrição ou propriedade.
+4. [Confirmado] Pedido e todos os itens mudam juntos na transação com a auditoria. O contexto cifrado existente incorpora evidência de autorização/cancelamento (ator, instante UTC e estado anterior; motivo somente no cancelamento). Cancelar preserva autorização anterior e authorized_at quando existente. A consulta autorizada exibe essa evidência com escaping. Falha da auditoria reverte estado, itens, evidência e datas.
+
+[Confirmado] Autorização é operacional do pedido, sem equivaler a aprovação clínica de protocolo ou documento. Não gera cobrança, agenda, atendimento ou execução. O desenvolvimento segue autorizado somente com dados sintéticos; aprovação do conteúdo real permanece necessária antes do uso clínico. Não há alteração do schema/migration para essas transições: reutilizam status, authorized_at e context_encrypted.
+
+[Confirmado] Integração futura com atendimento/financeiro deve revalidar dependências e coordenar seus locks/transições antes de criar execuções, recebíveis ou cancelamentos parciais. Este incremento não implementa estorno, dispensa de exame executado ou cancelamento de atendimento/slot. Repetição das transições é recusada, sem promessa de idempotência de toda a criação/integrações.
+
+## Limites e continuidade
+
+[Confirmado] Consulta de pedidos considera somente patient_id físico; não consolida histórico de origens arquivadas por merge. O merge atual recusa paciente com dependência nova de pedido como origem, em vez de mover FKs ou perder o histórico. Contrato do merge em [uso e limites](merge-pacientes.md); consolidação clínica futura exige implementação explícita.
+
+[Confirmado] Pagador empresarial/contrato, descontos/quantidades negociados, contas a receber, idempotência, reserva, check-in, execução e respostas cifradas continuam pendentes na etapa 4. Seleção operacional de protocolos depende das concessões e retirada de aprovação definidas no fluxo 23; este incremento não as aplica. Não representa entrega de ASO/laudos ou liberação clínica/produção.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Companies\Models;
 
+use App\Domain\Occupational\Models\OccupationalProgram;
 use App\Domain\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -33,6 +34,12 @@ final class Company extends Model
     public function accesses(): HasMany
     {
         return $this->hasMany(CompanyAccess::class);
+    }
+
+    /** @return HasMany<OccupationalProgram, $this> */
+    public function programs(): HasMany
+    {
+        return $this->hasMany(OccupationalProgram::class);
     }
 
     protected static function booted(): void

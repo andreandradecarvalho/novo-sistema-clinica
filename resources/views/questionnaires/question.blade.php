@@ -3,7 +3,7 @@
 @section('content')
 <div class="page-heading"><h1 class="h4 mb-1">Pergunta {{ $question->code }}</h1><p class="text-body-secondary">{{ $group->name }} · Versão {{ $question->version }}</p></div>
 <section class="card mb-6"><h2 class="card-header h5">Conteúdo preservado</h2><div class="card-body">
-    <p class="text-break">{{ $question->label }}</p>
+    <p class="text-break">{{ $snapshot->label }}</p>
     <p class="text-body-secondary">Tipo: texto livre. Cada alteração cria uma nova versão e preserva a anterior.</p>
     <a class="btn btn-label-secondary" href="{{ route('questionnaires.show', $group->id) }}">Voltar ao grupo</a>
 </div></section>

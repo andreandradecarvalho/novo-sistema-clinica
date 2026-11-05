@@ -13,6 +13,8 @@ python3 scripts/homologacao.py up
 python3 scripts/homologacao.py check
 # Inclui os cadastros e a identidade da etapa 2, com fixtures temporárias.
 python3 scripts/homologacao.py check --registries
+# Inclui também catálogo, questionários, manifestações e protocolos da etapa 3.
+python3 scripts/homologacao.py check --stage3
 python3 scripts/homologacao.py status
 
 # Encerra somente esta homologação, preservando seus volumes.
@@ -30,7 +32,16 @@ python3 scripts/homologacao.py down
 - [Confirmado] Cobertura adicional: unidade clínica, atribuição de integrante, profissional, empresa/estabelecimento, pacientes, busca por CPF/HMAC e nome, vínculo empregatício, comparação/merge humano, consulta consolidada, versionamento/desligamento e criação/revogação de concessão empresarial. Verifica preservação das FKs/histórico, ausência de papéis automáticos e recusa de paciente/empresa/vínculo de outra clínica.
 - [Confirmado] Usa os administradores sintéticos existentes com senha/TOTP privados. Cria integrante sem permissões e registros sintéticos com identificador aleatório próprio da execução; usa o mesmo CPF sintético nas duas clínicas para exercitar seu isolamento. Não modifica senhas, TOTP ou a atribuição de unidade dos quatro atores persistentes documentados.
 - [Confirmado] O destino é validado antes da execução e novamente antes da limpeza. Em `finally`, remove somente registros temporários rastreados por IDs e tenant, em transação e ordem de FKs; mantém a auditoria operacional sem conteúdo cadastral. Não faz truncamento ou limpeza global. Interrupção abrupta do processo/container pode impedir esse `finally`; nesse caso, examinar as fixtures do ambiente isolado antes de repetir, sem apagar registros pelo nome genericamente.
-- [Confirmado] `--registries` só é aceito na ação `check` do script. A suíte verifica que o comando Artisan, com e sem a opção, recusa ambiente diferente da homologação isolada antes de qualquer requisição ou fixture. A CI declarada executa o modo ampliado; execução remota continua não verificada.
+- [Confirmado] `--registries` só é aceito na ação `check` do script. A suíte verifica que o comando Artisan, com e sem as opções ampliadas, recusa ambiente diferente da homologação isolada antes de qualquer requisição ou fixture. A CI declarada agora executa `--stage3`, que inclui estes cadastros; execução remota continua não verificada.
+
+## Catálogo e configuração clínica — etapa 3
+
+[Confirmado] `check --stage3` inclui fundação e cadastros. A [execução de 04/11/2026 UTC](homologacao-etapa-03-2026-11-04.json) aprovou **168 verificações**: as 81 anteriores e 87 adicionais, incluindo a limpeza da etapa 3. Implementação em [StageThreeHomologation](../../app/Support/StageThreeHomologation.php); escopo e limites na [revisão da etapa 3](revisao-etapa-03.md). O relatório específico usa o prefixo `homologacao-etapa-03-AAAA-MM-DD.json`, sem substituir a evidência da etapa 2.
+
+- [Confirmado] HTTP real: cadastro/edição de exame e preparo, upload multipart de PNG sintético, download com bytes exatos, ausência de URL pública, publicação de perguntas e suas versões, concessão/retirada de manifestações, referências de programas, protocolos pendentes, aprovação e nova versão sem herança de aprovação. Verifica negações de objetos das duas clínicas em ambos os sentidos. A cifra do storage/evidências é inspecionada diretamente; o snapshot readonly da definição é construído pela Action, sem endpoint ou coleta de respostas.
+- [Confirmado] Cada clínica recebe um aprovador temporário sem papéis: senha e segredo TOTP aleatórios ficam somente na memória. A fixture concede explicitamente permissões mínimas de leitura/aprovação; login, TOTP e confirmação recente de senha passam pelo servidor real. O roteiro verifica a recusa do administrador sem concessão, da aprovação repetida e da aprovação após retirada da permissão temporária. Nenhuma concessão clínica é atribuída às contas persistentes.
+- [Confirmado] Antes das fixtures e novamente antes da limpeza, o destino isolado é validado. O `finally` remove somente IDs/tenant rastreados, concessões e sessões do aprovador temporário, em transação e ordem de FKs; apaga somente os caminhos privados exatos dos anexos sintéticos e confere sua ausência. Auditoria operacional permanece. Storage e transação SQL não são atômicos; interrupção abrupta pode impedir a limpeza e exige inspeção restrita da execução antes de repetir.
+- [Confirmado] `--stage3` só funciona com `check`; inclui `--registries` implicitamente. Testes de guarda cobrem as quatro combinações das opções e a recusa direta do helper fora da homologação antes de executar callbacks. O roteiro usa somente conteúdo fictício sem efeito médico/jurídico e não substitui aprovação de conteúdo pela clínica, revisão visual ou aceite final.
 
 ## Clínicas e acessos sintéticos
 

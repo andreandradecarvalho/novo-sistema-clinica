@@ -13,6 +13,17 @@
 
 [Confirmado] Consolidação de identidade implementada na etapa 2: vínculos mantêm seus IDs, empregador e patient_id original; a consulta/gestão autorizada pelo sobrevivente considera as origens arquivadas diretamente relacionadas. Concessão empresarial não é ampliada pelo merge. Contrato operacional e limites em [merge de pacientes](../outros/merge-pacientes.md).
 
+[Confirmado] Referências de programas por empresa implementadas na etapa 3: [uso, preservação e limites](../outros/programas-ocupacionais.md). O responsável informado não equivale a aprovação clínica; protocolos, exames e periodicidades não são pré-carregados.
+
+### 23.1.1 Contrato técnico inicial dos protocolos
+
+- [Inferido] A primeira implementação exige programa de origem, código único por clínica/série e versões inteiras atribuídas no servidor. Conteúdo não é editado: nova versão sempre acrescenta registro e começa sem aprovação. A série mantém seu programa; não há protocolo global sem programa nesta interface.
+- [Inferido] rules usa schema_version=1, source_reference (texto até 190), job_title opcional (até 120), risk_context (texto até 4.000) e exams (lista de 1–100 itens diferentes). Cada item preserva exam_type_id, code e name do catálogo da clínica. Campos são montados no servidor a partir de códigos escolhidos pela clínica; não se aceita JSON arbitrário do cliente. O contexto descreve informação fornecida pela clínica, sem dados de pacientes. Não há riscos, exames ou periodicidades pré-carregados, nem interpretação automática desse texto.
+- [Inferido] Início obrigatório; fim opcional enquanto permitido pelo programa. O período deve caber no programa de origem; se o programa tem fim, o protocolo também informa fim dentro desse intervalo. Pode haver sobreposição entre versões: nenhuma delas é escolhida automaticamente como vigente.
+- [Inferido] Gestão exige protocols.view/manage, consulta do programa/empresa, catalog.view e segundo fator. Aprovação é uma permissão separada protocols.approve, com clinical.access, mesma visibilidade, senha recente no endpoint e declaração explícita de revisão. Nenhum papel recebe protocols.approve automaticamente. O aprovador é o Professional associado ao próprio integrante autenticado e ativo, com council=CRM, UF e número preenchidos no cadastro local. Esses dados não comprovam verificação externa de conselho, especialidade ou habilitação; a clínica valida e concede a autorização pertinente.
+- [Inferido] A aprovação exige versão mais recente, ainda pendente, empresa ativa, período válido e exames ativos cujos código/nome ainda correspondam ao snapshot revisado. Divergência exige nova versão; não se atualiza a definição para aprovar. Aprovação registra profissional/data UTC apenas uma vez, com auditoria na mesma transação. O autor do cadastro pode aprovar somente se também tiver a autorização clínica específica; não existe regra implícita de dupla revisão nesta entrega.
+- [Confirmado] O contrato técnico acima foi implementado/testado conforme as evidências no [fluxo 20](20-plano-desenvolvimento.md); não significa aprovação de conteúdo real pela clínica. Operação e limites em [protocolos ocupacionais](../outros/protocolos-ocupacionais.md). A etapa 4 deve revalidar contexto, vigência e aprovação ao selecionar uma versão explicitamente; avaliação/ASO da etapa 6 preserva seu snapshot.
+
 ## 23.2 Avaliação e ASO
 
 [Confirmado] A NR-7 distingue admissional, periódico, retorno ao trabalho, mudança de riscos ocupacionais e demissional (§7.5.6), prevê conteúdo mínimo do ASO (§7.5.19.1) e periodicidades dependentes do contexto. Fonte: [NR-7 oficial](https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-partitaria-permanente/arquivos/normas-regulamentadoras/nr-07-atualizada-2022.pdf).
@@ -45,3 +56,5 @@
 
 - [Inferido] Testar cada motivo de avaliação, vínculo simultâneo, alteração de função sem reescrever passado, exame pendente/dispensado, emissão e retificação com médico, disponibilização registrada, bloqueio de outro empregador/tenant e ausência de acesso empresarial à anamnese.
 - [Inferido] Antes de ativar ocupacional em uma clínica, o responsável técnico deve aprovar seus protocolos, periodicidades, modelos, responsabilidades de PCMSO e regras de acesso. São parâmetros de implantação, não pré-requisito para inventar protocolos clínicos durante o desenvolvimento.
+
+[Confirmado] Decisão de continuidade técnica em 04/11/2026: aceite da etapa 3 e desenvolvimento da etapa 4 com dados sintéticos autorizados pelo usuário. Aprovação do conteúdo real permanece exigida antes do uso clínico, conforme §23.5; conciliação/registro na [P14](../outros/PENDENCIAS.md#p14-aceite-tecnico-clinico) e no fluxo 20.

@@ -81,7 +81,7 @@
 
 [Confirmado] Operação da aplicação na raiz (instalação local, migrations, seeds e checks): [README do projeto](../README.md#ambiente-local). Entrega e evidências da fundação: [fluxo 20](fluxos/20-plano-desenvolvimento.md); estrutura executável: [migrations](../database/migrations/).
 
-[Confirmado] Homologação local isolada da fundação e dos cadastros: [roteiro, clínicas e evidências](outros/homologacao-local.md). Credenciais ficam no arquivo de ambiente privado indicado no roteiro.
+[Confirmado] Homologação local isolada da fundação, cadastros e configuração da etapa 3: [roteiro, clínicas e evidências](outros/homologacao-local.md). Credenciais ficam no arquivo de ambiente privado indicado no roteiro.
 
 [Confirmado] Vínculos paciente–empregador, períodos, versões e desligamento: [uso e limites](outros/vinculos-empregaticios.md), com contrato no fluxo 23.
 
@@ -100,3 +100,11 @@
 [Confirmado] Configuração administrativa de grupos e perguntas de texto livre, com histórico imutável: [questionários versionados — uso e limites](outros/questionarios.md). Contrato clínico no fluxo 22; não inclui coleta de respostas.
 
 [Confirmado] Manifestações por finalidade, termo/evidência cifrados e histórico preservado: [consentimentos e termos do paciente — uso e limites](outros/consentimentos-pacientes.md), conforme fluxo 24.
+
+[Confirmado] Referências versionadas de programas por empresa, com contexto e identificação histórica cifrados: [programas ocupacionais — uso e limites](outros/programas-ocupacionais.md), conforme fluxo 23.
+
+[Confirmado] Versões de protocolos com exames explícitos do catálogo e aprovação profissional separada: [protocolos ocupacionais — operação e limites](outros/protocolos-ocupacionais.md), com contrato no fluxo 23 §23.1.1.
+
+[Confirmado] Revisão técnica conjunta da configuração clínica e homologação ampliada: [relatório da etapa 3](outros/revisao-etapa-03.md). Status e aceite continuam no fluxo 20.
+
+[Confirmado] Primeiro incremento da etapa 4: [pedidos particulares, autorização/cancelamento e preços preservados](outros/pedidos-exames.md), conforme fluxo 22.

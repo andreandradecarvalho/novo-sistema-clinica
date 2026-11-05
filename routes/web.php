@@ -7,10 +7,13 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyUnitController;
 use App\Http\Controllers\EmploymentController;
 use App\Http\Controllers\ExamAttachmentController;
+use App\Http\Controllers\ExamOrderController;
 use App\Http\Controllers\ExamPreparationController;
 use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\HealthQuestionController;
 use App\Http\Controllers\MemberUnitController;
+use App\Http\Controllers\OccupationalProgramController;
+use App\Http\Controllers\OccupationalProtocolController;
 use App\Http\Controllers\PatientConsentController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientMergeController;
@@ -24,6 +27,30 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function (): void {
+    Route::prefix('patients/{patient:public_id}/orders')->name('patients.orders.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
+        Route::get('/', [ExamOrderController::class, 'index'])->name('index');
+        Route::get('/create', [ExamOrderController::class, 'create'])->name('create');
+        Route::post('/', [ExamOrderController::class, 'store'])->name('store');
+        Route::get('/{order:public_id}', [ExamOrderController::class, 'show'])->name('show');
+        Route::post('/{order:public_id}/authorize', [ExamOrderController::class, 'authorize'])->name('authorize');
+        Route::post('/{order:public_id}/cancel', [ExamOrderController::class, 'cancel'])->name('cancel');
+    });
+    Route::prefix('programs/{program}/protocols')->name('programs.protocols.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
+        Route::get('/', [OccupationalProtocolController::class, 'index'])->name('index');
+        Route::get('/create', [OccupationalProtocolController::class, 'create'])->name('create');
+        Route::post('/', [OccupationalProtocolController::class, 'store'])->name('store');
+        Route::get('/{protocol}', [OccupationalProtocolController::class, 'show'])->name('show');
+        Route::get('/{protocol}/versions', [OccupationalProtocolController::class, 'version'])->name('version');
+        Route::post('/{protocol}/versions', [OccupationalProtocolController::class, 'replace'])->name('replace');
+        Route::post('/{protocol}/approve', [OccupationalProtocolController::class, 'approve'])->middleware('password.confirm')->name('approve');
+    });
+    Route::prefix('companies/{company:public_id}/programs')->name('companies.programs.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
+        Route::get('/', [OccupationalProgramController::class, 'index'])->name('index');
+        Route::get('/create', [OccupationalProgramController::class, 'create'])->name('create');
+        Route::get('/register/{professional}', [OccupationalProgramController::class, 'registration'])->withoutScopedBindings()->name('registration');
+        Route::post('/register/{professional}', [OccupationalProgramController::class, 'store'])->withoutScopedBindings()->name('store');
+        Route::get('/{program}', [OccupationalProgramController::class, 'show'])->name('show');
+    });
     Route::prefix('patients/{patient:public_id}/consents')->name('patients.consents.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
         Route::get('/', [PatientConsentController::class, 'index'])->name('index');
         Route::get('/create', [PatientConsentController::class, 'create'])->name('create');

@@ -16,6 +16,8 @@
 | [Confirmado] P09 | CONCILIADA NO CONTRATO/DDL | Diagramas correspondem ao schema; entidades clínicas/ocupacionais e CPF ciphertext/HMAC têm campos próprios; FKs compostas e regras de propriedade documentadas. Não afirmar criptografia ou Policy implementada. |
 | [Confirmado] P10 | CONCILIADA | Status derivado de flags, sem importar Status; identidade ambígua exige revisão, delta cobre updates e convivência Access é temporária/condicional. [13](../fluxos/13-plano-migracao-dados.md) substitui processo antigo, mantido como histórico. |
 | [Confirmado] P11 | ESPECIFICADA E MODELADA | [23](../fluxos/23-saude-ocupacional.md) define vínculo/função/contexto, avaliação, ASO e limites empresariais; entidades no DDL validado. Homologação clínica e aplicação continuam nas etapas 3/6. |
+| [Confirmado] P13 | CONCILIADA POR DECISÃO DO USUÁRIO EM 04/11/2026 | Modelos/snapshots de perguntas na etapa 3; coleta de respostas na etapa 4, junto de appointments. Registro abaixo e sequência no fluxo 20. |
+| [Confirmado] P14 | CONCILIADA POR DECISÃO DO USUÁRIO | Aceite técnico da etapa 3 autorizado e desenvolvimento da etapa 4 com dados sintéticos; aprovação do conteúdo real obrigatória antes do uso clínico. |
 | [Confirmado] P12 | REFERÊNCIAS/POLÍTICA CORRIGIDAS | Tutela da saúde em art. 11, II, f; marcos distintos de guarda e assinatura por processo no [24](../fluxos/24-seguranca-retencao-operacao.md). Aprovação da política por responsável técnico/jurídico antes do uso correspondente. |
 
 [Confirmado] Preparação documental complementada com [mapa central](../README.md), [banco legado](banco-legado.md) e [índice legado](indice-legado.md). Verificação SQL: 69 tabelas/170 FKs, 25 verificações sintéticas aprovadas em MariaDB 13.0.2. Resultado, hash do DDL e limites no CHANGELOG. Não houve importação no banco de trabalho nem ampliação de privilégios do usuário local.
@@ -25,6 +27,24 @@
 - [Confirmado] A fundação Laravel na raiz foi implementada e testada localmente; evidências/limites e aceite autorizado da etapa 1 estão no [fluxo 20](../fluxos/20-plano-desenvolvimento.md). Este DDL não implementa casts clínicos, assinatura, restore nem os módulos das etapas seguintes. A homologação local isolada com duas clínicas foi executada, conforme [roteiro/evidência](homologacao-local.md); a revisão técnica local e o aceite foram registrados no fluxo 20. Por instrução explícita do usuário, CI remota fica para verificação futura, sem bloquear o avanço local; implantação externa permanece pendente.
 - [Inferido] Antes de ativar cada domínio, homologar com a clínica protocolos/periodicidades/modelos, acesso empresarial, portfólio e financeiro contratado; perguntas únicas em [19](../fluxos/19-perguntas-em-aberto-negocio.md). Não são respostas fornecidas pelo negócio nesta correção.
 - [Confirmado] MySQL ainda não foi homologado; o resultado observado é MariaDB. Não anunciar suporte testado a ambos nem conformidade clínica integral.
+
+<a id="p13-sequencia-questionarios"></a>
+
+## P13 — Sequência de questionários e dependência da agenda (04/11/2026)
+
+- [Confirmado] Fontes ao identificar a divergência: fluxo 20 §20.2 atribuía questionários/snapshots à etapa 3 e agenda à etapa 4; o ponto §20.4.1 ainda incluía coleta de respostas entre as pendências da etapa 3. O schema.sql, health_records (linha 942 no snapshot inspecionado), exige FK composta para appointments. Migrations existentes iam até 000012 e não criavam appointments/health_records/health_answers.
+- [Confirmado] Impacto: criar a persistência completa de respostas na etapa 3 exigiria antecipar agenda ou adiar sua FK. A implementação afetada foi interrompida para decisão, sem criar tabelas fictícias, omitir FK ou alterar o DDL por conta própria.
+- [Confirmado] O usuário escolheu: **“Preparar modelos/snapshots na etapa 3 e coletar respostas na etapa 4”**. Sequência conciliada nos fluxos 20/22 e no documento de questionários. Mantidos DDL/FKs de referência; coleta de respostas continua pendente até a etapa 4, após aceite da etapa 3.
+
+<a id="p14-aceite-tecnico-clinico"></a>
+
+## P14 — Aceite técnico e ativação clínica (04/11/2026)
+
+- [Confirmado] O [fluxo 20 §20.4.1](../fluxos/20-plano-desenvolvimento.md#2041-ponto-de-retomada--04112026) mantém validação de conteúdo real e aceite integral entre as pendências da etapa 3, condicionando a etapa 4 ao aceite. O [AGENTS, Ciclo de implementação](../../AGENTS.md#ciclo-de-implementação), item 2, exige dependências concluídas. Em contrapartida, o [fluxo 23 §23.5](../fluxos/23-saude-ocupacional.md#235-aceite-e-configuração-da-clínica) situa aprovação de protocolos/periodicidades/modelos antes da ativação em uma clínica e esclarece que são parâmetros de implantação, sem exigir inventar protocolos durante o desenvolvimento. Esta divergência foi identificada na retomada após a revisão técnica, sem escolher silenciosamente uma interpretação.
+- [Confirmado] Código/testes e homologação sintética estão concretos para revisão: [relatório da etapa 3](revisao-etapa-03.md), 186 testes/2.244 asserções e 168 verificações locais. Não existe evidência de aprovação de conteúdo real pela clínica. O pedido de continuidade não foi registrado como validação médica.
+- [Inferido] Decisão necessária: autorizar aceite do escopo técnico da etapa 3 e desenvolvimento da etapa 4 com dados sintéticos, mantendo aprovação do conteúdo real como requisito antes de uso clínico; ou manter a dependência bloqueando a etapa 4 até validação clínica. A implementação dependente aguardou resposta, sem iniciar tabelas/rotas de agenda ou conceder permissões clínicas durante a consulta.
+
+- [Confirmado] Decisão posterior do usuário: **“Sim, avançar com dados sintéticos”**, em resposta à autorização explícita para concluir o escopo técnico e iniciar a etapa 4, mantendo validação do conteúdo real obrigatória antes do uso clínico. Aceite técnico registrado no fluxo 20; não representa aprovação médica nem liberação para produção.
 
 ## Histórico — registros anteriores à conciliação
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Domain\Catalog\Actions\BuildHealthQuestionSnapshot;
 use App\Domain\Catalog\Actions\CreateHealthQuestionGroup;
 use App\Domain\Catalog\Actions\ListHealthQuestionGroups;
 use App\Domain\Catalog\Actions\ListHealthQuestions;
@@ -15,7 +16,6 @@ use App\Http\Requests\CreateHealthQuestionGroupRequest;
 use App\Http\Requests\PublishHealthQuestionRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Gate;
 
 final class HealthQuestionController extends Controller
 {
@@ -43,12 +43,12 @@ final class HealthQuestionController extends Controller
         return redirect()->route('questionnaires.questions.show', [$group->id, $question->id])->with('status', 'Versão da pergunta cadastrada.');
     }
 
-    public function question(HealthQuestionGroup $group, HealthQuestion $question): View
+    public function question(HealthQuestionGroup $group, HealthQuestion $question, BuildHealthQuestionSnapshot $action): View
     {
-        Gate::authorize('view', $group);
+        $snapshot = $action->execute($group, $question);
         app(RegistryAudit::class)->record('catalog', 'health_question_version_viewed', $question, HealthQuestion::class);
 
-        return view('questionnaires.question', compact('group', 'question'));
+        return view('questionnaires.question', compact('group', 'question', 'snapshot'));
     }
 
     public function revise(PublishHealthQuestionRequest $request, HealthQuestionGroup $group, HealthQuestion $question, PublishHealthQuestion $action): RedirectResponse

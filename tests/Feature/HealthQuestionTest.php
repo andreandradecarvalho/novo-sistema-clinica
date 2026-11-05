@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Domain\Catalog\Actions\BuildHealthQuestionSnapshot;
 use App\Domain\Catalog\Actions\CreateHealthQuestionGroup;
 use App\Domain\Catalog\Actions\PublishHealthQuestion;
 use App\Domain\Catalog\Models\HealthQuestion;
@@ -13,6 +14,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Spatie\Permission\PermissionRegistrar;
 use Tests\Support\Clinics;
 
@@ -197,4 +199,29 @@ it('paginates groups and question histories without disclosing other clinics', f
     $this->get($this->base.'?page=2')->assertOk()->assertSee('Grupo paginado 21')->assertDontSee('Grupo sintético B');
     $this->get($this->groupUrl)->assertOk()->assertSee('page=2', false)->assertDontSee('Enunciado sintético B');
     $this->get($this->groupUrl.'?page=2')->assertOk()->assertSee('Enunciado sintético A')->assertDontSee('Enunciado sintético B');
+});
+
+it('prepares detached immutable question snapshots without collecting patient answers', function (): void {
+    $this->context->run($this->a['tenant'], function (): void {
+        auth()->setUser($this->a['user']->fresh());
+        $action = app(BuildHealthQuestionSnapshot::class);
+        $snapshot = $action->execute($this->groupA, $this->questionA);
+        $version = app(PublishHealthQuestion::class)->execute($this->groupA, ['label' => 'Versão sintética revisada'], $this->questionA);
+        $latest = $action->execute($this->groupA, $version);
+        expect($snapshot->version)->toBe(1)->and($latest->version)->toBe(2);
+        expect($snapshot->label)->toBe('Enunciado sintético A')->and($latest->label)->toBe('Versão sintética revisada');
+        expect($snapshot->answerColumns())->toBe(['question_id' => $this->questionA->id, 'question_label_snapshot' => 'Enunciado sintético A', 'question_type_snapshot' => 'text', 'question_options_snapshot' => null]);
+        expect($snapshot->tenantId)->toBe((int) $this->a['tenant']->id);
+        expect(fn () => $snapshot->label = 'Sobrescrita')->toThrow(Error::class);
+        $this->questionA->label = 'Estado obsoleto ou adulterado em memória';
+        expect($action->execute($this->groupA, $this->questionA)->label)->toBe('Enunciado sintético A');
+        expect(fn () => $action->execute($this->otherA, $this->questionA))->toThrow(ModelNotFoundException::class);
+        expect(fn () => $action->execute($this->groupB, $this->questionB))->toThrow(ModelNotFoundException::class);
+        DB::table('health_questions')->where('id', $this->questionA->id)->update(['type' => 'choice']);
+        expect(fn () => $action->execute($this->groupA, $this->questionA))->toThrow(ValidationException::class);
+        $this->a['user']->revokePermissionTo('catalog.view');
+        auth()->setUser($this->a['user']->fresh());
+        expect(fn () => $action->execute($this->groupA, $this->questionA))->toThrow(AuthorizationException::class);
+    });
+    expect(fn () => app(BuildHealthQuestionSnapshot::class)->execute($this->groupA, $this->questionA))->toThrow(MissingTenant::class);
 });

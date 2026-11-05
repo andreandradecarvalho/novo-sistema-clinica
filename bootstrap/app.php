@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias(['clinical.2fa' => RequireClinicalTwoFactor::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->dontFlash(['code', 'recovery_code', 'token', 'two_factor_secret', 'cpf', 'name', 'birth_date', 'email', 'mobile_phone', 'cnpj', 'city', 'council', 'council_number', 'specialty', 'registration_number', 'job_title', 'department', 'starts_on', 'termination_date', 'reason', 'review_token', 'purpose', 'legal_basis', 'policy_version', 'policy_text', 'evidence_note', 'evidence_encrypted']);
+        $exceptions->dontFlash(['code', 'recovery_code', 'token', 'two_factor_secret', 'cpf', 'name', 'birth_date', 'email', 'mobile_phone', 'cnpj', 'city', 'council', 'council_number', 'specialty', 'registration_number', 'job_title', 'department', 'starts_on', 'termination_date', 'reason', 'review_token', 'purpose', 'legal_basis', 'policy_version', 'policy_text', 'evidence_note', 'evidence_encrypted', 'source_reference', 'context', 'context_encrypted', 'risk_context', 'exam_codes', 'exam_ids']);
         $exceptions->render(fn (MissingTenant $exception, Request $request) => $request->expectsJson()
             ? response()->json(['message' => 'Clínica indisponível.'], 404)
             : response()->view('errors.404', [], 404));

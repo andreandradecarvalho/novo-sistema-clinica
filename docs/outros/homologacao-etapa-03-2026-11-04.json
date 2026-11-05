@@ -1,0 +1,692 @@
+{
+  "observed_at": "2026-11-04T23:34:34+00:00",
+  "environment": "homologacao-local-isolada",
+  "php": "8.5.12",
+  "laravel": "13.39.0",
+  "database": "13.0.2-MariaDB-ubu2604",
+  "foreign_key_checks": 1,
+  "passed": true,
+  "registries_included": true,
+  "stage3_included": true,
+  "checks": [
+    {
+      "name": "Debug desativado",
+      "passed": true
+    },
+    {
+      "name": "Sessões persistidas e criptografadas",
+      "passed": true
+    },
+    {
+      "name": "Fila e cache Redis",
+      "passed": true
+    },
+    {
+      "name": "Login Vuexy da clínica A",
+      "passed": true
+    },
+    {
+      "name": "Mesmo e-mail rejeita senha da outra clínica A",
+      "passed": true
+    },
+    {
+      "name": "Senha exige desafio 2FA A",
+      "passed": true
+    },
+    {
+      "name": "Senha sem 2FA não abre dashboard A",
+      "passed": true
+    },
+    {
+      "name": "TOTP real autenticou clínica A",
+      "passed": true
+    },
+    {
+      "name": "Sessão SQL abre dashboard A",
+      "passed": true
+    },
+    {
+      "name": "Login Vuexy da clínica B",
+      "passed": true
+    },
+    {
+      "name": "Mesmo e-mail rejeita senha da outra clínica B",
+      "passed": true
+    },
+    {
+      "name": "Senha exige desafio 2FA B",
+      "passed": true
+    },
+    {
+      "name": "Senha sem 2FA não abre dashboard B",
+      "passed": true
+    },
+    {
+      "name": "TOTP real autenticou clínica B",
+      "passed": true
+    },
+    {
+      "name": "Sessão SQL abre dashboard B",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: senha confirmada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: unidade clínica criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: atribuição de unidade por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: perfil profissional criado sem concessão clínica",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: empresa criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: estabelecimento do empregador criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: paciente root criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: paciente source criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: busca CPF/HMAC sem número na resposta",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: vínculo empregatício criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: merge humano preserva integralmente o vínculo",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: origem arquivada não abre por rota normal",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: histórico consolidado com proveniência",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: versionamento pelo sobrevivente conserva origem/empregador",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: desligamento pelo sobrevivente",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: concessão empresarial criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: concessão empresarial revogada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: cadastros não concederam papéis/permissões ao integrante",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: senha confirmada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: unidade clínica criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: atribuição de unidade por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: perfil profissional criado sem concessão clínica",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: empresa criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: estabelecimento do empregador criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: paciente root criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: paciente source criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: busca CPF/HMAC sem número na resposta",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: vínculo empregatício criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: merge humano preserva integralmente o vínculo",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: origem arquivada não abre por rota normal",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: histórico consolidado com proveniência",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: versionamento pelo sobrevivente conserva origem/empregador",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: desligamento pelo sobrevivente",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: concessão empresarial criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: concessão empresarial revogada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: cadastros não concederam papéis/permissões ao integrante",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: paciente da outra clínica recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: concessões de outra empresa/tenant recusadas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: vínculo cruzado recusado pelo binding",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: busca por nome não cruza clínicas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: paciente da outra clínica recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: concessões de outra empresa/tenant recusadas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: vínculo cruzado recusado pelo binding",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: busca por nome não cruza clínicas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2: fixtures temporárias removidas; auditoria operacional preservada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: senha administrativa confirmada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: catálogo criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: catálogo consultável",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: preço de referência atualizado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: preparo textual criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: preparo revisado sem atravessar exame",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: PNG sintético enviado por multipart real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: download autorizado devolve bytes exatos",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: arquivo privado cifrado em storage",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: arquivo não possui URL pública",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: grupo de perguntas criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: primeira versão de pergunta por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: nova versão preserva definição e snapshot anteriores",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: origem obsoleta recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: versão revisada consultável por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: paciente sintético para manifestações",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: manifestação granted registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: manifestação withdrawn registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: retirada preserva evento anterior e evidência cifrada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: evidência consultável com autorização",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: novo profissional começa sem permissões",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: cadastro profissional não concede aprovação",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: empresa sintética para programa",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: referência de programa com contexto cifrado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: protocolo criado pendente sem aprovação automática",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: administrador sem concessão não aprova",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovador exige TOTP real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovador autentica com TOTP real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovação exige senha recente",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovador confirma senha real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovador consulta configuração",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovação vinculada ao próprio profissional",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovação não pode ser reescrita",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: nova versão não herda aprovação nem altera a anterior",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: permissão retirada impede nova aprovação",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: fixtures não alteram papéis nem concedem aprovação ao administrador",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovador sintético encerra sessão",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: senha administrativa confirmada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: catálogo criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: catálogo consultável",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: preço de referência atualizado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: preparo textual criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: preparo revisado sem atravessar exame",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: PNG sintético enviado por multipart real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: download autorizado devolve bytes exatos",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: arquivo privado cifrado em storage",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: arquivo não possui URL pública",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: grupo de perguntas criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: primeira versão de pergunta por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: nova versão preserva definição e snapshot anteriores",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: origem obsoleta recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: versão revisada consultável por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: paciente sintético para manifestações",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: manifestação granted registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: manifestação withdrawn registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: retirada preserva evento anterior e evidência cifrada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: evidência consultável com autorização",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: novo profissional começa sem permissões",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: cadastro profissional não concede aprovação",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: empresa sintética para programa",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: referência de programa com contexto cifrado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: protocolo criado pendente sem aprovação automática",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: administrador sem concessão não aprova",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovador exige TOTP real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovador autentica com TOTP real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovação exige senha recente",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovador confirma senha real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovador consulta configuração",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovação vinculada ao próprio profissional",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovação não pode ser reescrita",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: nova versão não herda aprovação nem altera a anterior",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: permissão retirada impede nova aprovação",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: fixtures não alteram papéis nem concedem aprovação ao administrador",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovador sintético encerra sessão",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: exame externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: anexo externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: pergunta externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: manifestação externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: programa externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: protocolo externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: exame externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: anexo externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: pergunta externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: manifestação externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: programa externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: protocolo externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3: fixtures, arquivos, sessões e concessões temporárias removidos; auditoria preservada",
+      "passed": true
+    },
+    {
+      "name": "Administrador consulta equipe própria",
+      "passed": true
+    },
+    {
+      "name": "Binding não expõe integrante da outra clínica",
+      "passed": true
+    },
+    {
+      "name": "Cookie A reapresentado em B não autentica",
+      "passed": true
+    },
+    {
+      "name": "Reapresentação não destrói sessão A",
+      "passed": true
+    },
+    {
+      "name": "Header não seleciona outra clínica",
+      "passed": true
+    },
+    {
+      "name": "Domínio desconhecido rejeitado",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /.env",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /docs/README.md",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /vendor/autoload.php",
+      "passed": true
+    },
+    {
+      "name": "Horizon não expõe dados entre clínicas",
+      "passed": true
+    },
+    {
+      "name": "CSRF real rejeita POST sem token",
+      "passed": true
+    },
+    {
+      "name": "Recepção autenticou clínica A",
+      "passed": true
+    },
+    {
+      "name": "Troca obrigatória da senha inicial preservada",
+      "passed": true
+    },
+    {
+      "name": "Recepção autenticou clínica B",
+      "passed": true
+    },
+    {
+      "name": "Recepção sem permissão não consulta equipe",
+      "passed": true
+    },
+    {
+      "name": "Logout no HTTP real clinica-a.localhost",
+      "passed": true
+    },
+    {
+      "name": "Logout no HTTP real clinica-b.localhost",
+      "passed": true
+    },
+    {
+      "name": "Horizon processou três jobs reais",
+      "passed": true
+    },
+    {
+      "name": "Mesmo worker persistente em A/falha/B",
+      "passed": true
+    },
+    {
+      "name": "Contexto e team corretos após falha",
+      "passed": true
+    },
+    {
+      "name": "Permissões não vazam no Horizon",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "HTTP local; HTTPS externo não homologado",
+    "Somente dados sintéticos",
+    "Não substitui CI remota ou revisão de PR"
+  ],
+  "source_revision": "afc68e00b045ba4ab61336acb724a4ac29e827d0",
+  "working_tree_dirty": true
+}

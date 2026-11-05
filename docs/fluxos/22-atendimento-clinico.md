@@ -31,6 +31,8 @@
 - [Inferido] Cada medição preserva unidade, método e referência utilizados na coleta/interpretação. Não recalcular sinalização de resultado histórico ao editar o catálogo. Referências e protocolos são configurados pelo responsável técnico; não inferir diagnóstico de limites genéricos.
 - [Inferido] Campos de resultado numérico e textual são mutuamente exclusivos quando há valor; ambos nulos só representam dado explicitamente ausente, sem flag normal automática. Exames complexos podem exigir estruturas adicionais específicas; anexos não substituem metadados de autoria.
 
+[Confirmado] Sequência decidida pelo usuário em 04/11/2026: etapa 3 prepara modelos/versionamento e snapshots da definição das perguntas; a coleta de respostas, sua cifra e persistência em health_records/health_answers serão implementadas na etapa 4, com appointments disponível. Decisão e dependências na [P13](../outros/PENDENCIAS.md#p13-sequencia-questionarios) e no [fluxo 20](20-plano-desenvolvimento.md). Não criar tabelas de agenda antecipadamente nem remover FKs para simular a entrega.
+
 ## 22.4 Financeiro da clínica
 
 - [Confirmado] [Billing SaaS](10-assinatura-billing.md) cobra mensalidade da clínica; não representa venda de exames.
@@ -41,3 +43,7 @@
 ## 22.5 Aceite
 
 - [Inferido] Cobrir pedido com vários exames/dias; encaixe; recusa; repetição sem perda da tentativa anterior; liberação parcial; cancelamento e novo agendamento no mesmo slot; duas unidades/horários; preço histórico; questionário alterado sem mudar resposta anterior; resultado retificado sem sobrescrever documento; rejeição de paciente/resultado/pedido de tenant diferente.
+
+[Confirmado] Primeiro incremento da etapa 4: [rascunhos de pedidos particulares](../outros/pedidos-exames.md), com vários exames e snapshots de preço/descrição, sem agendamento prévio. Não implementa ainda as transições/financeiro do contrato acima. Escopo, testes e continuidade no fluxo 20.
+
+[Confirmado] Transições iniciais de pedidos particulares implementadas: draft → authorized e draft/authorized → canceled, com motivo cifrado, ator/data UTC, itens atualizados em transação e auditoria. [Uso, autorizações e limites](../outros/pedidos-exames.md#autorizar-ou-cancelar). Não implementam ainda execução, recebíveis, estornos ou cancelamento parcial; estados posteriores e dependências devem ser integrados antes do uso correspondente.

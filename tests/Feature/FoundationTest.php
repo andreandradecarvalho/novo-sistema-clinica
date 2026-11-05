@@ -11,6 +11,7 @@ use App\Domain\Tenancy\Services\TenantCache;
 use App\Domain\Tenancy\Services\TenantContext;
 use App\Domain\Tenancy\Services\TenantStorage;
 use App\Support\LocalHomologation;
+use App\Support\StageThreeHomologation;
 use Database\Seeders\HomologationSeeder;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Validation\UncompromisedVerifier;
@@ -376,11 +377,11 @@ it('refuses homologation fixtures outside the isolated staging environment', fun
     expect(fn () => app(HomologationSeeder::class)->run())->toThrow(RuntimeException::class);
 });
 
-it('refuses the live homologation check outside its isolated environment', function (bool $registries): void {
-    $this->artisan('homologation:check', ['--registries' => $registries])
+it('refuses the live homologation check outside its isolated environment', function (bool $registries, bool $stage3): void {
+    $this->artisan('homologation:check', ['--registries' => $registries, '--stage3' => $stage3])
         ->expectsOutputToContain('This command requires the isolated local homologation database.')
         ->assertFailed();
-})->with([false, true]);
+})->with([[false, false], [true, false], [false, true], [true, true]]);
 
 it('refuses homologation migrations outside the isolated environment', function (): void {
     $this->artisan('homologation:migrate')
@@ -412,3 +413,8 @@ it('rejects connection overrides before running homologation fixtures', function
     'another default connection' => ['database.default', 'mysql'],
     'previously resolved connection targets another database' => ['database.connections.mariadb.url', null],
 ]);
+
+it('refuses stage three synthetic grants and cleanup outside isolated staging', function (): void {
+    $unexpected = fn () => throw new LogicException('No HTTP or fixture callback may run here.');
+    expect(fn () => new StageThreeHomologation($unexpected, $unexpected, $unexpected)->run([]))->toThrow(RuntimeException::class);
+});

@@ -40,7 +40,7 @@ jobs:
       - name: Homologação local com duas clínicas
         run: |
           python3 scripts/homologacao.py up
-          python3 scripts/homologacao.py check --registries
+          python3 scripts/homologacao.py check --stage3
       - name: Encerrar serviços descartáveis
         if: always()
         run: |
