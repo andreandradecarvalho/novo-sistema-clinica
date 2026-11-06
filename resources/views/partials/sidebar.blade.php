@@ -42,6 +42,9 @@
         @can('viewAny', \App\Domain\Catalog\Models\HealthQuestionGroup::class)
         <li class="menu-item {{ request()->routeIs('questionnaires.*') ? 'active' : '' }}"><a href="{{ route('questionnaires.index') }}" class="menu-link" @if(request()->routeIs('questionnaires.*')) aria-current="page" @endif><x-icon name="layout-dashboard" class="menu-icon" /><span>Questionários</span></a></li>
         @endcan
+        @can('viewExceptionPolicy', \App\Domain\Tenancy\Models\Setting::class)
+        <li class="menu-item {{ request()->routeIs('settings.exception-financial-policy.*') ? 'active' : '' }}"><a href="{{ route('settings.exception-financial-policy.edit') }}" class="menu-link" @if(request()->routeIs('settings.exception-financial-policy.*')) aria-current="page" @endif><x-icon name="layout-dashboard" class="menu-icon" /><span>Política financeira</span></a></li>
+        @endcan
         <li class="menu-header small"><span class="menu-header-text">Minha conta</span></li>
         <li class="menu-item {{ request()->routeIs('security') ? 'active' : '' }}">
             <a href="{{ route('security') }}" class="menu-link" @if(request()->routeIs('security')) aria-current="page" @endif>

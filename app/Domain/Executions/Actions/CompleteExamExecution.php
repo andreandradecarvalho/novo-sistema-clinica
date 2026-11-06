@@ -61,11 +61,11 @@ final class CompleteExamExecution
             }
             $grant->reasonSnapshot();
             foreach ($items as $other) {
-                if (! in_array($other->status, ['authorized', 'in_progress', 'completed'], true) || $other->quantity !== 1) {
+                if (! in_array($other->status, ['authorized', 'in_progress', 'completed', 'refused', 'incomplete'], true) || $other->quantity !== 1) {
                     $this->refuse();
                 }
-                if ($other->status === 'completed') {
-                    $history = ExamExecution::query()->where('exam_order_item_id', $other->id)->where('status', 'completed')->get();
+                if (in_array($other->status, ['completed', 'refused', 'incomplete'], true)) {
+                    $history = ExamExecution::query()->where('exam_order_item_id', $other->id)->where('status', $other->status)->get()->filter(fn ($prior): bool => ! isset($prior->preparationSnapshot()['retry']));
                     if ($history->count() !== 1) {
                         $this->refuse();
                     }

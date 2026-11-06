@@ -12,6 +12,7 @@ use App\Domain\Patients\Models\Patient;
 use App\Domain\Scheduling\Models\Appointment;
 use App\Domain\Tenancy\Concerns\BelongsToTenant;
 use App\Domain\Tenancy\Services\TenantContext;
+use App\Domain\Visits\Services\VisitCompletionEvidence;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,7 +35,7 @@ final class Visit extends Model
 
     protected function casts(): array
     {
-        return ['checked_in_at' => 'immutable_datetime'];
+        return ['checked_in_at' => 'immutable_datetime', 'completed_at' => 'immutable_datetime'];
     }
 
     /** @return BelongsTo<Appointment, $this> */
@@ -80,7 +81,7 @@ final class Visit extends Model
                 || ($context['appointment_id'] ?? null) !== (int) $this->appointment_id || ($context['exam_order_id'] ?? null) !== (int) $this->exam_order_id
                 || ($context['unit_id'] ?? null) !== (int) $this->unit_id || ! is_int($context['actor_id'] ?? null) || $context['actor_id'] < 1 || $context['actor_id'] !== (int) $this->created_by
                 || ! is_string($context['occurred_at'] ?? null) || ! is_string($context['key_hash'] ?? null) || ! preg_match('/\A[a-f0-9]{64}\z/', $context['key_hash'])
-                || $this->source !== 'appointment' || ! in_array($this->status, ['open', 'canceled', 'in_progress'], true) || $this->completed_at !== null) {
+                || $this->source !== 'appointment' || ! in_array($this->status, ['open', 'canceled', 'in_progress', 'completed'], true)) {
                 throw new LogicException('Unsupported visit evidence.');
             }
             $at = CarbonImmutable::createFromFormat('Y-m-d\TH:i:sP', $context['occurred_at']);
@@ -88,12 +89,18 @@ final class Visit extends Model
                 throw new LogicException('Visit time differs from evidence.');
             }
 
-            if ($this->status === 'in_progress') {
+            if (in_array($this->status, ['in_progress', 'completed'], true)) {
                 if (ExecutionStartEvidence::validate($context['start'] ?? null, (int) $this->id)->lessThan($at)) {
                     throw new LogicException('Visit start predates arrival.');
                 }
             } elseif (isset($context['start'])) {
                 throw new LogicException('Unexpected visit start.');
+            }
+
+            if ($this->status === 'completed') {
+                VisitCompletionEvidence::validate($this, $context['completion'] ?? null);
+            } elseif (array_key_exists('completion', $context) || $this->completed_at !== null) {
+                throw new LogicException('Unexpected visit completion.');
             }
 
             $cancellation = $context['cancellation'] ?? null;

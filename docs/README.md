@@ -128,3 +128,9 @@
 [Confirmado] Etapa 4 — [coleta individual de respostas clínicas](outros/respostas-clinicas.md): seleção explícita da versão, snapshot, cifra, autoria, histórico e permissões próprias. Evidências/andamento no fluxo 20.
 
 [Confirmado] Etapa 4 — [conclusão de execuções/itens](outros/tentativas-exames.md#concluir-execução-e-itens-do-pedido): próprio executor, término, concessão atual, reenvio e pedido derivado de todos os itens, com financeiro/respostas preservados. Fechamento de atendimento e resultados são fluxos separados. Evidências no fluxo 20.
+
+[Confirmado] [Encerramento explícito do atendimento](outros/check-in-atendimento.md#encerrar-atendimento-após-execução): pendências locais, histórico preservado e novas execuções/coletas bloqueadas; continuidade e evidências no fluxo 20.
+
+[Confirmado] [Política financeira para recusa/incompletude](outros/politica-financeira-excecoes.md): configuração explícita por clínica e histórico; desfechos após início já utilizam a versão capturada; ajustes explícitos de contas permanecem no próximo incremento.
+
+[Confirmado] [Recusa/incompletude após início](outros/desfechos-excepcionais-exames.md): executor autorizado, motivo cifrado, versão da política preservada e apuração financeira por item; revisão/ajustes e repetição continuam no próximo incremento.

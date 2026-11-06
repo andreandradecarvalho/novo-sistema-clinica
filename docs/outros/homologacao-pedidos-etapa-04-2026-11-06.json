@@ -1,0 +1,3625 @@
+{
+  "observed_at": "2026-11-06T14:59:40+00:00",
+  "environment": "homologacao-local-isolada",
+  "php": "8.5.12",
+  "laravel": "13.39.0",
+  "database": "13.0.2-MariaDB-ubu2604",
+  "foreign_key_checks": 1,
+  "passed": true,
+  "registries_included": true,
+  "stage3_included": true,
+  "orders_included": true,
+  "checks": [
+    {
+      "name": "Debug desativado",
+      "passed": true
+    },
+    {
+      "name": "Sessões persistidas e criptografadas",
+      "passed": true
+    },
+    {
+      "name": "Fila e cache Redis",
+      "passed": true
+    },
+    {
+      "name": "Login Vuexy da clínica A",
+      "passed": true
+    },
+    {
+      "name": "Mesmo e-mail rejeita senha da outra clínica A",
+      "passed": true
+    },
+    {
+      "name": "Senha exige desafio 2FA A",
+      "passed": true
+    },
+    {
+      "name": "Senha sem 2FA não abre dashboard A",
+      "passed": true
+    },
+    {
+      "name": "TOTP real autenticou clínica A",
+      "passed": true
+    },
+    {
+      "name": "Sessão SQL abre dashboard A",
+      "passed": true
+    },
+    {
+      "name": "Login Vuexy da clínica B",
+      "passed": true
+    },
+    {
+      "name": "Mesmo e-mail rejeita senha da outra clínica B",
+      "passed": true
+    },
+    {
+      "name": "Senha exige desafio 2FA B",
+      "passed": true
+    },
+    {
+      "name": "Senha sem 2FA não abre dashboard B",
+      "passed": true
+    },
+    {
+      "name": "TOTP real autenticou clínica B",
+      "passed": true
+    },
+    {
+      "name": "Sessão SQL abre dashboard B",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: senha confirmada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: unidade clínica criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: atribuição de unidade por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: perfil profissional criado sem concessão clínica",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: empresa criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: estabelecimento do empregador criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: paciente root criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: paciente source criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: busca CPF/HMAC sem número na resposta",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: vínculo empregatício criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: merge humano preserva integralmente o vínculo",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: origem arquivada não abre por rota normal",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: histórico consolidado com proveniência",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: versionamento pelo sobrevivente conserva origem/empregador",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: desligamento pelo sobrevivente",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: concessão empresarial criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: concessão empresarial revogada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: cadastros não concederam papéis/permissões ao integrante",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: senha confirmada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: unidade clínica criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: atribuição de unidade por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: perfil profissional criado sem concessão clínica",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: empresa criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: estabelecimento do empregador criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: paciente root criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: paciente source criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: busca CPF/HMAC sem número na resposta",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: vínculo empregatício criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: merge humano preserva integralmente o vínculo",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: origem arquivada não abre por rota normal",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: histórico consolidado com proveniência",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: versionamento pelo sobrevivente conserva origem/empregador",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: desligamento pelo sobrevivente",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: concessão empresarial criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: concessão empresarial revogada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: cadastros não concederam papéis/permissões ao integrante",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: paciente da outra clínica recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: concessões de outra empresa/tenant recusadas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: vínculo cruzado recusado pelo binding",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 A: busca por nome não cruza clínicas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: paciente da outra clínica recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: concessões de outra empresa/tenant recusadas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: vínculo cruzado recusado pelo binding",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2 B: busca por nome não cruza clínicas",
+      "passed": true
+    },
+    {
+      "name": "Etapa 2: fixtures temporárias removidas; auditoria operacional preservada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: senha administrativa confirmada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: catálogo criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: catálogo consultável",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: preço de referência atualizado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: preparo textual criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: preparo revisado sem atravessar exame",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: PNG sintético enviado por multipart real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: download autorizado devolve bytes exatos",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: arquivo privado cifrado em storage",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: arquivo não possui URL pública",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: grupo de perguntas criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: primeira versão de pergunta por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: nova versão preserva definição e snapshot anteriores",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: origem obsoleta recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: versão revisada consultável por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: paciente sintético para manifestações",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: manifestação granted registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: manifestação withdrawn registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: retirada preserva evento anterior e evidência cifrada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: evidência consultável com autorização",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: novo profissional começa sem permissões",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: cadastro profissional não concede aprovação",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: empresa sintética para programa",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: referência de programa com contexto cifrado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: protocolo criado pendente sem aprovação automática",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: administrador sem concessão não aprova",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovador exige TOTP real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovador autentica com TOTP real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovação exige senha recente",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovador confirma senha real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovador consulta configuração",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovação vinculada ao próprio profissional",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovação não pode ser reescrita",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: nova versão não herda aprovação nem altera a anterior",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: permissão retirada impede nova aprovação",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: fixtures não alteram papéis nem concedem aprovação ao administrador",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: aprovador sintético encerra sessão",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: senha administrativa confirmada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: catálogo criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: catálogo consultável",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: preço de referência atualizado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: preparo textual criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: preparo revisado sem atravessar exame",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: PNG sintético enviado por multipart real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: download autorizado devolve bytes exatos",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: arquivo privado cifrado em storage",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: arquivo não possui URL pública",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: grupo de perguntas criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: primeira versão de pergunta por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: nova versão preserva definição e snapshot anteriores",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: origem obsoleta recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: versão revisada consultável por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: paciente sintético para manifestações",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: manifestação granted registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: manifestação withdrawn registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: retirada preserva evento anterior e evidência cifrada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: evidência consultável com autorização",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: novo profissional começa sem permissões",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: cadastro profissional não concede aprovação",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: empresa sintética para programa",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: referência de programa com contexto cifrado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: protocolo criado pendente sem aprovação automática",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: administrador sem concessão não aprova",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovador exige TOTP real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovador autentica com TOTP real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovação exige senha recente",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovador confirma senha real",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovador consulta configuração",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovação vinculada ao próprio profissional",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovação não pode ser reescrita",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: nova versão não herda aprovação nem altera a anterior",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: permissão retirada impede nova aprovação",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: fixtures não alteram papéis nem concedem aprovação ao administrador",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: aprovador sintético encerra sessão",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: exame externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: anexo externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: pergunta externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: manifestação externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: programa externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 A: protocolo externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: exame externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: anexo externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: pergunta externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: manifestação externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: programa externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3 B: protocolo externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Etapa 3: fixtures, arquivos, sessões e concessões temporárias removidos; auditoria preservada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: exame sintético 0 criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: exame sintético 1 criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: paciente root criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: paciente other criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: formulário de pedido acessível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta privada de rascunho por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: injeção de preço na autorização recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: catálogo alterado depois do rascunho",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta mantém preço e descrição históricos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido e itens autorizados juntos por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: autorização repetida recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: estado obsoleto no cancelamento recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento sem motivo recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento autorizado registrado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cifra e autoria preservam autorização e cancelamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento preserva preços e altera todos os itens",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: motivo exibido com escaping",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento repetido recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real rejeita transição sem token",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido não atravessa paciente da mesma clínica",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: rascunho não gera recebível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido financeiro autorizado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: formulário financeiro acessível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege recebível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: valor financeiro injetado recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: vencimento inválido recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: recebível integral usa valor histórico sem cobrança externa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio financeiro recupera registro único",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio financeiro divergente recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta financeira privada preserva valor e vencimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: recebível impede cancelamento silencioso do pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria financeira transacional sem conteúdo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege cancelamento financeiro",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento financeiro exige motivo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento financeiro registrado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio de cancelamento financeiro recupera transição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento financeiro divergente recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento financeiro permite cancelar pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: motivo financeiro preservado e escapado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: recebível de baixa preparado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: baixa recusa valor injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: baixa interna registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio de baixa recupera transição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: recebível baixado impede cancelamento financeiro e do pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: evidência financeira cifrada com data e valor preservados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria registra transições únicas e recuperações sem conteúdo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pagadora sintética criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: seleção e formulário empresariais acessíveis",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido empresarial criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio empresarial recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pagadora cifrada sem vínculo ou concessão empresarial automática",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cadastro atual da pagadora alterado e inativado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta preserva identificação histórica da pagadora",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pagadora inativa impede autorização",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pagadora reativada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido empresarial autorizado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido empresarial cancelado preservando pagadora",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: unidade de reserva 1 criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: unidade de reserva 2 criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: formulário de reserva diária acessível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege reserva",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reserva diária recusa horário injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reserva diária criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta privada da reserva",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio da reserva não duplica registro",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: chave da reserva com outra data recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reserva duplicada do paciente no mesmo dia e unidade recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento de reserva exige motivo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento preserva reserva e libera slot",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio de cancelamento de reserva é idempotente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento de reserva divergente recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: motivo da reserva é escapado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: nova intenção ocupa slot liberado sem apagar histórico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: permissão explícita permite reservar em outra unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reserva mantém evidência cifrada e auditoria sem conteúdo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: formulário de sala disponível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege cadastro de sala",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: sala recusa unidade e PIN injetados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: sala cadastrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta de sala privada e escapada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: chave de sala é única entre unidades da clínica",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: sala editada e inativada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: sala inativa mantém sua chave reservada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reativação preserva unidade sem criar credencial",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: sala de segunda unidade cadastrada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: sala não atravessa unidade no binding",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: lista de salas limitada à unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: salas auditadas sem conteúdo ou PIN",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido/recebível do atendimento preparados por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: check-in exige confirmação anterior",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege confirmação",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: data de confirmação injetada recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: confirmação manual registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio de confirmação é idempotente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: confirmação com nova intenção recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: seleção de pedido para check-in acessível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege check-in",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: unidade injetada no check-in recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: check-in abre atendimento único por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio recupera o mesmo atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: segunda intenção de check-in recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta privada do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reserva com check-in não pode ser cancelada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido com atendimento não pode ser cancelado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: recebível com atendimento exige revisão financeira",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: atendimento preserva autoria/cifra/vínculos sem iniciar exame",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria única do atendimento sem conteúdo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: lista e preparação de tentativas disponíveis",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege preparação da tentativa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: preparação não aceita executor ou sala injetados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: tentativa pendente preparada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio recupera preparação sem duplicação",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: segunda intenção não duplica item pendente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: tentativa pendente impede cancelar atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: preparação não inicia exame nem altera chegada pedido ou financeiro",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: seleção de sala limita unidade do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege atribuição de sala",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: atribuição de sala não recebe executor injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: sala de outra unidade recusada na tentativa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: sala atribuída à pendência por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio recupera atribuição da mesma sala",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: nova intenção não sobrescreve atribuição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: atribuição cifra histórico sem iniciar execução ou pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cadastro da sala alterado e inativado após atribuição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta preserva nome histórico escapado da sala",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio histórico não exige reativar sala",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria única de atribuição sem contexto ou chave bruta",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege cancelamento de tentativa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento da pendência e reenvio aprovados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento recusa mudança de motivo ou intenção",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: motivo de cancelamento escapado na consulta",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio da preparação recupera tentativa cancelada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: nova intenção cria tentativa adicional",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: segunda tentativa cancelada sem excluir a anterior",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: tentativas e motivo cifrado preservados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria das tentativas sem motivo ou chave",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor temporário autentica com senha e TOTP reais",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor autorizado consulta pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor de pedidos não consulta nem cria recebíveis",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor sem consulta empresarial não vê pedido empresarial",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor sem gestão não cria pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor sem gestão não autoriza",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor sem gestão não cancela",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor não baixa nem cancela recebível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor permanece sem papéis ou gestão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor sem permissões não confirma nem faz check-in ou lê atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor sem permissão de agenda não consulta reserva",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: integrante de agenda consulta reserva da própria unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: integrante não consulta reserva de outra unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: integrante não cancela reserva de outra unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: integrante não cria reserva em outra unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: lista de reservas oculta outra unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta de atendimento autorizada na própria unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: confirmação e check-in não atravessam unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: UUID de outro ator não recupera check-in",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitura de atendimento não autoriza seu cancelamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: salas exigem permissões próprias",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta administrativa de salas abrange unidades autorizadas da clínica",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta de salas não concede gestão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: tentativas exigem consulta própria",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta de tentativas não concede preparação ou cancelamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta de salas e tentativas não concede atribuição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: perfil profissional sintético preparado sem validar conselho",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: senha recente confirmada para concessões",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: perfil e catálogo não concedem gestão de habilitações",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta de concessões não permite conceder",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege concessão por profissional e exame",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: autoria da concessão não aceita injeção",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: concessão específica registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: concessão ativa duplicada recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: concessão isolada não concede permissão clínica ou execução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: tipo autorizado exige concessão e direitos clínicos explícitos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: justificativa cifrada exibida com escaping",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: concessão revogada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: revogação bloqueia novo check sem cache",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: nova concessão preserva registro revogado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria de concessão e revogação sem justificativas",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido separado para início autorizado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reserva separada para início criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: atendimento separado confirmado e aberto por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: tentativa separada preparada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: início exige sala previamente atribuída",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: sala própria atribuída para início por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege início do exame",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: executor não pode ser injetado no início",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: profissional assume e inicia com concessão específica por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: quatro estados e autoria do início coerentes com evidência cifrada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta privada mostra início e remove cancelamento administrativo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio recupera início e outro UUID não repete execução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: tentativa iniciada não aceita cancelamento administrativo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cobrança integral continua disponível após início",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: grupo sintético de coleta criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: versão explícita de pergunta criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: execução clínica não concede consulta ou coleta de respostas",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta de respostas não concede coleta",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: formulário clínico exige versão escolhida e escapa pergunta",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege resposta clínica",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: coleta não aceita autoria injetada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: resposta clínica coletada por HTTP em atendimento em execução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta privada escapa resposta clínica",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: resposta e evidência cifradas com autoria data origem e snapshot",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio clínico recupera o mesmo registro sem duplicar",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: UUID clínico com conteúdo diferente recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: nova pergunta publicada sem sobrescrever versão usada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: resposta histórica mantém definição da versão original",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria de coleta sem conteúdo clínico ou UUID bruto",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: realizar exame não concede concluir sem direito explícito",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege conclusão da execução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: conclusão não aceita horário de término injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: executor conclui tentativa por HTTP com concessão vigente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: tentativa item e pedido concluídos com evidência sem encerrar atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta histórica reconhece término sem repetir ação",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio de conclusão recuperado e nova chave recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: resposta clínica histórica permanece legível após concluir pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria única de conclusão e reenvio sem conteúdo clínico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: conclusão de exame não concede encerramento do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege encerramento do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: encerramento rejeita horário injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: atendimento encerrado explicitamente por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: encerramento preserva evidências de execução e vínculos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta privada apresenta atendimento encerrado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio de encerramento recupera história e outra chave é recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: resposta histórica preservada e nova coleta bloqueada após fechamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: execuções históricas legíveis após fechamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria de fechamento e reenvio sem conteúdo clínico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido recusa conjunto de tentativas adulterado no atendimento encerrado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido recupera leitura após restaurar evidência sintética original",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: permissões financeiras existentes não concedem configuração de política",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitura de política não concede alteração",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege configuração financeira",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: configuração recusa proprietário enviado pelo cliente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: política explicitamente configurada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio de configuração recuperado e formulário antigo recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta mostra política e histórico sem ativar desfechos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: configuração pertence à clínica e preserva revisão anterior",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: configuração sintética original restaurada e auditoria preservada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: baixa financeira permanece independente após início",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: pedido autorizado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: atendimento separado aberto",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: tentativa separada preparada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: profissional inicia em sala autorizada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: concluir exame não concede registrar desfecho excepcional",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: política não configurada impede desfecho",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: CSRF e campos de término protegidos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: política explicitamente selecionada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: executor registra desfecho por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: estados autoria política e motivo cifrado preservados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: motivo clínico escapado e histórico legível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: reenvio histórico preservado sem repetir atos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: leitor administrativo não recebe motivo clínico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: política posterior não reescreve o desfecho",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: financeiro aplica versão capturada sem ajuste retroativo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: repetição exige permissão explícita",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: repetição protege CSRF e dados autoritativos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: repetição e reenvio preparam uma tentativa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: vínculos recíprocos mantêm tentativa anterior e mesmo item",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: outra intenção não duplica repetição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: repetição exige revisão financeira antes de cobrança",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: nova tentativa atribuída iniciada e concluída separadamente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: histórico e reenvios anteriores preservados após conclusão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: histórico da repetição escapado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: motivo da repetição restrito no backend",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: encerramento protege CSRF e mapa de resolução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: encerramento e reenvio após repetição concluída",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: encerramento recusa outra intenção",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: encerramento preserva desfechos e comprova sucessão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: visita e histórico permanecem consultáveis após encerrar",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: revisão exige permissão financeira própria",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: revisão protege CSRF e valor do servidor",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: revisão recusa conferência desatualizada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: revisão explícita registrada sem pagamento automático",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: reenvio da revisão recupera evidência",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: justificativa financeira escapada e histórico legível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: revisão permite registrar a única conta do pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: baixa separada autorizada após revisão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: refused: uma cobrança por item e revisão preservada após baixa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: pedido autorizado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: atendimento separado aberto",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: tentativa separada preparada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: profissional inicia em sala autorizada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: CSRF e campos de término protegidos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: política explicitamente selecionada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: executor registra desfecho por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: estados autoria política e motivo cifrado preservados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: motivo clínico escapado e histórico legível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: reenvio histórico preservado sem repetir atos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: leitor administrativo não recebe motivo clínico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: política posterior não reescreve o desfecho",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: financeiro aplica versão capturada sem ajuste retroativo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: repetição protege CSRF e dados autoritativos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: repetição e reenvio preparam uma tentativa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: vínculos recíprocos mantêm tentativa anterior e mesmo item",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: outra intenção não duplica repetição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: repetição exige revisão financeira antes de cobrança",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: nova tentativa atribuída iniciada e concluída separadamente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: histórico e reenvios anteriores preservados após conclusão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: histórico da repetição escapado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: motivo da repetição restrito no backend",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: conclusão da repetição não libera baixa sem revisão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: revisão protege CSRF e valor do servidor",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: revisão recusa conferência desatualizada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: revisão explícita registrada sem pagamento automático",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: reenvio da revisão recupera evidência",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: justificativa financeira escapada e histórico legível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: baixa separada autorizada após revisão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: uma cobrança por item e revisão preservada após baixa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: encerramento protege CSRF e mapa de resolução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: encerramento e reenvio após repetição concluída",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: encerramento recusa outra intenção",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: encerramento preserva desfechos e comprova sucessão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: visita e histórico permanecem consultáveis após encerrar",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: incomplete: encerramento preserva revisão financeira anterior",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitor temporário encerra sessão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege cancelamento do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: estado injetado no atendimento recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: atendimento aberto cancelado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio recupera cancelamento sem nova alteração",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento recusa mudança de motivo ou intenção",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento consultado com motivo escapado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio do check-in preserva atendimento cancelado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento cifrado preserva chegada pedido itens e recebível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: atendimento cancelado mantém bloqueios de revisão dos vínculos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria única do cancelamento sem motivo ou chave bruta",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: rascunho cancelado sem autorização",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria de transições sem motivo ou preços",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: exame sintético 0 criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: exame sintético 1 criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: paciente root criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: paciente other criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: formulário de pedido acessível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta privada de rascunho por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: injeção de preço na autorização recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: catálogo alterado depois do rascunho",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta mantém preço e descrição históricos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido e itens autorizados juntos por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: autorização repetida recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: estado obsoleto no cancelamento recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento sem motivo recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento autorizado registrado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cifra e autoria preservam autorização e cancelamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento preserva preços e altera todos os itens",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: motivo exibido com escaping",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento repetido recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real rejeita transição sem token",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido não atravessa paciente da mesma clínica",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: rascunho não gera recebível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido financeiro autorizado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: formulário financeiro acessível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege recebível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: valor financeiro injetado recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: vencimento inválido recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: recebível integral usa valor histórico sem cobrança externa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio financeiro recupera registro único",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio financeiro divergente recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta financeira privada preserva valor e vencimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: recebível impede cancelamento silencioso do pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria financeira transacional sem conteúdo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege cancelamento financeiro",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento financeiro exige motivo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento financeiro registrado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio de cancelamento financeiro recupera transição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento financeiro divergente recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento financeiro permite cancelar pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: motivo financeiro preservado e escapado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: recebível de baixa preparado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: baixa recusa valor injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: baixa interna registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio de baixa recupera transição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: recebível baixado impede cancelamento financeiro e do pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: evidência financeira cifrada com data e valor preservados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria registra transições únicas e recuperações sem conteúdo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pagadora sintética criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: seleção e formulário empresariais acessíveis",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido empresarial criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio empresarial recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pagadora cifrada sem vínculo ou concessão empresarial automática",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cadastro atual da pagadora alterado e inativado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta preserva identificação histórica da pagadora",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pagadora inativa impede autorização",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pagadora reativada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido empresarial autorizado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido empresarial cancelado preservando pagadora",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: unidade de reserva 1 criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: unidade de reserva 2 criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: formulário de reserva diária acessível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege reserva",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reserva diária recusa horário injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reserva diária criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta privada da reserva",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio da reserva não duplica registro",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: chave da reserva com outra data recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reserva duplicada do paciente no mesmo dia e unidade recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento de reserva exige motivo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento preserva reserva e libera slot",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio de cancelamento de reserva é idempotente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento de reserva divergente recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: motivo da reserva é escapado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: nova intenção ocupa slot liberado sem apagar histórico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: permissão explícita permite reservar em outra unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reserva mantém evidência cifrada e auditoria sem conteúdo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: formulário de sala disponível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege cadastro de sala",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: sala recusa unidade e PIN injetados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: sala cadastrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta de sala privada e escapada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: chave de sala é única entre unidades da clínica",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: sala editada e inativada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: sala inativa mantém sua chave reservada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reativação preserva unidade sem criar credencial",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: sala de segunda unidade cadastrada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: sala não atravessa unidade no binding",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: lista de salas limitada à unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: salas auditadas sem conteúdo ou PIN",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido/recebível do atendimento preparados por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: check-in exige confirmação anterior",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege confirmação",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: data de confirmação injetada recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: confirmação manual registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio de confirmação é idempotente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: confirmação com nova intenção recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: seleção de pedido para check-in acessível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege check-in",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: unidade injetada no check-in recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: check-in abre atendimento único por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio recupera o mesmo atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: segunda intenção de check-in recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta privada do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reserva com check-in não pode ser cancelada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido com atendimento não pode ser cancelado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: recebível com atendimento exige revisão financeira",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: atendimento preserva autoria/cifra/vínculos sem iniciar exame",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria única do atendimento sem conteúdo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: lista e preparação de tentativas disponíveis",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege preparação da tentativa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: preparação não aceita executor ou sala injetados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: tentativa pendente preparada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio recupera preparação sem duplicação",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: segunda intenção não duplica item pendente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: tentativa pendente impede cancelar atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: preparação não inicia exame nem altera chegada pedido ou financeiro",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: seleção de sala limita unidade do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege atribuição de sala",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: atribuição de sala não recebe executor injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: sala de outra unidade recusada na tentativa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: sala atribuída à pendência por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio recupera atribuição da mesma sala",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: nova intenção não sobrescreve atribuição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: atribuição cifra histórico sem iniciar execução ou pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cadastro da sala alterado e inativado após atribuição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta preserva nome histórico escapado da sala",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio histórico não exige reativar sala",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria única de atribuição sem contexto ou chave bruta",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege cancelamento de tentativa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento da pendência e reenvio aprovados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento recusa mudança de motivo ou intenção",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: motivo de cancelamento escapado na consulta",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio da preparação recupera tentativa cancelada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: nova intenção cria tentativa adicional",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: segunda tentativa cancelada sem excluir a anterior",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: tentativas e motivo cifrado preservados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria das tentativas sem motivo ou chave",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor temporário autentica com senha e TOTP reais",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor autorizado consulta pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor de pedidos não consulta nem cria recebíveis",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor sem consulta empresarial não vê pedido empresarial",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor sem gestão não cria pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor sem gestão não autoriza",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor sem gestão não cancela",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor não baixa nem cancela recebível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor permanece sem papéis ou gestão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor sem permissões não confirma nem faz check-in ou lê atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor sem permissão de agenda não consulta reserva",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: integrante de agenda consulta reserva da própria unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: integrante não consulta reserva de outra unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: integrante não cancela reserva de outra unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: integrante não cria reserva em outra unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: lista de reservas oculta outra unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta de atendimento autorizada na própria unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: confirmação e check-in não atravessam unidade",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: UUID de outro ator não recupera check-in",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitura de atendimento não autoriza seu cancelamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: salas exigem permissões próprias",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta administrativa de salas abrange unidades autorizadas da clínica",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta de salas não concede gestão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: tentativas exigem consulta própria",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta de tentativas não concede preparação ou cancelamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta de salas e tentativas não concede atribuição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: perfil profissional sintético preparado sem validar conselho",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: senha recente confirmada para concessões",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: perfil e catálogo não concedem gestão de habilitações",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta de concessões não permite conceder",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege concessão por profissional e exame",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: autoria da concessão não aceita injeção",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: concessão específica registrada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: concessão ativa duplicada recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: concessão isolada não concede permissão clínica ou execução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: tipo autorizado exige concessão e direitos clínicos explícitos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: justificativa cifrada exibida com escaping",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: concessão revogada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: revogação bloqueia novo check sem cache",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: nova concessão preserva registro revogado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria de concessão e revogação sem justificativas",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido separado para início autorizado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reserva separada para início criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: atendimento separado confirmado e aberto por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: tentativa separada preparada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: início exige sala previamente atribuída",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: sala própria atribuída para início por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege início do exame",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: executor não pode ser injetado no início",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: profissional assume e inicia com concessão específica por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: quatro estados e autoria do início coerentes com evidência cifrada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta privada mostra início e remove cancelamento administrativo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio recupera início e outro UUID não repete execução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: tentativa iniciada não aceita cancelamento administrativo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cobrança integral continua disponível após início",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: grupo sintético de coleta criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: versão explícita de pergunta criada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: execução clínica não concede consulta ou coleta de respostas",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta de respostas não concede coleta",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: formulário clínico exige versão escolhida e escapa pergunta",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege resposta clínica",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: coleta não aceita autoria injetada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: resposta clínica coletada por HTTP em atendimento em execução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta privada escapa resposta clínica",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: resposta e evidência cifradas com autoria data origem e snapshot",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio clínico recupera o mesmo registro sem duplicar",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: UUID clínico com conteúdo diferente recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: nova pergunta publicada sem sobrescrever versão usada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: resposta histórica mantém definição da versão original",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria de coleta sem conteúdo clínico ou UUID bruto",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: realizar exame não concede concluir sem direito explícito",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege conclusão da execução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: conclusão não aceita horário de término injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: executor conclui tentativa por HTTP com concessão vigente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: tentativa item e pedido concluídos com evidência sem encerrar atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta histórica reconhece término sem repetir ação",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio de conclusão recuperado e nova chave recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: resposta clínica histórica permanece legível após concluir pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria única de conclusão e reenvio sem conteúdo clínico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: conclusão de exame não concede encerramento do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege encerramento do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: encerramento rejeita horário injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: atendimento encerrado explicitamente por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: encerramento preserva evidências de execução e vínculos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta privada apresenta atendimento encerrado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio de encerramento recupera história e outra chave é recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: resposta histórica preservada e nova coleta bloqueada após fechamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: execuções históricas legíveis após fechamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria de fechamento e reenvio sem conteúdo clínico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido recusa conjunto de tentativas adulterado no atendimento encerrado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido recupera leitura após restaurar evidência sintética original",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: permissões financeiras existentes não concedem configuração de política",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitura de política não concede alteração",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege configuração financeira",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: configuração recusa proprietário enviado pelo cliente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: política explicitamente configurada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio de configuração recuperado e formulário antigo recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta mostra política e histórico sem ativar desfechos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: configuração pertence à clínica e preserva revisão anterior",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: configuração sintética original restaurada e auditoria preservada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: baixa financeira permanece independente após início",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: pedido autorizado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: atendimento separado aberto",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: tentativa separada preparada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: profissional inicia em sala autorizada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: concluir exame não concede registrar desfecho excepcional",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: política não configurada impede desfecho",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: CSRF e campos de término protegidos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: política explicitamente selecionada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: executor registra desfecho por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: estados autoria política e motivo cifrado preservados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: motivo clínico escapado e histórico legível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: reenvio histórico preservado sem repetir atos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: leitor administrativo não recebe motivo clínico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: política posterior não reescreve o desfecho",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: financeiro aplica versão capturada sem ajuste retroativo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: repetição exige permissão explícita",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: repetição protege CSRF e dados autoritativos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: repetição e reenvio preparam uma tentativa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: vínculos recíprocos mantêm tentativa anterior e mesmo item",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: outra intenção não duplica repetição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: repetição exige revisão financeira antes de cobrança",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: nova tentativa atribuída iniciada e concluída separadamente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: histórico e reenvios anteriores preservados após conclusão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: histórico da repetição escapado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: motivo da repetição restrito no backend",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: encerramento protege CSRF e mapa de resolução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: encerramento e reenvio após repetição concluída",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: encerramento recusa outra intenção",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: encerramento preserva desfechos e comprova sucessão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: visita e histórico permanecem consultáveis após encerrar",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: revisão exige permissão financeira própria",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: revisão protege CSRF e valor do servidor",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: revisão recusa conferência desatualizada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: revisão explícita registrada sem pagamento automático",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: reenvio da revisão recupera evidência",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: justificativa financeira escapada e histórico legível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: revisão permite registrar a única conta do pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: baixa separada autorizada após revisão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: refused: uma cobrança por item e revisão preservada após baixa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: novo rascunho criado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: reenvio equivalente recupera o mesmo pedido",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: chave reutilizada com outros exames recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: pedido autorizado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: atendimento separado aberto",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: tentativa separada preparada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: profissional inicia em sala autorizada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: CSRF e campos de término protegidos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: política explicitamente selecionada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: executor registra desfecho por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: estados autoria política e motivo cifrado preservados",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: motivo clínico escapado e histórico legível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: reenvio histórico preservado sem repetir atos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: leitor administrativo não recebe motivo clínico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: política posterior não reescreve o desfecho",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: financeiro aplica versão capturada sem ajuste retroativo",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: repetição protege CSRF e dados autoritativos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: repetição e reenvio preparam uma tentativa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: vínculos recíprocos mantêm tentativa anterior e mesmo item",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: outra intenção não duplica repetição",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: repetição exige revisão financeira antes de cobrança",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: nova tentativa atribuída iniciada e concluída separadamente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: histórico e reenvios anteriores preservados após conclusão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: histórico da repetição escapado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: motivo da repetição restrito no backend",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: conclusão da repetição não libera baixa sem revisão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: revisão protege CSRF e valor do servidor",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: revisão recusa conferência desatualizada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: revisão explícita registrada sem pagamento automático",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: reenvio da revisão recupera evidência",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: justificativa financeira escapada e histórico legível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: baixa separada autorizada após revisão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: uma cobrança por item e revisão preservada após baixa",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: encerramento protege CSRF e mapa de resolução",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: encerramento e reenvio após repetição concluída",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: encerramento recusa outra intenção",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: encerramento preserva desfechos e comprova sucessão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: visita e histórico permanecem consultáveis após encerrar",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: incomplete: encerramento preserva revisão financeira anterior",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitor temporário encerra sessão",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege cancelamento do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: estado injetado no atendimento recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: atendimento aberto cancelado por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio recupera cancelamento sem nova alteração",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento recusa mudança de motivo ou intenção",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento consultado com motivo escapado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio do check-in preserva atendimento cancelado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento cifrado preserva chegada pedido itens e recebível",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: atendimento cancelado mantém bloqueios de revisão dos vínculos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria única do cancelamento sem motivo ou chave bruta",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: rascunho cancelado sem autorização",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria de transições sem motivo ou preços",
+      "passed": true
+    },
+    {
+      "name": "Recebíveis A: pedido externo recusado na consulta e criação",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta de pedido externo recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: autorização externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: cancelamento externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Recebíveis A: transições de recebível externo recusadas",
+      "passed": true
+    },
+    {
+      "name": "Reservas A: consulta/cancelamento externos recusados",
+      "passed": true
+    },
+    {
+      "name": "Reservas A: unidade externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Atendimento A: confirmação/check-in de reserva externa recusados",
+      "passed": true
+    },
+    {
+      "name": "Atendimento A: consulta de atendimento externo recusada",
+      "passed": true
+    },
+    {
+      "name": "Atendimento A: pedido externo recusado no check-in",
+      "passed": true
+    },
+    {
+      "name": "Tentativas A: cancelamento externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Tentativas A: item externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Tentativas A: atribuição de sala externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Salas A: consulta e alteração externas recusadas",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: exame externo recusado na criação",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: seleção de pagadora externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: criação com pagadora externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Recebíveis B: pedido externo recusado na consulta e criação",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta de pedido externo recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: autorização externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: cancelamento externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Recebíveis B: transições de recebível externo recusadas",
+      "passed": true
+    },
+    {
+      "name": "Reservas B: consulta/cancelamento externos recusados",
+      "passed": true
+    },
+    {
+      "name": "Reservas B: unidade externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Atendimento B: confirmação/check-in de reserva externa recusados",
+      "passed": true
+    },
+    {
+      "name": "Atendimento B: consulta de atendimento externo recusada",
+      "passed": true
+    },
+    {
+      "name": "Atendimento B: pedido externo recusado no check-in",
+      "passed": true
+    },
+    {
+      "name": "Tentativas B: cancelamento externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Tentativas B: item externo recusado",
+      "passed": true
+    },
+    {
+      "name": "Tentativas B: atribuição de sala externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Salas B: consulta e alteração externas recusadas",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: exame externo recusado na criação",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: seleção de pagadora externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: criação com pagadora externa recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos: fixtures, itens, concessões e sessões temporárias removidos; auditoria preservada",
+      "passed": true
+    },
+    {
+      "name": "Administrador consulta equipe própria",
+      "passed": true
+    },
+    {
+      "name": "Binding não expõe integrante da outra clínica",
+      "passed": true
+    },
+    {
+      "name": "Cookie A reapresentado em B não autentica",
+      "passed": true
+    },
+    {
+      "name": "Reapresentação não destrói sessão A",
+      "passed": true
+    },
+    {
+      "name": "Header não seleciona outra clínica",
+      "passed": true
+    },
+    {
+      "name": "Domínio desconhecido rejeitado",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /.env",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /docs/README.md",
+      "passed": true
+    },
+    {
+      "name": "Arquivo privado indisponível: /vendor/autoload.php",
+      "passed": true
+    },
+    {
+      "name": "Horizon não expõe dados entre clínicas",
+      "passed": true
+    },
+    {
+      "name": "CSRF real rejeita POST sem token",
+      "passed": true
+    },
+    {
+      "name": "Recepção autenticou clínica A",
+      "passed": true
+    },
+    {
+      "name": "Troca obrigatória da senha inicial preservada",
+      "passed": true
+    },
+    {
+      "name": "Recepção autenticou clínica B",
+      "passed": true
+    },
+    {
+      "name": "Recepção sem permissão não consulta equipe",
+      "passed": true
+    },
+    {
+      "name": "Logout no HTTP real clinica-a.localhost",
+      "passed": true
+    },
+    {
+      "name": "Logout no HTTP real clinica-b.localhost",
+      "passed": true
+    },
+    {
+      "name": "Horizon processou três jobs reais",
+      "passed": true
+    },
+    {
+      "name": "Mesmo worker persistente em A/falha/B",
+      "passed": true
+    },
+    {
+      "name": "Contexto e team corretos após falha",
+      "passed": true
+    },
+    {
+      "name": "Permissões não vazam no Horizon",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "HTTP local; HTTPS externo não homologado",
+    "Somente dados sintéticos",
+    "Não substitui CI remota ou revisão de PR"
+  ],
+  "source_revision": "70c5b7e74609432fcacbefdcff2bbce9aecf8bef",
+  "working_tree_dirty": true
+}

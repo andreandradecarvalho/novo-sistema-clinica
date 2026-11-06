@@ -1,13 +1,25 @@
 @extends('layouts.app')
-@section('title', ['open' => 'Atendimento aberto', 'in_progress' => 'Atendimento em execução', 'canceled' => 'Atendimento cancelado'][$visit->status])
+@section('title', ['open' => 'Atendimento aberto', 'in_progress' => 'Atendimento em execução', 'canceled' => 'Atendimento cancelado', 'completed' => 'Atendimento encerrado'][$visit->status])
 @section('content')
-<div class="page-heading"><h1 class="h4 mb-1">{{ ['open' => 'Atendimento aberto', 'in_progress' => 'Atendimento em execução', 'canceled' => 'Atendimento cancelado'][$visit->status] }}</h1><p class="text-body-secondary">{{ $patient->name }}</p></div>
+<div class="page-heading"><h1 class="h4 mb-1">{{ ['open' => 'Atendimento aberto', 'in_progress' => 'Atendimento em execução', 'canceled' => 'Atendimento cancelado', 'completed' => 'Atendimento encerrado'][$visit->status] }}</h1><p class="text-body-secondary">{{ $patient->name }}</p></div>
 <section class="card"><h2 class="card-header h5">{{ $visit->public_id }}</h2><div class="card-body">
-<dl class="row"><dt class="col-sm-4">Situação</dt><dd class="col-sm-8">{{ ['open' => 'Aberto', 'in_progress' => 'Em execução', 'canceled' => 'Cancelado'][$visit->status] }}</dd><dt class="col-sm-4">Check-in (UTC)</dt><dd class="col-sm-8">{{ $history['occurred_at'] }}</dd><dt class="col-sm-4">Integrante responsável pelo registro</dt><dd class="col-sm-8">#{{ $history['actor_id'] }}</dd><dt class="col-sm-4">Unidade no registro</dt><dd class="col-sm-8">{{ $visit->appointment->contextSnapshot()['unit_name'] }}</dd></dl>
+<dl class="row"><dt class="col-sm-4">Situação</dt><dd class="col-sm-8">{{ ['open' => 'Aberto', 'in_progress' => 'Em execução', 'canceled' => 'Cancelado', 'completed' => 'Encerrado'][$visit->status] }}</dd><dt class="col-sm-4">Check-in (UTC)</dt><dd class="col-sm-8">{{ $history['occurred_at'] }}</dd><dt class="col-sm-4">Integrante responsável pelo registro</dt><dd class="col-sm-8">#{{ $history['actor_id'] }}</dd><dt class="col-sm-4">Unidade no registro</dt><dd class="col-sm-8">{{ $visit->appointment->contextSnapshot()['unit_name'] }}</dd></dl>
 <p>Atendimento vinculado à reserva e ao pedido. Consulte as tentativas para assumir e iniciar um exame. Respostas clínicas possuem coleta e consulta próprias.</p>
 @can('viewAny', [\App\Domain\Clinical\Models\HealthRecord::class, $visit])<p><a class="btn btn-label-primary" href="{{ route('patients.visits.health-records.index', [$patient->public_id, $visit->public_id]) }}">Respostas clínicas</a></p>@endcan
 @foreach(['visit', 'idempotency_key', 'expected_status'] as $field) @error($field)<div class="alert alert-danger" role="alert">{{ $message }}</div>@enderror @endforeach
-@if(isset($history['cancellation']))
+@if(isset($history['completion']))
+<p>Encerrado em {{ $history['completion']['occurred_at'] }} por integrante #{{ $history['completion']['actor_id'] }}.</p>
+@if(! empty($history['completion']['resolved_executions']))<p>{{ count($history['completion']['resolved_executions']) }} tentativas históricas resolvidas por repetição concluída, com desfechos preservados.</p>@endif
+<p>O histórico permanece disponível. Resultados, documentos e financeiro seguem seus próprios fluxos.</p>
+@elseif($visit->status === 'in_progress')
+@can('complete', $visit)
+<form method="post" action="{{ route('patients.visits.complete', [$patient->public_id, $visit->public_id]) }}" class="mb-6">
+@csrf<input type="hidden" name="expected_status" value="in_progress"><input type="hidden" name="idempotency_key" value="{{ $idempotencyKey }}">
+<p>Encerre após concluir os exames e resolver as tentativas deste atendimento. Recusas ou execuções incompletas precisam de sucessora concluída na mesma visita; cancelamentos antes do início permanecem no histórico. Novas execuções e respostas serão bloqueadas. O encerramento não libera cobrança nem registra pagamento.</p>
+<button type="submit" class="btn btn-primary">Encerrar atendimento</button>
+</form>
+@endcan
+@elseif(isset($history['cancellation']))
 <p>Cancelado em {{ $history['cancellation']['occurred_at'] }} por integrante #{{ $history['cancellation']['actor_id'] }}.</p><p class="text-break">Motivo: {{ $history['cancellation']['reason'] }}</p>
 <p>A chegada permanece registrada. Reserva, pedido e financeiro exigem revisão própria.</p>
 @elseif($visit->status === 'open')

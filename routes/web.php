@@ -13,6 +13,7 @@ use App\Http\Controllers\ExamExecutionController;
 use App\Http\Controllers\ExamOrderController;
 use App\Http\Controllers\ExamPreparationController;
 use App\Http\Controllers\ExamTypeController;
+use App\Http\Controllers\ExceptionFinancialPolicyController;
 use App\Http\Controllers\HealthQuestionController;
 use App\Http\Controllers\HealthRecordController;
 use App\Http\Controllers\MemberUnitController;
@@ -34,6 +35,8 @@ use App\Http\Controllers\VisitController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function (): void {
+    Route::get('settings/exception-financial-policy', [ExceptionFinancialPolicyController::class, 'edit'])->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->name('settings.exception-financial-policy.edit');
+    Route::post('settings/exception-financial-policy', [ExceptionFinancialPolicyController::class, 'update'])->middleware(['clinical.2fa', 'password.confirm', 'cache.headers:private;no_store'])->name('settings.exception-financial-policy.update');
     Route::prefix('patients/{patient:public_id}/visits/{visit:public_id}/health-records')->name('patients.visits.health-records.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
         Route::get('/', [HealthRecordController::class, 'index'])->name('index');
         Route::get('/create', [HealthRecordController::class, 'create'])->name('create');
@@ -42,6 +45,8 @@ Route::middleware('auth')->group(function (): void {
     });
     Route::prefix('patients/{patient:public_id}/visits/{visit:public_id}/executions')->name('patients.visits.executions.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
         Route::post('{execution}/complete', [ExamExecutionController::class, 'complete'])->middleware('password.confirm')->name('complete');
+        Route::post('{execution}/repeat', [ExamExecutionController::class, 'repeat'])->middleware('password.confirm')->name('repeat');
+        Route::post('{execution}/exception', [ExamExecutionController::class, 'resolveException'])->middleware('password.confirm')->name('exception');
         Route::post('{execution}/start', [ExamExecutionController::class, 'start'])->middleware('password.confirm')->name('start');
         Route::get('/', [ExamExecutionController::class, 'index'])->name('index');
         Route::post('/', [ExamExecutionController::class, 'store'])->name('store');
@@ -51,6 +56,7 @@ Route::middleware('auth')->group(function (): void {
     });
     Route::get('patients/{patient:public_id}/visits/{visit:public_id}', [VisitController::class, 'show'])->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->name('patients.visits.show');
     Route::post('patients/{patient:public_id}/visits/{visit:public_id}/cancel', [VisitController::class, 'cancel'])->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->name('patients.visits.cancel');
+    Route::post('patients/{patient:public_id}/visits/{visit:public_id}/complete', [VisitController::class, 'complete'])->scopeBindings()->middleware(['clinical.2fa', 'password.confirm', 'cache.headers:private;no_store'])->name('patients.visits.complete');
     Route::prefix('patients/{patient:public_id}/appointments')->name('patients.appointments.')->scopeBindings()->middleware(['clinical.2fa', 'cache.headers:private;no_store'])->group(function (): void {
         Route::get('/', [AppointmentController::class, 'index'])->name('index');
         Route::get('/create', [AppointmentController::class, 'create'])->name('create');
@@ -68,6 +74,7 @@ Route::middleware('auth')->group(function (): void {
         Route::get('/payers', [ExamOrderController::class, 'payers'])->name('payers');
         Route::get('/company/{company:public_id}/create', [ExamOrderController::class, 'createCompany'])->withoutScopedBindings()->name('company.create');
         Route::post('/company/{company:public_id}', [ExamOrderController::class, 'storeCompany'])->withoutScopedBindings()->name('company.store');
+        Route::post('/{order:public_id}/receivables/review', [ClinicalReceivableController::class, 'review'])->middleware('password.confirm')->name('receivables.review');
         Route::post('/{order:public_id}/receivables/{receivable}/settle', [ClinicalReceivableController::class, 'settle'])->name('receivables.settle');
         Route::post('/{order:public_id}/receivables/{receivable}/cancel', [ClinicalReceivableController::class, 'cancel'])->name('receivables.cancel');
         Route::get('/{order:public_id}/receivables', [ClinicalReceivableController::class, 'index'])->name('receivables.index');

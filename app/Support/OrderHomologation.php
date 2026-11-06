@@ -14,6 +14,8 @@ use App\Domain\Executions\Services\ProfessionalExamAccess;
 use App\Domain\Identity\Models\User;
 use App\Domain\Orders\Models\ClinicalReceivable;
 use App\Domain\Orders\Models\ExamOrder;
+use App\Domain\Orders\Services\ClinicalFinancialReview;
+use App\Domain\Orders\Services\ExceptionFinancialPolicy;
 use App\Domain\Patients\Models\Patient;
 use App\Domain\Professionals\Models\Professional;
 use App\Domain\Scheduling\Models\Appointment;
@@ -24,6 +26,7 @@ use App\Domain\Tenancy\Services\TenantContext;
 use App\Domain\Visits\Models\Visit;
 use Closure;
 use GuzzleHttp\Cookie\CookieJar;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PragmaRX\Google2FA\Google2FA;
@@ -35,6 +38,8 @@ final class OrderHomologation
     private const array TABLES = ['exam_types', 'patients', 'exam_orders', 'users', 'companies', 'appointments', 'units', 'rooms', 'professionals', 'health_questions', 'health_question_groups'];
 
     private array $fixtures = [];
+
+    private array $exceptionPolicies = [];
 
     public function __construct(private readonly Closure $request, private readonly Closure $verify, private readonly Closure $token) {}
 
@@ -687,7 +692,11 @@ final class OrderHomologation
         $receipt = $context->run($tenant, fn () => $order->receivables()->sole());
         $this->exerciseHealthCollection($tenant, $user, $patient, $visit, $request, $post, $label);
         $this->exerciseExecutionCompletion($tenant, $user, $patient, $visit, $attempt, $request, $post, $label);
+        $this->exerciseVisitClosure($tenant, $user, $patient, $visit, $attempt, $request, $post, $label);
+        $this->exerciseClosedOrderEvidence($tenant, $patient, $visit, $request, $label);
+        $this->exerciseExceptionFinancialPolicy($tenant, $user, $request, $post, $label);
         ($this->verify)($post($orderPath.'/receivables/'.$receipt->id.'/settle', ['expected_status' => 'open', 'reason' => 'Baixa sintética após início', 'idempotency_key' => (string) Str::uuid()])->status() === 302, $label.'baixa financeira permanece independente após início');
+        $this->exerciseExecutionExceptions($tenant, $user, $patient, $exam, $booking, $room, $request, $post, $label);
     }
 
     private function exerciseHealthCollection(Tenant $tenant, User $user, Patient $patient, Visit $visit, Closure $request, Closure $post, string $label): void
@@ -766,6 +775,230 @@ final class OrderHomologation
             && $events->pluck('properties')->filter()->isEmpty(), $label.'auditoria única de conclusão e reenvio sem conteúdo clínico');
     }
 
+    private function exerciseVisitClosure(Tenant $tenant, User $user, Patient $patient, Visit $visit, ExamExecution $attempt, Closure $request, Closure $post, string $label): void
+    {
+        $context = app(TenantContext::class);
+        $base = '/patients/'.$patient->public_id.'/visits/'.$visit->public_id;
+        $path = $base.'/complete';
+        $input = ['expected_status' => 'in_progress', 'idempotency_key' => (string) Str::uuid()];
+        ($this->verify)($post($path, $input)->status() === 403, $label.'conclusão de exame não concede encerramento do atendimento');
+        $context->run($tenant, fn () => $user->givePermissionTo('visits.complete'));
+        ($this->verify)($request('POST', $path, $input)->status() === 419, $label.'CSRF real protege encerramento do atendimento');
+        ($this->verify)($post($path, ['completed_at' => '2026-12-12 10:00:00'] + $input)->status() === 422, $label.'encerramento rejeita horário injetado');
+        ($this->verify)($post($path, $input)->status() === 302, $label.'atendimento encerrado explicitamente por HTTP');
+        $context->run($tenant, function () use ($visit, $attempt, $label): void {
+            $fresh = $visit->fresh();
+            $event = $fresh->attendanceSnapshot()['completion'];
+            ($this->verify)($fresh->status === 'completed' && $fresh->completed_at !== null && $event['execution_ids'] === [(int) $attempt->id]
+                && $attempt->fresh()->preparationSnapshot()['completion']['execution_id'] === (int) $attempt->id, $label.'encerramento preserva evidências de execução e vínculos');
+        });
+        $page = $request('GET', $base);
+        ($this->verify)($page->ok() && str_contains($page->body(), 'Atendimento encerrado') && ! str_contains($page->body(), 'Encerrar atendimento'), $label.'consulta privada apresenta atendimento encerrado');
+        ($this->verify)($post($path, $input)->status() === 302 && $post($path, ['idempotency_key' => (string) Str::uuid()] + $input)->status() === 422, $label.'reenvio de encerramento recupera história e outra chave é recusada');
+        $record = $context->run($tenant, fn () => $visit->healthRecords()->sole());
+        $page = $request('GET', $base.'/health-records/'.$record->public_id);
+        ($this->verify)($page->ok() && str_contains($page->body(), 'versão 1') && $post($base.'/health-records', ['question_id' => $context->run($tenant, fn () => $record->snapshot()['answer']['question_id']), 'answer' => 'Nova resposta sintética bloqueada', 'idempotency_key' => (string) Str::uuid()])->status() === 422, $label.'resposta histórica preservada e nova coleta bloqueada após fechamento');
+        $page = $request('GET', $base.'/executions');
+        ($this->verify)($page->ok() && str_contains($page->body(), 'Execução concluída'), $label.'execuções históricas legíveis após fechamento');
+        $events = DB::table('activity_log')->where('tenant_id', $tenant->id)->where('subject_type', Visit::class)->where('subject_id', $visit->id)->get(['event', 'properties']);
+        ($this->verify)($events->where('event', 'visit_completed')->count() === 1 && $events->where('event', 'visit_completion_replayed')->count() === 1
+            && $events->pluck('properties')->filter()->isEmpty(), $label.'auditoria de fechamento e reenvio sem conteúdo clínico');
+    }
+
+    private function exerciseClosedOrderEvidence(Tenant $tenant, Patient $patient, Visit $visit, Closure $request, string $label): void
+    {
+        app(LocalHomologation::class)->ensure();
+        $stored = DB::table('visits')->where('tenant_id', $tenant->id)->where('id', $visit->id)->value('context_encrypted');
+        $context = json_decode(Crypt::decryptString((string) $stored), true, 512, JSON_THROW_ON_ERROR);
+        $context['completion']['execution_ids'][] = $context['completion']['execution_ids'][0];
+        $orderId = app(TenantContext::class)->run($tenant, fn () => $visit->order()->firstOrFail()->public_id);
+        $orderPath = '/patients/'.$patient->public_id.'/orders/'.$orderId;
+        try {
+            // Only this tracked synthetic visit is altered; restoration also runs if HTTP verification fails.
+            DB::table('visits')->where('tenant_id', $tenant->id)->where('id', $visit->id)
+                ->update(['context_encrypted' => Crypt::encryptString(json_encode($context, JSON_THROW_ON_ERROR))]);
+            ($this->verify)($request('GET', $orderPath)->status() === 302, $label.'pedido recusa conjunto de tentativas adulterado no atendimento encerrado');
+        } finally {
+            DB::table('visits')->where('tenant_id', $tenant->id)->where('id', $visit->id)->update(['context_encrypted' => $stored]);
+        }
+        ($this->verify)($request('GET', $orderPath)->ok(), $label.'pedido recupera leitura após restaurar evidência sintética original');
+    }
+
+    private function exerciseExceptionFinancialPolicy(Tenant $tenant, User $user, Closure $request, Closure $post, string $label): void
+    {
+        app(LocalHomologation::class)->ensure();
+        $context = app(TenantContext::class);
+        $original = DB::table('settings')->where('tenant_id', $tenant->id)->where('key', ExceptionFinancialPolicy::KEY)->first(['value', 'updated_at']);
+        $snapshot = $context->run($tenant, fn () => app(ExceptionFinancialPolicy::class)->current());
+        $path = '/settings/exception-financial-policy';
+        $input = ['mode' => 'review_required', 'expected_revision' => $snapshot['revision'], 'idempotency_key' => (string) Str::uuid()];
+        try {
+            ($this->verify)($request('GET', $path)->status() === 403 && $post($path, $input)->status() === 403, $label.'permissões financeiras existentes não concedem configuração de política');
+            $context->run($tenant, fn () => $user->givePermissionTo('financial_policies.view'));
+            ($this->verify)($request('GET', $path)->ok() && $post($path, $input)->status() === 403, $label.'leitura de política não concede alteração');
+            $context->run($tenant, fn () => $user->givePermissionTo('financial_policies.manage'));
+            ($this->verify)($request('POST', $path, $input)->status() === 419, $label.'CSRF real protege configuração financeira');
+            ($this->verify)($post($path, ['tenant_id' => $tenant->id] + $input)->status() === 422, $label.'configuração recusa proprietário enviado pelo cliente');
+            ($this->verify)($post($path, $input)->status() === 302, $label.'política explicitamente configurada por HTTP');
+            ($this->verify)($post($path, $input)->status() === 302 && $post($path, ['idempotency_key' => (string) Str::uuid()] + $input)->status() === 422, $label.'reenvio de configuração recuperado e formulário antigo recusado');
+            $page = $request('GET', $path);
+            ($this->verify)($page->ok() && str_contains($page->body(), 'Exigir revisão financeira') && str_contains($page->body(), 'Histórico de configurações'), $label.'consulta mostra política e histórico sem ativar desfechos');
+            $current = $context->run($tenant, fn () => app(ExceptionFinancialPolicy::class)->current());
+            ($this->verify)($current['revision'] === $snapshot['revision'] + 1 && $current['mode'] === 'review_required', $label.'configuração pertence à clínica e preserva revisão anterior');
+        } finally {
+            if ($original === null) {
+                DB::table('settings')->where('tenant_id', $tenant->id)->where('key', ExceptionFinancialPolicy::KEY)->delete();
+            } else {
+                DB::table('settings')->where('tenant_id', $tenant->id)->where('key', ExceptionFinancialPolicy::KEY)->update(['value' => $original->value, 'updated_at' => $original->updated_at]);
+            }
+        }
+        ($this->verify)($context->run($tenant, fn () => app(ExceptionFinancialPolicy::class)->current()) === $snapshot, $label.'configuração sintética original restaurada e auditoria preservada');
+    }
+
+    private function exerciseExecutionExceptions(Tenant $tenant, User $user, Patient $patient, ExamType $exam, array $booking, Room $room, Closure $request, Closure $post, string $label): void
+    {
+        app(LocalHomologation::class)->ensure();
+        $context = app(TenantContext::class);
+        $this->exceptionPolicies[$tenant->id] = DB::table('settings')->where('tenant_id', $tenant->id)->where('key', ExceptionFinancialPolicy::KEY)->first(['value', 'updated_at']);
+        foreach (['refused' => 'review_required', 'incomplete' => 'charge_contracted'] as $outcome => $mode) {
+            $case = $label.$outcome.': ';
+            $order = $this->createOrder($tenant, $patient, [$exam], $post, $case);
+            $orderPath = '/patients/'.$patient->public_id.'/orders/'.$order->public_id;
+            ($this->verify)($post($orderPath.'/authorize', ['expected_status' => 'draft'])->status() === 302, $case.'pedido autorizado');
+            $day = $outcome === 'refused' ? '2026-12-20' : '2026-12-21';
+            $response = $post($booking['base'], ['unit_id' => $booking['unit']->id, 'scheduled_date' => $day, 'idempotency_key' => (string) Str::uuid()]);
+            $appointment = $context->run($tenant, fn () => $patient->appointments()->orderByDesc('id')->firstOrFail());
+            $this->remember($tenant, 'appointments', (int) $appointment->id);
+            $bookingPath = $booking['base'].'/'.$appointment->public_id;
+            ($this->verify)($response->status() === 302 && $post($bookingPath.'/confirm', ['expected_status' => 'pre_agendado', 'idempotency_key' => (string) Str::uuid()])->status() === 302
+                && $post($bookingPath.'/check-in', ['expected_status' => 'confirmado', 'exam_order_id' => $order->id, 'idempotency_key' => (string) Str::uuid()])->status() === 302, $case.'atendimento separado aberto');
+            $visit = $context->run($tenant, fn () => $patient->visits()->where('appointment_id', $appointment->id)->sole());
+            $base = '/patients/'.$patient->public_id.'/visits/'.$visit->public_id.'/executions';
+            $item = $context->run($tenant, fn () => $order->items()->sole());
+            ($this->verify)($post($base, ['expected_status' => 'open', 'exam_order_item_id' => $item->id, 'idempotency_key' => (string) Str::uuid()])->status() === 302, $case.'tentativa separada preparada');
+            $attempt = $context->run($tenant, fn () => $visit->executions()->sole());
+            $start = ['expected_status' => 'pending', 'idempotency_key' => (string) Str::uuid()];
+            ($this->verify)($post($base.'/'.$attempt->id.'/room', ['room_id' => $room->id, 'expected_status' => 'pending', 'idempotency_key' => (string) Str::uuid()])->status() === 302
+                && $post($base.'/'.$attempt->id.'/start', $start)->status() === 302, $case.'profissional inicia em sala autorizada');
+            $path = $base.'/'.$attempt->id.'/exception';
+            $input = ['expected_status' => 'in_progress', 'outcome' => $outcome, 'reason' => 'Motivo clínico sintético <script>exception()</script>', 'idempotency_key' => (string) Str::uuid()];
+            if ($outcome === 'refused') {
+                ($this->verify)($post($path, $input)->status() === 403, $case.'concluir exame não concede registrar desfecho excepcional');
+                $context->run($tenant, fn () => $user->givePermissionTo('executions.resolve_exception'));
+                if ($context->run($tenant, fn () => app(ExceptionFinancialPolicy::class)->current()['revision']) === 0) {
+                    ($this->verify)($post($path, $input)->status() === 422, $case.'política não configurada impede desfecho');
+                }
+            }
+            ($this->verify)($request('POST', $path, $input)->status() === 419 && $post($path, ['finished_at' => '2026-12-20'] + $input)->status() === 422, $case.'CSRF e campos de término protegidos');
+            $policy = $context->run($tenant, fn () => app(ExceptionFinancialPolicy::class)->current());
+            ($this->verify)($post('/settings/exception-financial-policy', ['mode' => $mode, 'expected_revision' => $policy['revision'], 'idempotency_key' => (string) Str::uuid()])->status() === 302, $case.'política explicitamente selecionada');
+            ($this->verify)($post($path, $input)->status() === 302, $case.'executor registra desfecho por HTTP');
+            $context->run($tenant, function () use ($attempt, $visit, $order, $mode, $outcome, $case): void {
+                $fresh = $attempt->fresh();
+                $event = $fresh->preparationSnapshot()['exception'];
+                ($this->verify)($fresh->status === $outcome && $fresh->item->status === $outcome && $fresh->finished_at !== null
+                    && $visit->fresh()->status === 'in_progress' && $order->fresh()->status === 'in_progress' && $event['financial_policy']['mode'] === $mode
+                    && ! str_contains($fresh->getRawOriginal('reason_encrypted'), 'Motivo'), $case.'estados autoria política e motivo cifrado preservados');
+            });
+            $page = $request('GET', $base);
+            ($this->verify)($page->ok() && str_contains($page->body(), '&lt;script&gt;exception()&lt;/script&gt;') && ! str_contains($page->body(), '<script>exception()</script>'), $case.'motivo clínico escapado e histórico legível');
+            ($this->verify)($post($path, $input)->status() === 302 && $post($path, ['idempotency_key' => (string) Str::uuid()] + $input)->status() === 422
+                && $post($base.'/'.$attempt->id.'/start', $start)->status() === 302, $case.'reenvio histórico preservado sem repetir atos');
+            $context->run($tenant, fn () => $user->revokePermissionTo('clinical.access'));
+            $page = $request('GET', $base);
+            ($this->verify)($page->ok() && ! str_contains($page->body(), 'Motivo clínico sintético'), $case.'leitor administrativo não recebe motivo clínico');
+            $context->run($tenant, fn () => $user->givePermissionTo('clinical.access'));
+            $policy = $context->run($tenant, fn () => app(ExceptionFinancialPolicy::class)->current());
+            ($this->verify)($post('/settings/exception-financial-policy', ['mode' => 'charge_completed', 'expected_revision' => $policy['revision'], 'idempotency_key' => (string) Str::uuid()])->status() === 302, $case.'política posterior não reescreve o desfecho');
+            $response = $post($orderPath.'/receivables', ['due_date' => $day]);
+            ($this->verify)($response->status() === ($mode === 'review_required' ? 422 : 302), $case.'financeiro aplica versão capturada sem ajuste retroativo');
+            $repeatPath = $base.'/'.$attempt->id.'/repeat';
+            $repeat = ['expected_status' => $outcome, 'reason' => 'Repetição clínica sintética <script>repeat()</script>', 'idempotency_key' => (string) Str::uuid()];
+            if ($outcome === 'refused') {
+                ($this->verify)($post($repeatPath, $repeat)->status() === 403, $case.'repetição exige permissão explícita');
+                $context->run($tenant, fn () => $user->givePermissionTo('executions.repeat'));
+            }
+            ($this->verify)($request('POST', $repeatPath, $repeat)->status() === 419 && $post($repeatPath, ['attempt_no' => 100] + $repeat)->status() === 422, $case.'repetição protege CSRF e dados autoritativos');
+            $repeatResponses = [$post($repeatPath, $repeat)->status(), $post($repeatPath, $repeat)->status()];
+            ($this->verify)($repeatResponses === [302, 302], $case.'repetição e reenvio preparam uma tentativa');
+            $next = $context->run($tenant, fn () => $visit->executions()->orderByDesc('id')->firstOrFail());
+            $context->run($tenant, function () use ($next, $attempt, $item, $case): void {
+                ($this->verify)($next->status === 'pending' && $next->attempt_no === 2 && $next->room_id === null && $next->performed_by === null
+                    && $item->fresh()->status === 'authorized' && $attempt->fresh()->preparationSnapshot()['retry'] === $next->preparationSnapshot()['repeat_of'], $case.'vínculos recíprocos mantêm tentativa anterior e mesmo item');
+            });
+            ($this->verify)($post($repeatPath, ['idempotency_key' => (string) Str::uuid()] + $repeat)->status() === 422, $case.'outra intenção não duplica repetição');
+            ($this->verify)($post($orderPath.'/receivables', ['due_date' => $day])->status() === 422, $case.'repetição exige revisão financeira antes de cobrança');
+            $nextPath = $base.'/'.$next->id;
+            ($this->verify)($post($nextPath.'/room', ['room_id' => $room->id, 'expected_status' => 'pending', 'idempotency_key' => (string) Str::uuid()])->status() === 302
+                && $post($nextPath.'/start', ['expected_status' => 'pending', 'idempotency_key' => (string) Str::uuid()])->status() === 302
+                && $post($nextPath.'/complete', ['expected_status' => 'in_progress', 'idempotency_key' => (string) Str::uuid()])->status() === 302, $case.'nova tentativa atribuída iniciada e concluída separadamente');
+            ($this->verify)($post($repeatPath, $repeat)->status() === 302 && $post($path, $input)->status() === 302 && $post($base.'/'.$attempt->id.'/start', $start)->status() === 302, $case.'histórico e reenvios anteriores preservados após conclusão');
+            $page = $request('GET', $base);
+            ($this->verify)($page->ok() && str_contains($page->body(), '&lt;script&gt;repeat()&lt;/script&gt;') && ! str_contains($page->body(), '<script>repeat()</script>'), $case.'histórico da repetição escapado');
+            $context->run($tenant, fn () => $user->revokePermissionTo('clinical.access'));
+            $page = $request('GET', $base);
+            ($this->verify)($page->ok() && ! str_contains($page->body(), 'Repetição clínica sintética'), $case.'motivo da repetição restrito no backend');
+            $context->run($tenant, fn () => $user->givePermissionTo('clinical.access'));
+            if ($outcome === 'incomplete') {
+                $receipt = $context->run($tenant, fn () => $order->receivables()->sole());
+                ($this->verify)($post($orderPath.'/receivables/'.$receipt->id.'/settle', ['expected_status' => 'open', 'reason' => 'Baixa sintética', 'idempotency_key' => (string) Str::uuid()])->status() === 422, $case.'conclusão da repetição não libera baixa sem revisão');
+            }
+            if ($outcome === 'refused') {
+                $this->exerciseResolvedVisitClosure($tenant, $visit, $attempt, $next, $request, $post, $case);
+            }
+            $review = $context->run($tenant, fn () => app(ClinicalFinancialReview::class)->inspect($order->fresh()));
+            $reviewPath = $orderPath.'/receivables/review';
+            $reviewInput = ['expected_revision' => $review['revision'], 'expected_fingerprint' => $review['fingerprint'], 'reason' => 'Conferência financeira sintética <script>review()</script>', 'idempotency_key' => (string) Str::uuid()];
+            if ($outcome === 'refused') {
+                ($this->verify)($post($reviewPath, $reviewInput)->status() === 403, $case.'revisão exige permissão financeira própria');
+                $context->run($tenant, fn () => $user->givePermissionTo('receivables.review'));
+            }
+            ($this->verify)($request('POST', $reviewPath, $reviewInput)->status() === 419 && $post($reviewPath, ['amount' => '0.00'] + $reviewInput)->status() === 422, $case.'revisão protege CSRF e valor do servidor');
+            ($this->verify)($post($reviewPath, ['expected_fingerprint' => str_repeat('0', 64)] + $reviewInput)->status() === 422, $case.'revisão recusa conferência desatualizada');
+            ($this->verify)($post($reviewPath, $reviewInput)->status() === 302, $case.'revisão explícita registrada sem pagamento automático');
+            ($this->verify)($post($reviewPath, ['idempotency_key' => strtoupper($reviewInput['idempotency_key'])] + $reviewInput)->status() === 302, $case.'reenvio da revisão recupera evidência');
+            $page = $request('GET', $orderPath.'/receivables');
+            ($this->verify)($page->ok() && str_contains($page->body(), '&lt;script&gt;review()&lt;/script&gt;') && ! str_contains($page->body(), '<script>review()</script>'), $case.'justificativa financeira escapada e histórico legível');
+            if ($outcome === 'refused') {
+                ($this->verify)($post($orderPath.'/receivables', ['due_date' => $day])->status() === 302, $case.'revisão permite registrar a única conta do pedido');
+            }
+            $receipt = $context->run($tenant, fn () => $order->receivables()->sole());
+            ($this->verify)($post($orderPath.'/receivables/'.$receipt->id.'/settle', ['expected_status' => 'open', 'reason' => 'Baixa após revisão sintética', 'idempotency_key' => (string) Str::uuid()])->status() === 302, $case.'baixa separada autorizada após revisão');
+            $context->run($tenant, function () use ($order, $receipt, $item, $case): void {
+                $review = app(ClinicalFinancialReview::class)->inspect($order->fresh());
+                ($this->verify)($review['approved'] && $review['amount'] === $item->unit_price && $receipt->fresh()->status === 'paid'
+                    && $order->receivables()->count() === 1 && count($review['history']) === 1, $case.'uma cobrança por item e revisão preservada após baixa');
+            });
+            if ($outcome === 'incomplete') {
+                $this->exerciseResolvedVisitClosure($tenant, $visit, $attempt, $next, $request, $post, $case);
+                $context->run($tenant, function () use ($order, $case): void {
+                    ($this->verify)(app(ClinicalFinancialReview::class)->inspect($order->fresh())['approved'], $case.'encerramento preserva revisão financeira anterior');
+                });
+            }
+
+        }
+    }
+
+    private function exerciseResolvedVisitClosure(Tenant $tenant, Visit $visit, ExamExecution $previous, ExamExecution $completed, Closure $request, Closure $post, string $case): void
+    {
+        $path = app(TenantContext::class)->run($tenant, fn () => '/patients/'.$visit->patient->public_id.'/visits/'.$visit->public_id);
+        $input = ['expected_status' => 'in_progress', 'idempotency_key' => (string) Str::uuid()];
+        ($this->verify)($request('POST', $path.'/complete', $input)->status() === 419
+            && $post($path.'/complete', ['resolved_executions' => [['execution_id' => 0]]] + $input)->status() === 422, $case.'encerramento protege CSRF e mapa de resolução');
+        $responses = [$post($path.'/complete', $input)->status(), $post($path.'/complete', $input)->status()];
+        ($this->verify)($responses === [302, 302], $case.'encerramento e reenvio após repetição concluída');
+        ($this->verify)($post($path.'/complete', ['idempotency_key' => (string) Str::uuid()] + $input)->status() === 422, $case.'encerramento recusa outra intenção');
+        app(TenantContext::class)->run($tenant, function () use ($visit, $previous, $completed, $case): void {
+            $snapshot = $visit->fresh()->attendanceSnapshot();
+            ($this->verify)($snapshot['completion']['resolved_executions'] === [['execution_id' => (int) $previous->id, 'completed_execution_id' => (int) $completed->id]]
+                && in_array($previous->fresh()->status, ['refused', 'incomplete'], true) && $completed->fresh()->status === 'completed', $case.'encerramento preserva desfechos e comprova sucessão');
+            $previous->fresh()->preparationSnapshot();
+            $completed->fresh()->preparationSnapshot();
+        });
+        $page = $request('GET', $path);
+        ($this->verify)($page->ok() && str_contains($page->body(), 'tentativas históricas resolvidas') && $request('GET', $path.'/executions')->ok(), $case.'visita e histórico permanecem consultáveis após encerrar');
+    }
+
     private function cleanup(): void
     {
         app(LocalHomologation::class)->ensure();
@@ -790,6 +1023,14 @@ final class OrderHomologation
                 DB::table('visits')->where('tenant_id', $tenantId)->whereIn('appointment_id', $fixture['appointments'] ?? [])->delete();
                 if (DB::table('visits')->where('tenant_id', $tenantId)->whereIn('appointment_id', $fixture['appointments'] ?? [])->exists()) {
                     throw new RuntimeException('Visit fixture cleanup incomplete.');
+                }
+                if (array_key_exists($tenantId, $this->exceptionPolicies)) {
+                    $original = $this->exceptionPolicies[$tenantId];
+                    if ($original === null) {
+                        DB::table('settings')->where('tenant_id', $tenantId)->where('key', ExceptionFinancialPolicy::KEY)->delete();
+                    } else {
+                        DB::table('settings')->where('tenant_id', $tenantId)->where('key', ExceptionFinancialPolicy::KEY)->update(['value' => $original->value, 'updated_at' => $original->updated_at]);
+                    }
                 }
                 DB::table('clinical_receivables')->where('tenant_id', $tenantId)->whereIn('exam_order_id', $orders)->delete();
                 if (DB::table('clinical_receivables')->where('tenant_id', $tenantId)->whereIn('exam_order_id', $orders)->exists()) {

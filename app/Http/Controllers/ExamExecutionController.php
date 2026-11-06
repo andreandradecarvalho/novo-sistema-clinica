@@ -10,6 +10,8 @@ use App\Domain\Executions\Actions\CompleteExamExecution;
 use App\Domain\Executions\Actions\ListAssignableRooms;
 use App\Domain\Executions\Actions\ListExamExecutions;
 use App\Domain\Executions\Actions\PrepareExamExecution;
+use App\Domain\Executions\Actions\RepeatExamExecution;
+use App\Domain\Executions\Actions\ResolveExecutionException;
 use App\Domain\Executions\Actions\StartExamExecution;
 use App\Domain\Executions\Models\ExamExecution;
 use App\Domain\Patients\Models\Patient;
@@ -18,6 +20,8 @@ use App\Http\Requests\AssignExecutionRoomRequest;
 use App\Http\Requests\CancelPendingExecutionRequest;
 use App\Http\Requests\CompleteExamExecutionRequest;
 use App\Http\Requests\PrepareExamExecutionRequest;
+use App\Http\Requests\RepeatExamExecutionRequest;
+use App\Http\Requests\ResolveExecutionExceptionRequest;
 use App\Http\Requests\StartExamExecutionRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -61,6 +65,20 @@ final class ExamExecutionController extends Controller
         $action->execute($patient, $visit, $execution, $request->validated('idempotency_key'), $request->validated('expected_status'));
 
         return redirect()->route('patients.visits.executions.index', [$patient->public_id, $visit->public_id])->with('status', 'Execução concluída. Resultados e laudos têm seus próprios fluxos.');
+    }
+
+    public function resolveException(ResolveExecutionExceptionRequest $request, Patient $patient, Visit $visit, ExamExecution $execution, ResolveExecutionException $action): RedirectResponse
+    {
+        $action->execute($patient, $visit, $execution, $request->validated('outcome'), $request->validated('reason'), $request->validated('idempotency_key'), $request->validated('expected_status'));
+
+        return redirect()->route('patients.visits.executions.index', [$patient->public_id, $visit->public_id])->with('status', 'Desfecho registrado. Consulte as pendências do pedido e do financeiro.');
+    }
+
+    public function repeat(RepeatExamExecutionRequest $request, Patient $patient, Visit $visit, ExamExecution $execution, RepeatExamExecution $action): RedirectResponse
+    {
+        $action->execute($patient, $visit, $execution, $request->validated('reason'), $request->validated('idempotency_key'), $request->validated('expected_status'));
+
+        return redirect()->route('patients.visits.executions.index', [$patient->public_id, $visit->public_id])->with('status', 'Nova tentativa preparada. Cobrança e baixa dependem de revisão financeira explícita.');
     }
 
     public function cancel(CancelPendingExecutionRequest $request, Patient $patient, Visit $visit, ExamExecution $execution, CancelPendingExecution $action): RedirectResponse

@@ -15,13 +15,22 @@ final class ExecutionCompletionEvidence
     {
         $event = $context['completion'] ?? null;
         $start = $context['start'] ?? null;
-        if (! is_array($event) || ! is_array($start) || ($event['from_status'] ?? null) !== 'in_progress'
+        if (! is_array($event) || ! is_array($start)) {
+            throw new LogicException('Missing execution completion evidence.');
+        }
+
+        return self::validateEvent($execution, $event, $start, 'completed');
+    }
+
+    public static function validateEvent(ExamExecution $execution, array $event, array $start, string $status): CarbonImmutable
+    {
+        if (($event['from_status'] ?? null) !== 'in_progress'
             || ($event['execution_id'] ?? null) !== (int) $execution->id || ($event['professional_id'] ?? null) !== (int) $execution->performed_by
             || ($event['actor_id'] ?? null) !== ($start['actor_id'] ?? null) || $event['professional_id'] !== ($start['professional_id'] ?? null)
             || ! is_int($event['authorization_id'] ?? null) || $event['authorization_id'] < 1
             || ! is_string($event['key_hash'] ?? null) || ! preg_match('/\A[a-f0-9]{64}\z/', $event['key_hash'])
-            || ! is_string($event['occurred_at'] ?? null) || $execution->status !== 'completed' || $execution->finished_at === null || $execution->started_at === null) {
-            throw new LogicException('Invalid execution completion evidence.');
+            || ! is_string($event['occurred_at'] ?? null) || $execution->status !== $status || $execution->finished_at === null || $execution->started_at === null) {
+            throw new LogicException('Invalid execution finish evidence.');
         }
         $at = CarbonImmutable::createFromFormat('Y-m-d\TH:i:sP', $event['occurred_at']);
         if (! $at || $at->getOffset() !== 0 || $at->format('Y-m-d\TH:i:sP') !== $event['occurred_at']

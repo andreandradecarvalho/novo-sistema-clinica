@@ -8,12 +8,16 @@ use App\Domain\Executions\Actions\CancelPendingExecution;
 use App\Domain\Executions\Actions\CompleteExamExecution;
 use App\Domain\Executions\Actions\ManageProfessionalExamAuthorization;
 use App\Domain\Executions\Actions\PrepareExamExecution;
+use App\Domain\Executions\Actions\RepeatExamExecution;
+use App\Domain\Executions\Actions\ResolveExecutionException;
 use App\Domain\Executions\Actions\StartExamExecution;
 use App\Domain\Executions\Models\ExamExecution;
 use App\Domain\Executions\Models\ProfessionalExamAuthorization;
 use App\Domain\Identity\Models\User;
 use App\Domain\Orders\Actions\CreateClinicalReceivable;
 use App\Domain\Orders\Actions\CreateExamOrder;
+use App\Domain\Orders\Actions\ReviewClinicalOrder;
+use App\Domain\Orders\Actions\SaveExceptionFinancialPolicy;
 use App\Domain\Orders\Actions\TransitionClinicalReceivable;
 use App\Domain\Orders\Enums\ReceivableTransition;
 use App\Domain\Orders\Models\ClinicalReceivable;
@@ -28,6 +32,7 @@ use App\Domain\Tenancy\Models\Tenant;
 use App\Domain\Tenancy\Services\TenantContext;
 use App\Domain\Visits\Actions\CancelVisit;
 use App\Domain\Visits\Actions\CheckInAppointment;
+use App\Domain\Visits\Actions\CompleteVisit;
 use App\Domain\Visits\Models\Visit;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Console\Kernel;
@@ -50,6 +55,8 @@ app(TenantContext::class)->run($tenant, function () use ($input): void {
     fflush(STDOUT);
     try {
         $result = match ($input['operation']) {
+            'financial-review' => app(ReviewClinicalOrder::class)->execute($patient, ExamOrder::query()->findOrFail($input['order_id']), 0, $input['review_fingerprint'], 'Conferência sintética concorrente', $input['key'])['revision'],
+            'financial-policy' => app(SaveExceptionFinancialPolicy::class)->execute('charge_completed', $input['expected_revision'] ?? 0, $input['key'])['revision'],
             'order' => app(CreateExamOrder::class)->execute($patient, [$input['exam_id']], $input['key'])->public_id,
             'receivable' => app(CreateClinicalReceivable::class)->execute($patient, ExamOrder::query()->findOrFail($input['order_id']), '2026-12-10')->id,
             'settle', 'cancel' => app(TransitionClinicalReceivable::class)->execute($patient, ExamOrder::query()->findOrFail($input['order_id']), ClinicalReceivable::query()->findOrFail($input['receipt_id']), ReceivableTransition::from($input['operation']), 'Motivo sintético concorrente', $input['key'], 'open')->id,
@@ -61,6 +68,9 @@ app(TenantContext::class)->run($tenant, function () use ($input): void {
             'execution-prepare' => app(PrepareExamExecution::class)->execute($patient, Visit::query()->findOrFail($input['visit_id']), (int) $input['item_id'], $input['key'], 'open')->id,
             'execution-cancel' => app(CancelPendingExecution::class)->execute($patient, Visit::query()->findOrFail($input['visit_id']), ExamExecution::query()->findOrFail($input['execution_id']), 'Motivo sintético concorrente', $input['key'], 'pending')->id,
             'execution-room' => app(AssignExecutionRoom::class)->execute($patient, Visit::query()->findOrFail($input['visit_id']), ExamExecution::query()->findOrFail($input['execution_id']), (int) $input['room_id'], $input['key'], 'pending')->id,
+            'visit-complete' => app(CompleteVisit::class)->execute($patient, Visit::query()->findOrFail($input['visit_id']), $input['key'], 'in_progress')->public_id,
+            'execution-repeat' => app(RepeatExamExecution::class)->execute($patient, Visit::query()->findOrFail($input['visit_id']), ExamExecution::query()->findOrFail($input['execution_id']), 'Repetição sintética concorrente', $input['key'], 'incomplete')->id,
+            'execution-exception' => app(ResolveExecutionException::class)->execute($patient, Visit::query()->findOrFail($input['visit_id']), ExamExecution::query()->findOrFail($input['execution_id']), 'incomplete', 'Motivo sintético concorrente', $input['key'], 'in_progress')->id,
             'execution-complete' => app(CompleteExamExecution::class)->execute($patient, Visit::query()->findOrFail($input['visit_id']), ExamExecution::query()->findOrFail($input['execution_id']), $input['key'], 'in_progress')->id,
             'execution-start' => app(StartExamExecution::class)->execute($patient, Visit::query()->findOrFail($input['visit_id']), ExamExecution::query()->findOrFail($input['execution_id']), $input['key'], 'pending')->id,
             'grant-revoke' => app(ManageProfessionalExamAuthorization::class)->revoke(Professional::query()->findOrFail($input['professional_id']), ProfessionalExamAuthorization::query()->findOrFail($input['grant_id']), 'Revogação sintética concorrente')->id,

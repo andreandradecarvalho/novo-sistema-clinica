@@ -28,3 +28,5 @@
 - [Confirmado] Down apaga registros/respostas/snapshots/autoria/chaves e destrói histórico clínico; reaplicar não recupera nem impede repetição de intenções antigas. Com dados em uso, preservar backup consistente do banco/chaves de cifra e corrigir progressivamente. Rollback vazio de testing não certifica restore. Não executar em produção; não importar DDL completo no banco de trabalho.
 
 [Confirmado] Concluir todos os exames/pedido não encerra automaticamente o atendimento. Enquanto este permanecer ativo, consulta e nova coleta continuam sujeitas às permissões clínicas próprias; o histórico é validado também após as conclusões. [Contrato de término](tentativas-exames.md#concluir-execução-e-itens-do-pedido).
+
+[Confirmado] [Encerramento explícito do atendimento](check-in-atendimento.md#encerrar-atendimento-após-execução) entregue: verifica tentativas locais, preserva consultas e reenvios históricos e bloqueia novos atos de execução/coleta. Pedido pode abranger outros dias; financeiro mantém fluxo independente. Evidências/status no fluxo 20.

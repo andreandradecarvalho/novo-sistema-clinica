@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Executions\Models;
 
 use App\Domain\Executions\Services\ExecutionCompletionEvidence;
+use App\Domain\Executions\Services\ExecutionExceptionEvidence;
+use App\Domain\Executions\Services\ExecutionRetryEvidence;
 use App\Domain\Executions\Services\ExecutionStartEvidence;
 use App\Domain\Orders\Models\ExamOrderItem;
 use App\Domain\Scheduling\Models\Room;
@@ -69,7 +71,7 @@ final class ExamExecution extends Model
                 || $context['key_hash'] !== $this->creation_key_hash || ! is_string($context['request_hash'] ?? null)
                 || ! preg_match('/\A[a-f0-9]{64}\z/', $context['request_hash']) || $context['request_hash'] !== $this->creation_request_hash
                 || $this->source !== 'order'
-                || ! in_array($this->status, ['pending', 'canceled', 'in_progress', 'completed'], true)) {
+                || ! in_array($this->status, ['pending', 'canceled', 'in_progress', 'completed', 'refused', 'incomplete'], true)) {
                 throw new LogicException('Unsupported execution evidence.');
             }
             $at = self::utc($context['occurred_at']);
@@ -96,7 +98,7 @@ final class ExamExecution extends Model
             } elseif ($this->room_id !== null) {
                 throw new LogicException('Missing room assignment evidence.');
             }
-            if (in_array($this->status, ['in_progress', 'completed'], true)) {
+            if (in_array($this->status, ['in_progress', 'completed', 'refused', 'incomplete'], true)) {
                 $startedAt = ExecutionStartEvidence::validate($context['start'] ?? null, (int) $this->visit_id);
                 if (($context['start']['execution_id'] ?? null) !== (int) $this->id || ! isset($context['room_assignment']) || $startedAt->lessThan($assignedAt)) {
                     throw new LogicException('Invalid execution start sequence.');
@@ -106,8 +108,14 @@ final class ExamExecution extends Model
             }
             if ($this->status === 'completed') {
                 ExecutionCompletionEvidence::validate($this, $context);
-            } elseif (isset($context['completion']) || $this->finished_at !== null) {
+            } elseif (isset($context['completion']) || ($this->finished_at !== null && ! in_array($this->status, ['refused', 'incomplete'], true))) {
                 throw new LogicException('Unexpected execution completion.');
+            }
+            if (in_array($this->status, ['refused', 'incomplete'], true)) {
+                ExecutionExceptionEvidence::validate($this, $context);
+                $context['exception']['reason'] = Crypt::decryptString((string) $this->getRawOriginal('reason_encrypted'));
+            } elseif (array_key_exists('exception', $context)) {
+                throw new LogicException('Unexpected execution exception.');
             }
             if ($this->status === 'canceled') {
                 $event = $context['cancellation'] ?? null;
@@ -121,9 +129,11 @@ final class ExamExecution extends Model
                     throw new LogicException('Invalid cancellation reason.');
                 }
                 $context['cancellation']['reason'] = $reason;
-            } elseif (array_key_exists('cancellation', $context) || $this->reason_encrypted !== null) {
+            } elseif (array_key_exists('cancellation', $context) || ($this->reason_encrypted !== null && ! in_array($this->status, ['refused', 'incomplete'], true))) {
                 throw new LogicException('Unexpected execution cancellation.');
             }
+
+            ExecutionRetryEvidence::validate($this, $context);
 
             return $context;
         } catch (Throwable) {
@@ -147,7 +157,7 @@ final class ExamExecution extends Model
             }
         }
         $visit->attendanceSnapshot();
-        if (in_array($this->status, ['in_progress', 'completed'], true) && ($visit->status !== 'in_progress' || ! in_array($visit->order?->status, ['in_progress', 'completed'], true) || $item->status !== $this->status)) {
+        if (in_array($this->status, ['in_progress', 'completed', 'refused', 'incomplete'], true) && (! in_array($visit->status, ['in_progress', 'completed'], true) || ! in_array($visit->order?->status, ['in_progress', 'completed'], true))) {
             throw ValidationException::withMessages(['execution' => 'A execução diverge da situação do item, pedido ou atendimento.']);
         }
 

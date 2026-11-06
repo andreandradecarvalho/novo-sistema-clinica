@@ -61,12 +61,12 @@ afterEach(function (): void {
 
 it('registers and reads an integral historical receivable and safely replays the same order', function (): void {
     $this->get($this->base)->assertOk()->assertSee('Contas a receber');
-    $this->get($this->base.'/receivables')->assertOk()->assertSee('Registrar recebível integral')->assertHeader('Cache-Control', 'no-store, private');
+    $this->get($this->base.'/receivables')->assertOk()->assertSee('Registrar recebível do pedido')->assertHeader('Cache-Control', 'no-store, private');
     $this->context->run($this->a['tenant'], fn () => $this->dataA['exam']->update(['price' => '99.99', 'is_active' => false]));
     $this->post($this->base.'/receivables', $this->input)->assertRedirect($this->base.'/receivables');
     $this->post($this->base.'/receivables', $this->input)->assertRedirect();
     $this->postJson($this->base.'/receivables', ['due_date' => '2026-12-11'])->assertUnprocessable()->assertJsonValidationErrors('receivable');
-    $this->get($this->base.'/receivables')->assertOk()->assertSee('12.34')->assertSee('10/12/2026')->assertSee('Em aberto')->assertDontSee('99.99')->assertDontSee('Registrar recebível integral');
+    $this->get($this->base.'/receivables')->assertOk()->assertSee('12.34')->assertSee('10/12/2026')->assertSee('Em aberto')->assertDontSee('99.99')->assertDontSee('Registrar recebível do pedido');
     $this->context->run($this->a['tenant'], function (): void {
         $receivable = ClinicalReceivable::query()->sole();
         expect($receivable->amount)->toBe('12.34')->and($receivable->payer_type)->toBe('patient')->and($receivable->company_id)->toBeNull();
@@ -109,7 +109,7 @@ it('requires separate current permissions and confirmed two factor including on 
         if ($permission !== 'receivables.manage') {
             $this->getJson($this->base.'/receivables')->assertForbidden();
         } else {
-            $this->get($this->base.'/receivables')->assertOk()->assertDontSee('Registrar recebível integral');
+            $this->get($this->base.'/receivables')->assertOk()->assertDontSee('Registrar recebível do pedido');
         }
         $this->context->run($this->a['tenant'], fn () => $this->a['user']->givePermissionTo($permission));
     }

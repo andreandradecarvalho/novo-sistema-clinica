@@ -9,6 +9,7 @@ use App\Domain\Orders\Services\OrderCompletionEvidence;
 use App\Domain\Patients\Models\Patient;
 use App\Domain\Tenancy\Concerns\BelongsToTenant;
 use App\Domain\Tenancy\Services\TenantContext;
+use App\Domain\Visits\Models\Visit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -98,6 +99,15 @@ final class ExamOrder extends Model
                 OrderCompletionEvidence::validate($this, $context['completion'] ?? null);
             } elseif (isset($context['completion'])) {
                 throw new LogicException('Unexpected order completion.');
+            }
+
+            // Closed visits must remain coherent even when this order spans several days/items.
+            // contextSnapshot never calls the parent order; attendanceSnapshot here would recurse.
+            foreach (Visit::query()->where('exam_order_id', $this->id)->where('status', 'completed')->orderBy('id')->get() as $visit) {
+                if ((int) $visit->patient_id !== (int) $this->patient_id) {
+                    throw new LogicException('Closed visit belongs to another patient.');
+                }
+                $visit->contextSnapshot();
             }
 
             return $context;

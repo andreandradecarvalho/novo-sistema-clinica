@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-11-05T18:23:10+00:00",
+  "observed_at": "2026-11-05T20:15:16+00:00",
   "environment": "homologacao-local-isolada",
   "php": "8.5.12",
   "laravel": "13.39.0",
@@ -1531,6 +1531,90 @@
       "passed": true
     },
     {
+      "name": "Pedidos A: conclusão de exame não concede encerramento do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege encerramento do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: encerramento rejeita horário injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: atendimento encerrado explicitamente por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: encerramento preserva evidências de execução e vínculos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta privada apresenta atendimento encerrado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio de encerramento recupera história e outra chave é recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: resposta histórica preservada e nova coleta bloqueada após fechamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: execuções históricas legíveis após fechamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: auditoria de fechamento e reenvio sem conteúdo clínico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido recusa conjunto de tentativas adulterado no atendimento encerrado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: pedido recupera leitura após restaurar evidência sintética original",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: permissões financeiras existentes não concedem configuração de política",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: leitura de política não concede alteração",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: CSRF real protege configuração financeira",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: configuração recusa proprietário enviado pelo cliente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: política explicitamente configurada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: reenvio de configuração recuperado e formulário antigo recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: consulta mostra política e histórico sem ativar desfechos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: configuração pertence à clínica e preserva revisão anterior",
+      "passed": true
+    },
+    {
+      "name": "Pedidos A: configuração sintética original restaurada e auditoria preservada",
+      "passed": true
+    },
+    {
       "name": "Pedidos A: baixa financeira permanece independente após início",
       "passed": true
     },
@@ -2519,6 +2603,90 @@
       "passed": true
     },
     {
+      "name": "Pedidos B: conclusão de exame não concede encerramento do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege encerramento do atendimento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: encerramento rejeita horário injetado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: atendimento encerrado explicitamente por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: encerramento preserva evidências de execução e vínculos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta privada apresenta atendimento encerrado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio de encerramento recupera história e outra chave é recusada",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: resposta histórica preservada e nova coleta bloqueada após fechamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: execuções históricas legíveis após fechamento",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: auditoria de fechamento e reenvio sem conteúdo clínico",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido recusa conjunto de tentativas adulterado no atendimento encerrado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: pedido recupera leitura após restaurar evidência sintética original",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: permissões financeiras existentes não concedem configuração de política",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: leitura de política não concede alteração",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: CSRF real protege configuração financeira",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: configuração recusa proprietário enviado pelo cliente",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: política explicitamente configurada por HTTP",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: reenvio de configuração recuperado e formulário antigo recusado",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: consulta mostra política e histórico sem ativar desfechos",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: configuração pertence à clínica e preserva revisão anterior",
+      "passed": true
+    },
+    {
+      "name": "Pedidos B: configuração sintética original restaurada e auditoria preservada",
+      "passed": true
+    },
+    {
       "name": "Pedidos B: baixa financeira permanece independente após início",
       "passed": true
     },
@@ -2804,6 +2972,6 @@
     "Somente dados sintéticos",
     "Não substitui CI remota ou revisão de PR"
   ],
-  "source_revision": "482840c964fdde373e243de5b78c021f67e6e598",
+  "source_revision": "70c5b7e74609432fcacbefdcff2bbce9aecf8bef",
   "working_tree_dirty": true
 }

@@ -37,7 +37,7 @@ final class ExamExecutionPolicy
             || ! app(TenantPermission::class)->allows($actor, 'executions.perform')) {
             return false;
         }
-        if (in_array($execution->status, ['in_progress', 'completed'], true)) {
+        if (in_array($execution->status, ['in_progress', 'completed', 'refused', 'incomplete'], true)) {
             return Professional::query()->whereKey($execution->performed_by)->where('user_id', $actor->id)->exists();
         }
         $exam = ExamType::query()->whereKey($execution->exam_type_id)->first();
@@ -53,6 +53,32 @@ final class ExamExecutionPolicy
             return false;
         }
         if ($execution->status === 'completed') {
+            return true;
+        }
+        $exam = ExamType::query()->whereKey($execution->exam_type_id)->first();
+
+        return $exam !== null && app(ProfessionalExamAccess::class)->allows($actor, $exam);
+    }
+
+    public function viewException(User $actor, ExamExecution $execution): bool
+    {
+        return $this->view($actor, $execution) && app(TenantPermission::class)->allows($actor, 'clinical.access');
+    }
+
+    public function repeat(User $actor, ExamExecution $execution): bool
+    {
+        return $this->viewException($actor, $execution) && $this->prepare($actor, $execution->visit)
+            && app(TenantPermission::class)->allows($actor, 'executions.repeat');
+    }
+
+    public function resolveException(User $actor, ExamExecution $execution): bool
+    {
+        if (! $this->view($actor, $execution) || ! app(TenantPermission::class)->allows($actor, 'clinical.access')
+            || ! app(TenantPermission::class)->allows($actor, 'executions.perform') || ! app(TenantPermission::class)->allows($actor, 'executions.resolve_exception')
+            || ! Professional::query()->whereKey($execution->performed_by)->where('user_id', $actor->id)->exists()) {
+            return false;
+        }
+        if (in_array($execution->status, ['refused', 'incomplete'], true)) {
             return true;
         }
         $exam = ExamType::query()->whereKey($execution->exam_type_id)->first();

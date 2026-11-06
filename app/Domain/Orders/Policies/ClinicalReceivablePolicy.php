@@ -22,6 +22,11 @@ final class ClinicalReceivablePolicy
         return $this->viewAny($actor, $order) && app(TenantPermission::class)->allows($actor, 'receivables.manage');
     }
 
+    public function review(User $actor, ExamOrder $order): bool
+    {
+        return $this->create($actor, $order) && app(TenantPermission::class)->allows($actor, 'receivables.review');
+    }
+
     public function settle(User $actor, ClinicalReceivable $receivable): bool
     {
         return $this->transition($actor, $receivable, 'receivables.settle');

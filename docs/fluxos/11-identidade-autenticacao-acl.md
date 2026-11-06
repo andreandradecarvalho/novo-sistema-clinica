@@ -84,3 +84,15 @@ No legado a autorização rodava no cliente e o `header()` sem `exit` não bloqu
 [Confirmado] [Respostas clínicas](../outros/respostas-clinicas.md) exigem clinical.access e health_records.view/create, além do acesso ao atendimento/unidade/paciente/pedido; coleta exige catalog.view e senha recente. Permissões novas sem atribuição automática a papéis. Direitos de catálogo/financeiro/execução e vínculos empresariais não concedem essas permissões. Não há portal empresarial de respostas.
 
 [Confirmado] [Conclusão de execução](../outros/tentativas-exames.md#concluir-execução-e-itens-do-pedido) acrescenta executions.complete sem concessão automática a papéis. Requer direitos clínicos/de execução/acesso ao recurso e próprio executor; novo ato exige concessão específica atual e tipo ativo. Reenvio concluído exige direitos atuais e evidência histórica, preservando ato anterior após revogação. Não concede revisão/liberação de laudo ou emissão de ASO.
+
+[Confirmado] `visits.complete` autoriza o [encerramento explícito](../outros/check-in-atendimento.md#encerrar-atendimento-após-execução) junto a `clinical.access` e Policy de recurso. Somente catálogo, sem concessão automática a papéis; não substitui direitos de execução, resultados ou liberação de documentos.
+
+[Confirmado] financial_policies.view/manage e os direitos correspondentes de recebíveis controlam a [configuração financeira de desfechos excepcionais](../outros/politica-financeira-excecoes.md), sem concessão automática a papéis ou acesso adicional a prontuários.
+
+[Confirmado] executions.resolve_exception, junto a clinical.access/executions.perform e vínculo ao próprio executor/concessão específica atual, controla [desfechos excepcionais](../outros/desfechos-excepcionais-exames.md). Permissão somente no catálogo, sem concessão automática; motivo clínico exige clinical.access também na leitura.
+
+
+[Confirmado] Etapa 4: `executions.repeat` autoriza [preparar repetição](../outros/desfechos-excepcionais-exames.md#repetir-no-mesmo-item), conjuntamente com acesso ao recurso, clinical.access e executions.prepare; somente catálogo, sem concessão automática aos papéis. Não substitui autorização profissional no início nem libera revisão financeira.
+
+
+[Confirmado] Etapa 4: receivables.review autoriza a [revisão explícita após repetição concluída](../outros/contas-a-receber.md#revisão-explícita-após-repetição-concluída), junto de receivables.view/manage e acesso atual ao recurso. Somente catálogo; sem concessão automática a papéis, acesso clínico, liberação de baixa por si só ou permissão para alterar valores.

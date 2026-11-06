@@ -75,6 +75,9 @@ final class HealthRecord extends Model
                 throw new LogicException('Invalid clinical collection time.');
             }
             $visit->attendanceSnapshot();
+            if ($visit->status === 'completed' && $at->greaterThan($visit->completed_at)) {
+                throw new LogicException('Clinical collection follows visit closure.');
+            }
             $answer = $this->answers()->sole()->snapshot();
             if (! hash_equals(self::requestHash((int) $this->visit_id, $answer['question_id'], $answer['answer']), $context['request_hash'])) {
                 throw new LogicException('Answer differs from collection evidence.');

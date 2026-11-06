@@ -112,6 +112,8 @@ docker compose run --rm --no-deps app php artisan horizon
 docker compose down
 ```
 
+[Confirmado] O Composer limita cada processo a 900 segundos, conforme composer.json, para comportar a suíte completa em MariaDB com cenários concorrentes e vínculos clínicos. O limite padrão de 300 segundos interrompeu essa suíte durante a ampliação da etapa 4; isso não foi tratado como aprovação dos testes.
+
 [Confirmado] O dashboard Horizon nega acesso pela web, inclusive local, até existir identidade operacional da plataforma; usuários clínicos não podem inspecionar jobs de outras clínicas. Redis de desenvolvimento é descartável. SMTP, HTTPS e infraestrutura de staging ainda exigem configuração própria. O [workflow de CI](.github/workflows/ci.yml) executa os mesmos checks em ambiente descartável; não há resultado remoto publicado nesta sessão.
 
 ## Homologação local com duas clínicas
@@ -131,3 +133,9 @@ docker compose down
 - [Confirmado] Não executar DDL/DML em produção. Validações devem usar bancos autorizados local/staging, no motor e versão de destino.
 - [Confirmado] O legado é referência somente leitura. Respeitar as exclusões de indexação definidas no `AGENTS.md`; não copiar PDFs de laudos nem dados de pacientes para o repositório.
 - [Confirmado] Usar dados sintéticos em fixtures e testes. Requisitos de acesso, auditoria e proteção de dados estão no [diagnóstico de segurança e LGPD](docs/analise/05-seguranca-lgpd-conformidade.md) e nos fluxos do domínio.
+
+[Confirmado] [Encerramento explícito do atendimento](docs/outros/check-in-atendimento.md#encerrar-atendimento-após-execução): pendências locais, histórico preservado e novas execuções/coletas bloqueadas; continuidade e evidências no fluxo 20.
+
+[Confirmado] [Política financeira para recusa/incompletude](docs/outros/politica-financeira-excecoes.md): configuração explícita por clínica e histórico; desfechos após início já utilizam a versão capturada; ajustes explícitos de contas permanecem no próximo incremento.
+
+[Confirmado] [Recusa/incompletude após início](docs/outros/desfechos-excepcionais-exames.md): executor autorizado, motivo cifrado, versão da política preservada e apuração financeira por item; revisão/ajustes e repetição continuam no próximo incremento.

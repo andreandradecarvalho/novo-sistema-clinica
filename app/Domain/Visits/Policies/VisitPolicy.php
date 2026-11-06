@@ -23,6 +23,12 @@ final class VisitPolicy
         return $this->view($actor, $visit) && app(TenantPermission::class)->allows($actor, 'visits.cancel');
     }
 
+    public function complete(User $actor, Visit $visit): bool
+    {
+        return $this->view($actor, $visit) && app(TenantPermission::class)->allows($actor, 'visits.complete')
+            && app(TenantPermission::class)->allows($actor, 'clinical.access');
+    }
+
     public function view(User $actor, Visit $visit): bool
     {
         return (int) $visit->tenant_id === app(TenantContext::class)->id() && app(TenantPermission::class)->allows($actor, 'visits.view')

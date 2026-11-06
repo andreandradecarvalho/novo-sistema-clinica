@@ -50,8 +50,10 @@ use App\Domain\Scheduling\Models\Room;
 use App\Domain\Scheduling\Policies\AppointmentPolicy;
 use App\Domain\Scheduling\Policies\RoomPolicy;
 use App\Domain\Tenancy\Exceptions\MissingTenant;
+use App\Domain\Tenancy\Models\Setting;
 use App\Domain\Tenancy\Models\Tenant;
 use App\Domain\Tenancy\Models\Unit;
+use App\Domain\Tenancy\Policies\SettingPolicy;
 use App\Domain\Tenancy\Policies\UnitPolicy;
 use App\Domain\Tenancy\Services\TenantContext;
 use App\Domain\Visits\Models\Visit;
@@ -79,6 +81,7 @@ final class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Gate::policy(Setting::class, SettingPolicy::class);
         Gate::policy(HealthRecord::class, HealthRecordPolicy::class);
         Gate::policy(HealthQuestionGroup::class, HealthQuestionGroupPolicy::class);
         Gate::policy(PatientConsent::class, PatientConsentPolicy::class);

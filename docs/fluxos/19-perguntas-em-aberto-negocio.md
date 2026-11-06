@@ -47,3 +47,20 @@
 
 - [Confirmado] Cadastro profissional não comprova habilitação; o fluxo 11 exige autorização conforme habilitação/atribuição/tipo e o fluxo 22 exige profissional autorizado. Preparação e atribuição administrativa de sala não implementam essa autorização.
 - [Confirmado] O usuário decidiu: **“Concessão explícita por profissional e tipo de exame”**. A decisão define o contrato de autorização do sistema; não equivale à concessão para qualquer profissional real nem à aprovação clínica do conteúdo/P14. Cadastro, permissões gerais ou sala atribuída não substituem a concessão específica.
+
+## Desfechos excepcionais e financeiro — decisão do usuário
+
+- [Confirmado] O [fluxo 22 §22.2/22.4](22-atendimento-clinico.md#224-financeiro-da-clínica) prevê `refused`/`incomplete`, preservação das tentativas e decisão dos itens cobrados em execução parcial. Quando a decisão foi solicitada, o [financeiro](../outros/contas-a-receber.md) registrava somente valor integral do pedido; não implementa ajuste por item, estorno ou parcelamento. Cadastro dos estados no schema não materializa uma política comercial.
+- [Confirmado] Na retomada de 05/11/2026 foi solicitada ao usuário a política inicial para exame recusado/incompleto: manter valores com revisão financeira explícita, cobrar somente concluídos mediante ajuste explícito, ou política por clínica. O usuário escolheu: **“Definir uma política configurável por clínica”**. Não foi escolhido um modo padrão para todas as clínicas.
+- [Inferido] Com a política configurável definida, especificar como pendências/repetições e fechamento do pedido se relacionam com recebíveis já abertos/baixados. A continuidade técnica independente pode reforçar integridade e leitores existentes; transições excepcionais devem usar a política explicitamente configurada e preservar sua versão, sem alterar preços/baixas existentes automaticamente.
+
+[Confirmado] [Configuração e histórico por clínica](../outros/politica-financeira-excecoes.md) implementados na etapa 4, sem aplicar um modo padrão ou modificar cobranças existentes. Integração ao registro após início entregue; ajustes explícitos de contas/revisão financeira seguem no próximo incremento.
+
+
+<a id="repetição-após-desfecho-excepcional--decisão-pendente"></a>
+
+## Repetição após desfecho excepcional — decisão do usuário
+
+- [Confirmado] A implementação atual mantém uma conta agregada por pedido e uma tentativa excepcional vinculada ao item, com política financeira capturada. Preparação regular não repete itens refused/incomplete; evidências e limites estão em [desfechos excepcionais](../outros/desfechos-excepcionais-exames.md).
+- [Confirmado] Em 06/11/2026 foi solicitada ao usuário a regra para repetir um exame após recusa/incompletude: manter uma cobrança por item, exigindo revisão financeira explícita antes de liberar nova cobrança/baixa após repetição; ou exigir outro pedido e cobrança independente para cada nova tentativa. O usuário respondeu: **“Uma cobrança por item; revisão financeira explícita antes de liberar nova cobrança/baixa após repetição”**. Essa é a regra escolhida; não criar cobrança por tentativa nem outro pedido automaticamente.
+- [Confirmado] A repetição prepara outra tentativa no mesmo item, preservando anterior/preço/motivo/política/respostas e contas existentes. Nova cobrança ou baixa exige revisão financeira explícita mesmo se o novo exame concluir ou a política vigente permitir cobrança. A implementação progressiva e seus limites ficam em [desfechos excepcionais](../outros/desfechos-excepcionais-exames.md#repetir-no-mesmo-item).

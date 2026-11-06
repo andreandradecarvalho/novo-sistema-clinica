@@ -21,8 +21,11 @@ final class ListExamExecutions
         $histories = [];
         foreach ($executions as $execution) {
             $histories[$execution->id] = $execution->setRelation('visit', $visit)->preparationSnapshot();
+            if (! Gate::allows('viewException', $execution)) {
+                unset($histories[$execution->id]['exception']['reason'], $histories[$execution->id]['retry']['reason'], $histories[$execution->id]['repeat_of']['reason']);
+            }
         }
-        $items = $visit->order?->items()->select(['id', 'tenant_id', 'exam_order_id', 'description_snapshot', 'status'])->where('status', 'authorized')->orderBy('id')->limit(20)->get();
+        $items = $visit->order?->items()->select(['id', 'tenant_id', 'exam_order_id', 'description_snapshot', 'status'])->where('status', 'authorized')->whereNotIn('id', ExamExecution::query()->select('exam_order_item_id')->where('status', '!=', 'canceled'))->orderBy('id')->limit(20)->get();
         app(RegistryAudit::class)->record('executions', 'executions_listed', $visit, Visit::class);
 
         return compact('visit', 'executions', 'histories', 'items');
